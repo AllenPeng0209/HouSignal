@@ -1,0 +1,4 @@
+# Runtime-only dependencies; browser binaries installed separately.
+playwright>=1.45,<2
+segno>=1.6,<2
+biliup>=1,<2

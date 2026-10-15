@@ -1,0 +1,51 @@
+.env
+.env.*
+!.env.example
+.venv/
+node_modules/
+.runtime/
+runtime/
+__pycache__/
+.pytest_cache/
+*.pyc
+apps/web/dist/
+*.log
+*.tsbuildinfo
+.DS_Store
+
+# Private records, generated deliveries and acceptance media
+/reports/
+/exports/
+apps/mobile/reports/
+
+# Expo/native generated output (source configuration and plugins are versioned)
+apps/mobile/.expo/
+apps/mobile/.native-build/
+apps/mobile/dist/
+apps/mobile/dist-final/
+apps/mobile/dist-native/
+apps/mobile/dist-web/
+apps/mobile/web-build/
+apps/mobile/ios/
+apps/mobile/android/
+**/xcuserdata/
+**/.gradle/
+**/.cxx/
+
+# Signing, local databases and machine-specific configuration
+*.keystore
+*.jks
+*.p8
+*.p12
+*.pfx
+*.key
+*.pem
+*.mobileprovision
+*.db
+*.sqlite
+*.sqlite3
+**/.xcode.env.local
+
+# Keep the hand-written demo/dist source; exclude only generated demo packages
+demo/*.zip
+demo/dist/楼响_HouSignal_交互Demo.html

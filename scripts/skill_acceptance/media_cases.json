@@ -1,0 +1,1350 @@
+{
+  "schema_version": 1,
+  "group": "media",
+  "cases": [
+    {
+      "case_id": "media-ai-image-gen",
+      "skill_name": "ai-image-gen",
+      "input": "原创商业产品示意：白色保温杯放在浅蓝摄影背景，柔和侧光，材质真实，无文字无商标。",
+      "parameters": {
+        "op": "text2img",
+        "size": "1024x1024",
+        "n": 1
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "blocked",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "尚未接入经过商业许可与实际出图验收的免费图片生成模型；不调用付费云模型。"
+      ]
+    },
+    {
+      "case_id": "media-ai-music",
+      "skill_name": "ai-music",
+      "input": "原创30秒轻松产品展示配乐，温暖钢琴与低强度鼓点，不模仿艺人。",
+      "parameters": {
+        "duration": 30,
+        "instrumental": true
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "blocked",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "尚无经过许可与真实音频验收的免费音乐生成模型；不调用付费音乐服务。"
+      ]
+    },
+    {
+      "case_id": "media-ai-video-gen",
+      "skill_name": "ai-video-gen",
+      "input": "A five-second cinematic product shot of an original plain white ceramic cup on a light blue studio background. The camera slowly dollies forward; warm side lighting creates a soft moving reflection. Gentle original room ambience. No text, logos, people, or dialogue.",
+      "parameters": {
+        "size": "576x1024",
+        "duration": 5,
+        "seed": 42
+      },
+      "asset_fixture_names": [],
+      "billing": "existing_ppu",
+      "expected_outcome": "blocked",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".mp4",
+          ".json"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "单独video-live.json已经有本项目真实PPU task/artifact/完整解码证据；通用媒体批次只复用回执，不重复生成"
+      ]
+    },
+    {
+      "case_id": "media-audio-denoise",
+      "skill_name": "audio-denoise",
+      "input": "",
+      "parameters": {
+        "tier": 2,
+        "mix": 0.8,
+        "format": "wav"
+      },
+      "asset_fixture_names": [
+        "noisy_audio"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".wav"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "自制带噪双声道音调素材，独立干净信号可核验；本案只验证tier2真实dry/wet混合和信号噪声指标，不代表真实人声听审。"
+      ]
+    },
+    {
+      "case_id": "media-audio-editing",
+      "skill_name": "audio-editing",
+      "input": "",
+      "parameters": {
+        "op": "normalize",
+        "format": "wav",
+        "i": -16,
+        "tp": -1.5,
+        "lra": 11
+      },
+      "asset_fixture_names": [
+        "audio"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".wav"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": []
+    },
+    {
+      "case_id": "media-audio-mix",
+      "skill_name": "audio-mix",
+      "input": "",
+      "parameters": {
+        "voice_index": 0,
+        "bgm_index": 1,
+        "voice_volume": 1,
+        "bgm_volume": 0.18,
+        "format": "wav"
+      },
+      "asset_fixture_names": [
+        "speech",
+        "audio"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".wav"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": []
+    },
+    {
+      "case_id": "media-audio-visualizer",
+      "skill_name": "audio-visualizer",
+      "input": "",
+      "parameters": {
+        "mode": "waves",
+        "size": "720x1280",
+        "title": "原创示意音频 · 波形可视化"
+      },
+      "asset_fixture_names": [
+        "audio"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".mp4"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": []
+    },
+    {
+      "case_id": "media-auto-short-video",
+      "skill_name": "auto-short-video",
+      "input": "",
+      "parameters": {
+        "size": "720x1280",
+        "per": 2,
+        "transition": "fade",
+        "trans_duration": 0.4,
+        "bgm_index": 2,
+        "storyboard": [
+          {
+            "asset_index": 0,
+            "duration": 2,
+            "caption": "杯身细节 · 自制示意"
+          },
+          {
+            "asset_index": 1,
+            "duration": 2,
+            "caption": "清晰排版 · 非实际商品承诺"
+          }
+        ]
+      },
+      "asset_fixture_names": [
+        "image",
+        "image2",
+        "audio"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".mp4"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "先合成背景转场，再按真实scene时间单层切换字幕；0.4秒转场中不得两句同位叠影，成片3.6秒与指定音轨保持。"
+      ]
+    },
+    {
+      "case_id": "media-auto-subtitle",
+      "skill_name": "auto-subtitle",
+      "input": "",
+      "parameters": {
+        "format": "srt",
+        "language": "en",
+        "engine": "local"
+      },
+      "asset_fixture_names": [
+        "speech"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".srt"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "本项目已下载固定版本tiny Whisper；识别内容与时间戳需人工核对，不能以模型输出自动声称准确。"
+      ]
+    },
+    {
+      "case_id": "media-batch-process",
+      "skill_name": "batch-process",
+      "input": "",
+      "parameters": {
+        "op": "resize",
+        "width": 720,
+        "format": "png"
+      },
+      "asset_fixture_names": [
+        "image",
+        "image2"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".png"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": []
+    },
+    {
+      "case_id": "media-beat-sync-video",
+      "skill_name": "beat-sync-video",
+      "input": "",
+      "parameters": {
+        "size": "720x1280",
+        "music_index": 2,
+        "effect": "zoom",
+        "every": 1,
+        "max_duration": 4.8,
+        "beat_mode": "auto"
+      },
+      "asset_fixture_names": [
+        "image",
+        "image2",
+        "rhythm"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".mp4",
+          ".json"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "自制非均匀真实音头rhythm.wav，不向execute提供beats数组；必须实测onsets、非等分切点及音画对齐；均分/显式人工点只算base，不能代表自动踩点。"
+      ]
+    },
+    {
+      "case_id": "media-card-design",
+      "skill_name": "card-design",
+      "input": "# 看得清，才有下一步\n\n为原创杯具示意设计一套清晰的内容卡片。\n\n- 一张卡只讲一个要点。\n- 杯具图仅用于示意，不虚构产品参数。\n- 品牌文案须先审核，再对外发布。",
+      "parameters": {
+        "draft_content": false,
+        "width": 1080,
+        "height": 1440,
+        "scale": 1,
+        "style": "editorial"
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".png",
+          ".svg",
+          ".html"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "base",
+      "prerequisites": [
+        "提供完整文案直接渲染，尚未验收免费模型的自动策划/写作阶段。"
+      ]
+    },
+    {
+      "case_id": "media-card-quote",
+      "skill_name": "card-quote",
+      "input": "把重要的事讲清楚，比把所有的事放进去更重要。\n\n— 原创验收文案",
+      "parameters": {
+        "draft_content": false,
+        "width": 1600,
+        "height": 900,
+        "scale": 1,
+        "style": "cream",
+        "source": "原创验收文案"
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".png",
+          ".svg"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "base",
+      "prerequisites": []
+    },
+    {
+      "case_id": "media-card-xiaohongshu",
+      "skill_name": "card-xiaohongshu",
+      "input": "原创内容卡片",
+      "parameters": {
+        "draft_content": false,
+        "width": 1080,
+        "height": 1440,
+        "scale": 1,
+        "style": "editorial",
+        "cards": [
+          {
+            "title": "先讲清楚",
+            "body": [
+              "一张卡只传达一个核心观点。",
+              "用清晰事实支持结论。"
+            ]
+          },
+          {
+            "title": "保留证据",
+            "body": [
+              "不编造商品参数或消费体验。",
+              "所有图片为自制示意。"
+            ]
+          },
+          {
+            "title": "审核再发布",
+            "body": [
+              "先核对排版、错字与来源。",
+              "保留可编辑源文件。"
+            ]
+          }
+        ]
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".png",
+          ".html"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "base",
+      "prerequisites": [
+        "提供成稿渲染3卡，未验收免费模型自动撰稿。"
+      ]
+    },
+    {
+      "case_id": "media-chart-visualization",
+      "skill_name": "chart-visualization",
+      "input": "",
+      "parameters": {
+        "width": 1200,
+        "height": 800,
+        "scale": 1,
+        "title": "验收示意：任务完成数",
+        "chart_type": "bar",
+        "x": "week",
+        "y": "completed",
+        "data": [
+          {
+            "week": "第一周",
+            "completed": 12
+          },
+          {
+            "week": "第二周",
+            "completed": 18
+          },
+          {
+            "week": "第三周",
+            "completed": 15
+          }
+        ]
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".png",
+          ".svg"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "所有数据为自制测试数值；图表必须保留12/18/15及单位说明。"
+      ]
+    },
+    {
+      "case_id": "media-clipify",
+      "skill_name": "clipify",
+      "input": "",
+      "parameters": {
+        "segments": [
+          {
+            "start": 0.5,
+            "end": 2.5,
+            "label": "核心示意"
+          }
+        ],
+        "pad": 0,
+        "reframe": "9:16",
+        "reframe_mode": "crop"
+      },
+      "asset_fixture_names": [
+        "video"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".mp4"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "base",
+      "prerequisites": [
+        "明确范围的精华切片，未验收自动语义选段。"
+      ]
+    },
+    {
+      "case_id": "media-comparison-card",
+      "skill_name": "comparison-card",
+      "input": "仅比较给出的示意方案，无虚构优劣排名。",
+      "parameters": {
+        "width": 1080,
+        "height": 1440,
+        "scale": 1,
+        "title": "内容交付方案比较",
+        "data": [
+          {
+            "维度": "交付格式",
+            "方案A": "PNG + SVG",
+            "方案B": "HTML + PDF"
+          },
+          {
+            "维度": "用途",
+            "方案A": "社交媒体卡片",
+            "方案B": "长文阅读"
+          },
+          {
+            "维度": "修改方式",
+            "方案A": "重新渲染",
+            "方案B": "编辑原始文案"
+          }
+        ]
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".png",
+          ".svg"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": []
+    },
+    {
+      "case_id": "media-data-report",
+      "skill_name": "data-report",
+      "input": "以下为自制测试数据，报告不得宣称真实业务业绩。",
+      "parameters": {
+        "op": "report",
+        "width": 1200,
+        "scale": 1,
+        "title": "验收示意统计报告",
+        "data": [
+          {
+            "region": "东区",
+            "sales": 10,
+            "cost": 4
+          },
+          {
+            "region": "东区",
+            "sales": 20,
+            "cost": 8
+          },
+          {
+            "region": "西区",
+            "sales": 30,
+            "cost": 12
+          }
+        ]
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".html",
+          ".json"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": []
+    },
+    {
+      "case_id": "media-doc-convert",
+      "skill_name": "doc-convert",
+      "input": "# 原创内容交付说明\n\n本文为技能验收而创作，不代表真实业务数据。\n\n## 交付标准\n\n- 保留真实文字与结构。\n- PDF正文必须可提取，中文应正确显示。\n- 图片、视频与音频文件必须可正常解码。\n\n| 产物 | 检查 |\n|---|---|\n| 文档 | 页面与文字 |\n| 媒体 | 画面与音轨 |",
+      "parameters": {
+        "format": "pdf",
+        "title": "原创内容交付说明"
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".pdf"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": []
+    },
+    {
+      "case_id": "media-ecom-details-image",
+      "skill_name": "ecom-details-image",
+      "input": "只依据自制示意保温杯素材生成电商详情图，不能虚构价格、销量、保温时长或认证。",
+      "parameters": {
+        "op": "generate",
+        "size": "1024x1024",
+        "n": 1
+      },
+      "asset_fixture_names": [
+        "image"
+      ],
+      "billing": "free",
+      "expected_outcome": "blocked",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "实际图片生成未配置免费可交付模型；视觉brief是部分能力，不能冒充详情图。"
+      ]
+    },
+    {
+      "case_id": "media-green-screen",
+      "skill_name": "green-screen",
+      "input": "",
+      "parameters": {
+        "color": "0x00ff00",
+        "similarity": 0.3,
+        "blend": 0.1,
+        "bg_color": "0x19283f"
+      },
+      "asset_fixture_names": [
+        "green"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".mp4"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "视频fixture必须含纯绿背景与移动红色主体；否则不能据此验收去绿算法。"
+      ]
+    },
+    {
+      "case_id": "media-gzh-design",
+      "skill_name": "gzh-design",
+      "input": "# 怎样写出清晰的内容\n\n清晰的内容从一个真实、具体的观察开始。验收的示意数据不是客户事实。\n\n## 一张图表达一个观点\n\n标题讲出核心信息，正文解释原因，数据和来源帮助读者核对。\n\n## 交付前的核对\n\n核对错字、数字、中文字体和来源说明，再保存可编辑文档及发布用文件。\n\n> 本文为原创验收示意，尚未发布。",
+      "parameters": {
+        "draft_content": false,
+        "format": "html",
+        "theme": "graphite-minimal",
+        "title": "怎样写出清晰的内容"
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".html"
+        ],
+        "required_fields": [],
+        "require_sources": false,
+        "min_artifact_text_chars": 100
+      },
+      "commercial_scope": "base",
+      "prerequisites": []
+    },
+    {
+      "case_id": "media-image-editing",
+      "skill_name": "image-editing",
+      "input": "",
+      "parameters": {
+        "op": "resize",
+        "width": 1080,
+        "format": "png"
+      },
+      "asset_fixture_names": [
+        "image"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".png"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": []
+    },
+    {
+      "case_id": "media-image-enhance",
+      "skill_name": "image-enhance",
+      "input": "",
+      "parameters": {
+        "scale": 2,
+        "auto": true,
+        "denoise": true,
+        "sharpen": 1.1
+      },
+      "asset_fixture_names": [
+        "image"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".png"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "传统增强；主体与内框的橙色/米色应保留，不允许RGB黑化或通道翻转，不代表AI超分/真实录音噪声质量。"
+      ]
+    },
+    {
+      "case_id": "media-infographic",
+      "skill_name": "infographic",
+      "input": "# 内容交付的四步\n- 收集真实材料\n- 制作内容与排版\n- 核对信息与媒体\n- 保存交付文件",
+      "parameters": {
+        "draft_content": false,
+        "op": "flow",
+        "width": 1200,
+        "height": 800,
+        "scale": 1,
+        "title": "内容交付的四步"
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".png",
+          ".svg"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "base",
+      "prerequisites": []
+    },
+    {
+      "case_id": "media-meme-generator",
+      "skill_name": "meme-generator",
+      "input": "原创验收表情卡片",
+      "parameters": {
+        "layout": "bottom-bar",
+        "caption": "当你终于把所有源文件都命名清楚",
+        "format": "png"
+      },
+      "asset_fixture_names": [
+        "image"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".png"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": []
+    },
+    {
+      "case_id": "media-mindmap",
+      "skill_name": "mindmap",
+      "input": "# 内容交付\n## 资料\n- 原始来源\n- 授权素材\n## 制作\n- 文字结构\n- 图像排版\n## 核对\n- 来源与数字\n- 下载与解码",
+      "parameters": {
+        "draft_content": false,
+        "width": 1400,
+        "height": 900,
+        "scale": 1
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".png",
+          ".svg",
+          ".html",
+          ".json"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "base",
+      "prerequisites": []
+    },
+    {
+      "case_id": "media-multi-voice-dubbing",
+      "skill_name": "multi-voice-dubbing",
+      "input": "原创内容交付对话",
+      "parameters": {
+        "engine": "edge",
+        "gap": 0.3,
+        "lines": [
+          {
+            "text": "先保留原始来源，再开始制作。",
+            "voice": "zh-CN-XiaoxiaoNeural"
+          },
+          {
+            "text": "交付之前，一起核对文字、画面和音轨。",
+            "voice": "zh-CN-YunxiNeural"
+          }
+        ]
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".wav",
+          ".srt",
+          ".mp3",
+          ".json"
+        ],
+        "required_fields": [
+          "roles",
+          "gap_seconds",
+          "voice_identity_verified",
+          "human_review_required"
+        ],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "两种公开普通音色；每段原MP3与voice/index/text_hash/audio_hash绑定回执可下载，合并停顿保持；实际声线身份、自然度与发音仍需独立人审，不以统计回执冒充试听。"
+      ]
+    },
+    {
+      "case_id": "media-paper-explainer",
+      "skill_name": "paper-explainer",
+      "input": "",
+      "parameters": {
+        "op": "extract"
+      },
+      "asset_fixture_names": [
+        "paper"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".txt",
+          ".json"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "base",
+      "prerequisites": [
+        "仅真实PDF提取文字/图片；全文模型解读、证据引用、图文或有声视频未以免费路径验收。"
+      ]
+    },
+    {
+      "case_id": "media-poster-hero",
+      "skill_name": "poster-hero",
+      "input": "清晰的标题、克制的文案、可核验的事实。\n原创示意内容，用于流程验收。",
+      "parameters": {
+        "draft_content": false,
+        "width": 1080,
+        "height": 1920,
+        "scale": 1,
+        "title": "看得清，才有下一步",
+        "subtitle": "原创杯具示意 · 不代表实际商品参数",
+        "cta": "查看项目资料",
+        "style": "swiss"
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".png",
+          ".svg"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "base",
+      "prerequisites": []
+    },
+    {
+      "case_id": "media-remove-bg",
+      "skill_name": "remove-bg",
+      "input": "",
+      "parameters": {
+        "model": "u2netp",
+        "format": "png"
+      },
+      "asset_fixture_names": [
+        "image"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".png"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "已下载项目内Apache-2.0官方U2NetP小权重；需核对主体完整度和透明边缘。"
+      ]
+    },
+    {
+      "case_id": "media-short-drama",
+      "skill_name": "short-drama",
+      "input": "",
+      "parameters": {
+        "op": "assemble",
+        "size": "720x1280",
+        "transition": "none",
+        "cover": true
+      },
+      "asset_fixture_names": [
+        "ppu_video",
+        "video2"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".mp4",
+          ".json"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "base",
+      "prerequisites": [
+        "仅真实已有动态片段的有声合成；不代表角色策划、一致性参考、逐镜AI生成或对白准确度通过。"
+      ]
+    },
+    {
+      "case_id": "media-slideshow-video",
+      "skill_name": "slideshow-video",
+      "input": "",
+      "parameters": {
+        "size": "720x1280",
+        "per": 2,
+        "transition": "fade",
+        "trans_duration": 0.4,
+        "kenburns": true,
+        "bgm_index": 2,
+        "captions": [
+          "原创杯具示意",
+          "交付前核对排版"
+        ]
+      },
+      "asset_fixture_names": [
+        "image",
+        "image2",
+        "audio"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".mp4"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": []
+    },
+    {
+      "case_id": "media-subtitle-translate",
+      "skill_name": "subtitle-translate",
+      "input": "",
+      "parameters": {
+        "op": "translate",
+        "subtitle_text": "1\n00:00:00,000 --> 00:00:01,200\nKeep the source.\n\n2\n00:00:01,500 --> 00:00:03,000\nReview before publishing.\n",
+        "translations": [
+          "保留原始来源。",
+          "发布之前先审核。"
+        ],
+        "format": "srt"
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".srt"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "base",
+      "prerequisites": [
+        "提供人工完成译文，只验收时码保留和双语字幕产物；不代表免费模型翻译质量通过。"
+      ]
+    },
+    {
+      "case_id": "media-tts-voiceover",
+      "skill_name": "tts-voiceover",
+      "input": "这是原创内容制作的验收示意。我们只使用自制素材，不虚构客户事实。交付之前，先核对文字、画面和音轨。",
+      "parameters": {
+        "engine": "edge",
+        "voice": "zh-CN-XiaoxiaoNeural"
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".mp3"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "公开普通合成音色，非真人或克隆；免费网络服务须实际可达。"
+      ]
+    },
+    {
+      "case_id": "media-video-chapters",
+      "skill_name": "video-chapters",
+      "input": "",
+      "parameters": {
+        "language": "en",
+        "chapter_seconds": 5
+      },
+      "asset_fixture_names": [
+        "speech"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".md"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "本地实际ASR时间段生成章节，需人工核对标题与识别文本。"
+      ]
+    },
+    {
+      "case_id": "media-video-editing",
+      "skill_name": "video-editing",
+      "input": "",
+      "parameters": {
+        "op": "text",
+        "text": "原创验收示意 · 非真实商品",
+        "fontsize": 32,
+        "position": "bottom",
+        "format": "mp4"
+      },
+      "asset_fixture_names": [
+        "video"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".mp4"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": []
+    },
+    {
+      "case_id": "media-video-highlights",
+      "skill_name": "video-highlights",
+      "input": "",
+      "parameters": {
+        "segments": [
+          {
+            "start": 0,
+            "end": 1.5,
+            "label": "主体移动"
+          },
+          {
+            "start": 2,
+            "end": 3.5,
+            "label": "画面展示"
+          }
+        ],
+        "pad": 0
+      },
+      "asset_fixture_names": [
+        "video"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".mp4"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "base",
+      "prerequisites": [
+        "用户明确提供高光范围；未验收免费模型自动判断高光。"
+      ]
+    },
+    {
+      "case_id": "media-video-intro-outro",
+      "skill_name": "video-intro-outro",
+      "input": "内容交付，从清晰开始",
+      "parameters": {
+        "op": "card",
+        "size": "720x1280",
+        "duration": 2.5,
+        "title": "内容交付，从清晰开始",
+        "subtitle": "原创验收示意",
+        "cta": "核对后再发布",
+        "gradient": true
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".mp4"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": []
+    },
+    {
+      "case_id": "media-video-production",
+      "skill_name": "video-production",
+      "input": "",
+      "parameters": {
+        "size": "720x1280",
+        "transition": "none",
+        "cover": true
+      },
+      "asset_fixture_names": [
+        "video",
+        "video2"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".mp4",
+          ".json"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": []
+    },
+    {
+      "case_id": "media-video-reframe",
+      "skill_name": "video-reframe",
+      "input": "",
+      "parameters": {
+        "ratio": "9:16",
+        "mode": "smart",
+        "size": "720x1280"
+      },
+      "asset_fixture_names": [
+        "video"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".mp4"
+        ],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "base",
+      "prerequisites": [
+        "smart实际为24帧人脸焦点中位数的静态裁剪，无人脸则居中；本次无真人fixture仅验收实际静态裁剪及解码，不能证明移动主体动态跟踪。"
+      ]
+    },
+    {
+      "case_id": "media-video-to-article",
+      "skill_name": "video-to-article",
+      "input": "",
+      "parameters": {
+        "op": "transcribe",
+        "engine": "local",
+        "language": "en"
+      },
+      "asset_fixture_names": [
+        "speech"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".txt"
+        ],
+        "required_fields": [],
+        "require_sources": false,
+        "min_artifact_text_chars": 80
+      },
+      "commercial_scope": "base",
+      "prerequisites": [
+        "只免费真实语音转录；全文事实核对与文章重写需文字模型，尚未以免费路径完整验收。"
+      ]
+    },
+    {
+      "case_id": "media-voice-clone",
+      "skill_name": "voice-clone",
+      "input": "",
+      "parameters": {
+        "op": "enroll",
+        "name": "synthetic-acceptance"
+      },
+      "asset_fixture_names": [
+        "speech"
+      ],
+      "billing": "free",
+      "expected_outcome": "blocked",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [],
+        "required_fields": [],
+        "require_sources": false
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "尚无免费项目内声音登记与真实克隆服务；不以普通Edge公开音色假装克隆。样本是普通合成音频非真人。"
+      ]
+    },
+    {
+      "case_id": "media-xhs-note-creator",
+      "skill_name": "xhs-note-creator",
+      "input": "已核对的完整笔记",
+      "parameters": {
+        "format": "cards",
+        "note": {
+          "title": "清晰内容的三个动作",
+          "body": "从来源开始，再做结构，最后核对交付。以下示例均为自制验收材料。",
+          "caption": "先找到可靠的来源，再把一个观点讲清楚。每一张卡片只承载一个核心信息，复杂内容分成多张。交付之前，核对文字、数字、图像以及来源说明。这组笔记使用自制示意资料，没有真实客户数据，也尚未发布。把源文件留好，后续修改才会更轻松。",
+          "hashtags": [
+            "内容制作",
+            "清晰表达",
+            "原创示意",
+            "资料核对",
+            "交付流程"
+          ],
+          "cards": [
+            {
+              "title": "从来源开始",
+              "body": [
+                "保存原始材料与出处。",
+                "明确自制数据的用途。",
+                "核对每个数字和结论。",
+                "交付前保留可编辑文件。"
+              ]
+            },
+            {
+              "title": "让结构清晰",
+              "body": [
+                "一张卡传达一个核心观点。",
+                "标题表达具体信息。",
+                "正文解释观察与证据。",
+                "复杂材料分多张说明。"
+              ]
+            },
+            {
+              "title": "交付前核对",
+              "body": [
+                "核对文字、数字和来源。",
+                "检查画面和音轨。",
+                "保留可编辑源文件。",
+                "人工审核之后再发布。"
+              ]
+            }
+          ]
+        },
+        "card_count": 3,
+        "style": "editorial",
+        "width": 1080,
+        "height": 1440,
+        "scale": 1
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".png",
+          ".html",
+          ".md",
+          ".json"
+        ],
+        "required_fields": [],
+        "require_sources": false,
+        "min_artifact_text_chars": 100
+      },
+      "commercial_scope": "base",
+      "prerequisites": [
+        "提供完整成稿，不调用模型写作。必须3张有效卡片及版面审查通过，尚未实际平台发布。"
+      ]
+    }
+  ]
+}

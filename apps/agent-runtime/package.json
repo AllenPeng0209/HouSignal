@@ -1,0 +1,13 @@
+{
+  "name": "@housignal/agent-runtime",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Native Pi Agent scheduling bridge for 楼管家",
+  "type": "module",
+  "engines": { "node": ">=22.19.0" },
+  "scripts": { "start": "node bridge.mjs", "test": "node --test test/*.test.mjs" },
+  "dependencies": {
+    "@earendil-works/pi-agent-core": "1.2.0",
+    "@earendil-works/pi-ai": "1.2.0"
+  }
+}

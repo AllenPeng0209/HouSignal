@@ -1,0 +1,119 @@
+{
+  "source_repository": "https://github.com/ZJU-REAL/Easel",
+  "source_commit": "40f08d96f7eaaad19500cb121c4ca23b542fd89e",
+  "copied_on": "2026-10-13",
+  "license": "Apache-2.0",
+  "scope": "Seven platform login, publish and account-readback adapters with their Python dependency closure; no credentials or browser profiles.",
+  "files": [
+    {
+      "path": "skills/shared/scripts/login_state.py",
+      "source_sha256": "172a4c42fb1b78a0c3fa93d29ce9820b5b76767fcffac2292d71c7d43b1d5693",
+      "vendored_sha256": "172a4c42fb1b78a0c3fa93d29ce9820b5b76767fcffac2292d71c7d43b1d5693",
+      "modified": false,
+      "changes": []
+    },
+    {
+      "path": "skills/shared/scripts/xhs_publish.py",
+      "source_sha256": "50d79533d11211c08dfbd425cad40a7bbc067d6dd7f384d99f716e9d4c994c77",
+      "vendored_sha256": "1ebe79097915303b2b8bfa9f301e0bc6602be197871e6373cbe112796be7fca5",
+      "modified": true,
+      "changes": [
+        "Honor EASEL_ROOT to keep diagnostics and defaults inside the private project session.",
+        "Use private EASEL_ROOT/profiles as profile fallback when provided."
+      ]
+    },
+    {
+      "path": "skills/shared/scripts/douyin_publish.py",
+      "source_sha256": "cc15ecc1462d367fea8f0b5afb9387f282433b6d8d49ee6eccfb028dcc6ac1c0",
+      "vendored_sha256": "2bb184281189d37b3d0bc93466dc2906ff1d41b522aee209d955b39c95ddf5e6",
+      "modified": true,
+      "changes": [
+        "Honor EASEL_ROOT to keep diagnostics and defaults inside the private project session.",
+        "Use private EASEL_ROOT/profiles as profile fallback when provided."
+      ]
+    },
+    {
+      "path": "skills/shared/scripts/web_publisher.py",
+      "source_sha256": "de0db840e62dc6e3e2e7e4a8fa48ab39cfc53271944650b8b3bec3cc4dc194b5",
+      "vendored_sha256": "df86c49bd6ef54d899deecc0e515981e2443cfcadec312d135ff23305283145c",
+      "modified": true,
+      "changes": [
+        "Honor EASEL_ROOT for login defaults, all failure screenshots and step diagnostic screenshots.",
+        "Use private EASEL_ROOT/profiles as profile fallback when provided."
+      ]
+    },
+    {
+      "path": "skills/shared/scripts/bili_login.py",
+      "source_sha256": "7cc40fd24830680cbf32681475baae0edb0ca410bdcc809c4ba3a2360bab97eb",
+      "vendored_sha256": "2aee595edeca7a5815c40a7dfb79608077e06853c48ded3ea5bb23ceba8cbf33",
+      "modified": true,
+      "changes": [
+        "Honor EASEL_ROOT to keep diagnostics and defaults inside the private project session."
+      ]
+    },
+    {
+      "path": "skills/shared/scripts/weixin_mp_stats.py",
+      "source_sha256": "f2e307d052c6e4f34d4f6279e7d4a1da66f9870faa11c3c1ed6ab5789d535f99",
+      "vendored_sha256": "30ae0503d450ab4afc0f30c6cc2699d214d34acf1e21d2541ff514252a0f28ec",
+      "modified": true,
+      "changes": [
+        "Honor EASEL_ROOT to keep diagnostics and defaults inside the private project session.",
+        "Use private EASEL_ROOT/profiles as profile fallback when provided."
+      ]
+    },
+    {
+      "path": "skills/shared/scripts/account_stats.py",
+      "source_sha256": "472b1fbeb139ba4a760aa452e1a732ae2d57261040f0216d0e326ed0616e1bc8",
+      "vendored_sha256": "2a7033dd4076d55afb39e909e87ac4b929733ac3f09d27dd922ad6ad8bdcf3a8",
+      "modified": true,
+      "changes": [
+        "Honor EASEL_ROOT to keep diagnostics and defaults inside the private project session.",
+        "Use private EASEL_ROOT/profiles as profile fallback when provided."
+      ]
+    },
+    {
+      "path": "skills/shared/scripts/content_guard.py",
+      "source_sha256": "f459c857f7aa841b63f0050a65a59957022a6f1da3749e6ace62f1a7c734b866",
+      "vendored_sha256": "7cefe2252d7cdeba139067773105ec9a612083e60963ae944606d4dce3723adc",
+      "modified": true,
+      "changes": [
+        "Selftest generates synthetic API-key evidence at runtime with stdlib secrets; detection, blocking and redaction assertions are retained."
+      ]
+    },
+    {
+      "path": "skills/shared/scripts/platform_readback.py",
+      "source_sha256": "b86b69802debf79b89d64ec682de2de792d05308f42d4e79ec567150154a2bf9",
+      "vendored_sha256": "b86b69802debf79b89d64ec682de2de792d05308f42d4e79ec567150154a2bf9",
+      "modified": false,
+      "changes": []
+    },
+    {
+      "path": "skills/shared/scripts/human_pace.py",
+      "source_sha256": "621c1a194e5870a6ae3069b2d4c73f94bedeadbd58ab88111acdae9c045cb19a",
+      "vendored_sha256": "621c1a194e5870a6ae3069b2d4c73f94bedeadbd58ab88111acdae9c045cb19a",
+      "modified": false,
+      "changes": []
+    },
+    {
+      "path": "skills/shared/scripts/calendar_ops.py",
+      "source_sha256": "edf4fe0b3c49bd760abd05f92c7038f9e88524eb3bff633fdb6f625b29c0188b",
+      "vendored_sha256": "edf4fe0b3c49bd760abd05f92c7038f9e88524eb3bff633fdb6f625b29c0188b",
+      "modified": false,
+      "changes": []
+    },
+    {
+      "path": "skills/openclaw/skill-bilibili-upload/scripts/bili_upload.py",
+      "source_sha256": "1767cd622d14a5fb996b5f42dd6796a52f9e391c10edec73e0533fffff8d19d0",
+      "vendored_sha256": "1767cd622d14a5fb996b5f42dd6796a52f9e391c10edec73e0533fffff8d19d0",
+      "modified": false,
+      "changes": []
+    },
+    {
+      "path": "LICENSE",
+      "source_sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "vendored_sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "modified": false,
+      "changes": []
+    }
+  ]
+}

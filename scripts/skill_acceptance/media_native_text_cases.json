@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "group": "media_native_text",
+  "cases": [
+    {
+      "case_id": "media-video-to-article:article-native-ppu",
+      "skill_name": "video-to-article",
+      "input": "将这段自制验收语音整理为100至150个非空白字符的简短文章，使用一个标题和三个短段落。保留原声中的自制演示、保留原始内容、突出一个清晰主题、发布前逐文件审查、合成素材不含真实客户信息等要求；不补入当前项目的面积、价格或卖点。另标明转录尚未经人工核验。",
+      "parameters": {
+        "op": "article",
+        "engine": "local",
+        "language": "en"
+      },
+      "asset_fixture_names": [
+        "speech"
+      ],
+      "billing": "free",
+      "expected_outcome": "success",
+      "timeout_seconds": 920,
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [
+          ".md"
+        ],
+        "min_artifact_text_chars": 80,
+        "required_fields": [
+          "response"
+        ],
+        "require_sources": false,
+        "semantic_review_required": true,
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "required_semantics": [
+          "真实本地语音转录后生成实际文章文件",
+          "准确保留自制演示与合成素材无真实客户信息",
+          "忠实保留原内容、单一主题、发布前逐文件审查",
+          "一个标题及三个短段，文章100至150个非空白字符，待核验说明另计",
+          "不补当前项目数据或原音外现实主张"
+        ]
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "本项目固定本地Whisper模型与自制已授权语音",
+        "既有PPU完整Qwen文字推理就绪，禁止付费回退"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "source": "exact numeric generator recovered from this task execution; both WAV byte identities verified",
+  "generator_file": "scripts/skill_acceptance/make_audio_fixtures.py",
+  "generator_sha256": "53c928aeb1a2068b9198c3028275a6139b59e44d907b78199898515a239ccfc6",
+  "seed": 20261014,
+  "rng_call": "np.random.default_rng(20261014)",
+  "rng_bit_generator_for_verified_rebuild": "PCG64",
+  "rng_order": "One (176400,2) normal draw for noisy_audio, then seven normal(size=7056) draws for rhythm in onset order; no draws before noisy_audio. Do not advance the raw bit generator by a presumed normal draw count.",
+  "wave_format": {
+    "sample_rate_hz": 44100,
+    "sample_width_bytes": 2,
+    "encoding": "signed little-endian PCM16",
+    "wav_writer": "Python stdlib wave; one writeframes(samples.tobytes()) call per file",
+    "quantization": "np.rint(np.clip(signal,-1,1)*32767).astype(\"<i2\")",
+    "rounding": "nearest integer, ties to even"
+  },
+  "noisy_audio": {
+    "file": "reports/skill-acceptance/fixtures/noisy_audio.wav",
+    "duration_seconds": 4.0,
+    "channels": 2,
+    "frames": 176400,
+    "bytes": 705644,
+    "sha256": "a0f09bf443bf5ef717e62400757bddfb894b37398dfc46ed8e6e95bedbb20136",
+    "time_array": "np.arange(44100*4,dtype=np.float64)/44100",
+    "clean_reference_before_quantization": {
+      "left": ".18*sin(2*pi*440*t)+.05*sin(2*pi*880*t)",
+      "right": ".15*sin(2*pi*660*t)+.04*sin(2*pi*1320*t)",
+      "phase_radians": 0.0,
+      "stacking": "np.stack((left,right),axis=1)"
+    },
+    "noise": {
+      "shared_two_channel_rumble": ".09*sin(2*pi*45*t)[:,None]",
+      "rumble_phase_radians": 0.0,
+      "independent_gaussian": "rng.normal(0,.035,size=clean.shape)",
+      "gaussian_mean": 0.0,
+      "gaussian_std": 0.035,
+      "gaussian_shape": [
+        176400,
+        2
+      ]
+    },
+    "combined_signal": "clean+noise; then shared quantization rule"
+  },
+  "rhythm": {
+    "file": "reports/skill-acceptance/fixtures/rhythm.wav",
+    "duration_seconds": 4.8,
+    "channels": 1,
+    "frames": 211680,
+    "bytes": 423404,
+    "sha256": "50a9b8b6fde5112c2e8ce44983935198427db9efa66bd18044adc98c695326a2",
+    "time_array": "np.arange(round(44100*4.8),dtype=np.float64)/44100",
+    "base_signal": ".009*sin(2*pi*110*rt)",
+    "base_phase_radians": 0.0,
+    "known_pulse_start_seconds": [
+      0.25,
+      0.83,
+      1.52,
+      2.07,
+      2.89,
+      3.46,
+      4.14
+    ],
+    "pulse_start_sample_rule": "round(onset*44100)",
+    "pulse_samples": 7056,
+    "pulse_duration_seconds": 0.16,
+    "pulse_local_time": "np.arange(7056)/44100",
+    "pulse_envelope": "minimum(local/.008,1)*exp(-local/.040)",
+    "attack_seconds": 0.008,
+    "exponential_decay_seconds": 0.04,
+    "pulse_signal": ".20*rng.normal(size=7056)+.36*sin(2*pi*(80+index*9)*local)",
+    "pulse_sine_frequencies_hz": [
+      80,
+      89,
+      98,
+      107,
+      116,
+      125,
+      134
+    ],
+    "pulse_sine_amplitude": 0.36,
+    "pulse_sine_local_phase_radians": 0.0,
+    "pulse_white_noise_std_before_envelope": 0.2,
+    "assembly": "rhythm[start:start+7056] += pulse_signal*pulse_envelope; quantize only after all seven pulses",
+    "oracle_use": "Pulse start times are evaluation ground truth only; automatic beat execution receives the WAV, never these beat times."
+  },
+  "verified_rebuild": {
+    "temporary_directory": true,
+    "existing_files_unchanged": true,
+    "whole_file_byte_exact_matches": [
+      "noisy_audio.wav",
+      "rhythm.wav"
+    ],
+    "python_version": "3.12.14",
+    "numpy_version": "2.5.4"
+  },
+  "original_generation_environment": {
+    "numpy_version": "not separately recorded; numerical recipe and whole-file hashes are recovered and verified"
+  },
+  "reference_snr_method": "Test uses middle 2 seconds (samples 44100:132300), Hann-window rFFT, target tone bands +/-8Hz; reports spectral SNR rather than unaligned sample MSE."
+}

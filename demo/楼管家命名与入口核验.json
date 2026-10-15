@@ -1,0 +1,41 @@
+{
+  "version": "v0.3.1",
+  "verified_at": "2026-10-12 Asia/Shanghai",
+  "name": "楼管家",
+  "sidebar_order": [
+    "brand",
+    "project-selector",
+    "sidebar-search",
+    "butler-entry",
+    "nav-label",
+    "nav-list",
+    "sidebar-bottom"
+  ],
+  "desktop": {
+    "butler_bottom": 273.3828125,
+    "workspace_top": 291.3828125
+  },
+  "mobile": {
+    "width": 390,
+    "document_width": 390,
+    "butler_bottom": 267.78125,
+    "workspace_top": 285.78125,
+    "settings_bottom": 825.703125
+  },
+  "renamed": [
+    "导航",
+    "面包屑与搜索标题",
+    "页面标题",
+    "回复与查询中身份",
+    "对话日志标签",
+    "输入标签",
+    "默认回答标题",
+    "README"
+  ],
+  "tests": {
+    "passed": 78,
+    "failed": 0
+  },
+  "preserved": "assistant 页面标识、存储key及对话字段，兼容已有项目和对话",
+  "screenshot": "screenshots/15_楼管家独立入口.jpg"
+}

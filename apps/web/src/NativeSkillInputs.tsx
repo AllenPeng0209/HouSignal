@@ -1,0 +1,71 @@
+import {api} from './api.js';
+import {Button,ErrorNotice,Field,Loading} from './components';
+import type {Asset,Job} from './types';
+import './native-skill-inputs.css';
+
+export interface NativeSkillParameter {key:string;label:string;type:'text'|'number'|'select'|'boolean';options?:{value:string;label:string}[];default?:string|number|boolean;min?:number;max?:number;format?:'json'|'date';integer?:boolean;required?:boolean;placeholder?:string;description?:string;hint?:string}
+export interface NativeSkillInputSchema {accepts_assets:boolean;parameters:NativeSkillParameter[];accepted_kinds?:string[];requires_model_authorization?:boolean;input_required?:boolean;requires_assets?:boolean}
+export type NativeSkillStatus='ready'|'setup'|'unavailable'|'manual';
+export interface NativeSkillOperationState {status:NativeSkillStatus;reason:string;input_schema?:Partial<NativeSkillInputSchema>}
+export interface NativeSkillOperationMetadata {status:NativeSkillStatus;reason:string;input_schema?:NativeSkillInputSchema;operation_states?:Record<string,NativeSkillOperationState>;operation_key?:string}
+export type NativeSkillParameters=Record<string,string|number|boolean>;
+export interface NativeSkillSubmission {input:string;account_id?:string;asset_ids:string[];parameters:NativeSkillParameters}
+export interface NativeSkillPreflight {status:NativeSkillStatus;reason:string;execution_mode?:'task'|'navigate';execution_engine?:string;input_schema:NativeSkillInputSchema;parameters?:Record<string,unknown>}
+
+const parameterLabels:Record<string,string>={lyrics:'歌词',language:'语言',cta_color:'引导文字颜色',trans_duration:'转场时长（秒）',op:'操作',action:'操作',negative_prompt:'避免出现的内容',seed:'随机种子',ratio:'画面比例',text:'文字内容',sharpen:'锐化强度',contrast:'对比度',saturation:'饱和度',bg_color:'背景颜色',duration:'时长（秒）',segments:'带时间轴的文字片段',start:'起始时间（秒）',end:'结束时间（秒）',volume:'音量倍数',factor:'速度倍数',tier:'降噪强度',mix:'混合比例',voice_volume:'配音音量',bgm_volume:'背景音乐音量',no_duck:'保持背景音乐音量',mode:'处理方式',focus_x:'水平焦点',focus_y:'垂直焦点',per:'单段时长（秒）',transition:'转场方式',kenburns:'图片缓慢推拉',captions:'字幕内容',storyboard:'分镜安排',subtitle:'副标题',cta:'行动引导文字',color:'主要颜色',similarity:'颜色匹配范围',blend:'颜色混合范围',every:'抽帧间隔',effect:'画面效果',beat_mode:'节奏依据',beats:'节拍时间点',max_duration:'最长时长（秒）',pad:'补边时间（秒）',reframe:'调整画幅',reframe_mode:'画幅处理方式',target_language:'目标语言',translations:'已核对的翻译内容',trans_only:'仅输出翻译',cover:'导出封面',soft_subtitles:'保留可开关字幕',bg_blur:'背景模糊',background:'背景颜色',bar_color:'文字条颜色',blur_sigma:'模糊强度',text_color:'文字颜色',font:'字体',fontsize:'字号',force_style:'字幕样式设置',gradient:'背景渐变',grid:'拼图行列',i:'综合响度',tp:'峰值响度',lra:'响度范围',layout:'文字布局',margin:'边缘留白',min_silence:'最短静音秒数',music_volume:'音乐音量',sfx_volume:'音效音量',noise:'噪声强度',no_kenburns:'关闭图片推拉',opacity:'透明度',orient:'布局方向',order:'素材顺序',page_width:'页面宽度',pitch:'音高调整',position:'放置位置',preset:'编码速度',rate:'语速调整',radius:'圆角半径',radius_percent:'圆角比例',replace_audio:'替换原音轨',sample_rate:'采样率',channels:'声道数',shape:'形状',soft:'柔和处理',source:'来源',subtitle_color:'副标题颜色',subtitle_text:'字幕文字',title_color:'标题颜色',title_size:'标题字号',type:'类型',watermark:'水印设置',wave_color:'声波颜色',width:'宽度（像素）',height:'高度（像素）',quality:'画质',crf:'视频质量',fps:'每秒帧数',max_frames:'最多抽帧数',max_kb:'文件大小上限（KB）',time:'时间（秒）',scale:'缩放倍数',size:'输出尺寸',n:'生成数量',fade_in:'淡入时长（秒）',fade_out:'淡出时长（秒）',fade:'淡入淡出',cell_width:'单格宽度',cell_height:'单格高度',gap:'间距',percent:'缩放百分比',fit:'适配方式',bgm_loop_off:'关闭背景音乐循环',fallback_interval:'备用抽帧间隔',sfx_at:'音效插入时间',sfx_indices:'音效素材位置',cover_time:'封面取帧时间',logo_width:'标志宽度',axisXTitle:'横轴标题',axisYTitle:'纵轴标题',color2:'辅助颜色',columns:'数据字段',group:'分组字段',intro:'片头设置',outro:'片尾设置',kicker:'引题',kpi:'关键指标',main:'主体素材',lang:'语言',audio:'音轨',bg:'背景素材',bg_image:'背景图片',bgm:'背景音乐',foreground:'前景素材',logo:'标志图片',model:'模型素材',music:'音乐素材',sub:'字幕素材',voice:'配音音色',draft_content:'先生成内容再排版',instrumental:'纯音乐',references_reviewed:'已复核角色参考',translated_only:'仅保留翻译',autocontrast:'自动调整对比度',alpha_matting:'精细处理边缘',keep_ratio:'保持比例',denoise:'降噪',auto:'自动增强',innerRadius:'内环比例',binNumber:'直方图分组数',bitrate:'视频比特率',audio_bitrate:'音频比特率',top_n:'结果数量',card_count:'卡片数量',slide_count:'幻灯页数',chapter_seconds:'章节间隔（秒）',plan:'已核对的完整方案',note:'已完成的完整笔记',data:'真实结构化数据',cards:'卡片内容',lines:'对白与音色',box:'裁剪坐标',chart_type:'图表类型',format:'输出格式',engine:'处理服务',style:'视觉风格',theme:'排版主题',paper:'公开论文链接或编号',audience:'目标受众',name:'名称',resolution:'清晰度',title:'标题',caption:'配文',top:'顶部文字',bottom:'底部文字',voice_id:'已登记音色',x:'横轴字段',y:'数值字段'};
+const optionLabels:Record<string,string>={info:'查看文件信息',resize:'调整尺寸',crop:'裁剪',pad:'补边',convert:'转换格式',compress:'压缩文件',watermark:'添加水印',round:'添加圆角',collage:'拼图',thumbnail:'生成缩略图',text2img:'文字生成图片',img2img:'参考图片生成',variations:'生成图片变体',brief:'整理制作需求',generate:'生成内容',enroll:'登记音色',clone:'使用已登记音色',article:'生成文章',transcribe:'识别文字',plan:'制作方案',references:'制作参考图',assemble:'拼接已有素材',trim:'截取片段',volume:'调整音量',normalize:'统一响度',reframe:'调整画幅',concat:'拼接素材',speed:'调整速度','extract-audio':'提取音频','extract-frames':'提取画面',subtitles:'添加字幕',text:'添加文字',denoise:'降低噪声',fade:'淡入淡出',extract:'提取内容',card:'制作卡片',attach:'添加到现有文件',translate:'翻译',merge:'合并',parse:'解析内容',render:'排版制作',audit:'核对内容',list:'列表',flow:'流程图',comparison:'对比图',hierarchy:'层级图','bar-race':'动态排名','count-up':'数字递增',progress:'进度动画','line-grow':'动态折线',report:'导出报告',analyze:'分析数据',fetch:'取回公开资料',explain:'解读内容',overlay:'画面上叠加','top-bar':'顶部文字条','bottom-bar':'底部文字条',blur:'模糊补边',smart:'自动选择焦点',waves:'声波图',bars:'频谱柱图',spectrum:'频谱图',cqt:'音高频谱',none:'不使用',dissolve:'叠化',zoom:'推拉',flash:'闪光',swiss:'瑞士简洁',editorial:'杂志排版','chinese-ink':'水墨',cream:'奶油色',dopamine:'明亮色彩','luxe-noir':'深色奢华',journal:'手账',terminal:'终端风格',botanical:'植物风格',bar:'条形图',column:'柱状图',line:'折线图',area:'面积图',scatter:'散点图',pie:'饼图',radar:'雷达图',funnel:'漏斗图',histogram:'直方图',spreadsheet:'表格',boxplot:'箱线图',violin:'小提琴图',waterfall:'瀑布图','dual-axes':'双轴图',liquid:'水位图','word-cloud':'词云',treemap:'矩形树图',sankey:'桑基图',venn:'集合图','network-graph':'关系图','flow-diagram':'流程图','fishbone-diagram':'鱼骨图','org-chart':'组织图','mind-map':'思维导图','moyu-green':'绿色排版','red-white':'红白排版','graphite-minimal':'石墨简洁','zen-whitespace':'留白排版','moyu-ticket':'票据排版','olive-journal':'橄榄绿手账',cards:'图片卡片',video:'视频',both:'全部形式'};
+const jsonHints:Record<string,string>={segments:'填写实际时间段，例如 [{"start":0,"end":2,"text":"项目实拍"}]。',plan:'复制前一步生成并核对过的完整方案 JSON。',note:'粘贴已完成并核对过的完整笔记 JSON。',data:'保留真实数据的字段名；横轴和数值字段须与数据中的键名一致。',storyboard:'填写已核对的分镜数组，素材引用应来自当前所选项目素材。'};
+export function nativeSkillParameterLabel(parameter:NativeSkillParameter):string{
+ if(/[^\x00-\x7f]/.test(parameter.label||''))return parameter.label;
+ if(parameter.key.endsWith('_index'))return `${parameterLabels[parameter.key.slice(0,-6)]||'所选'}素材`;
+ return parameterLabels[parameter.key]||parameter.label||parameter.key;
+}
+export function nativeSkillOptionLabel(option:{value:string;label:string}):string{
+ return /[^\x00-\x7f]/.test(option.label||'')?option.label:optionLabels[option.value]||option.label||option.value;
+}
+
+export function nativeSkillDefaults(schema?:NativeSkillInputSchema):NativeSkillParameters{
+ return Object.fromEntries((schema?.parameters||[]).filter(parameter=>parameter.default!==undefined).map(parameter=>[parameter.key,parameter.default!]));
+}
+export function nativeSkillSubmissionParameters(schema:NativeSkillInputSchema|undefined,parameters:NativeSkillParameters):NativeSkillParameters{
+ if(!schema)return {...parameters};
+ const values={...nativeSkillDefaults(schema),...parameters};
+ return Object.fromEntries(schema.parameters.filter(parameter=>values[parameter.key]!==undefined).map(parameter=>[parameter.key,values[parameter.key]]));
+}
+
+export function nativeSkillHasInput(schema:NativeSkillInputSchema|undefined,input:string,assetIds:string[]):boolean{
+ return (!schema||schema.input_required?Boolean(input.trim()):true)&&(!schema?.requires_assets||assetIds.length>0);
+}
+
+export function nativeSkillOperation(skill:NativeSkillOperationMetadata,parameters:NativeSkillParameters):{status:NativeSkillStatus;reason:string;input_schema?:NativeSkillInputSchema}{
+ if(!skill.operation_states)return {status:skill.status,reason:skill.reason,input_schema:skill.input_schema};
+ const key=skill.operation_key||'op',operation=String(parameters[key]??skill.input_schema?.parameters.find(parameter=>parameter.key===key)?.default??'');
+ const state=skill.operation_states[operation];
+ if(!state)return {status:'unavailable',reason:'此操作的准备状态尚未读取，请刷新技能状态。',input_schema:skill.input_schema};
+ return {status:state.status,reason:state.reason,input_schema:skill.input_schema?{...skill.input_schema,...state.input_schema}:undefined};
+}
+
+export function requestNativeSkill(projectId:string,skillId:string,submission:NativeSkillSubmission):Promise<{job_id?:string;job?:Job}>{
+ return api(`/api/projects/${encodeURIComponent(projectId)}/operations/skills/${encodeURIComponent(skillId)}/run`,{method:'POST',body:{...submission,input:submission.input.trim()}});
+}
+export function requestNativeSkillPreflight(projectId:string,skillId:string,submission:NativeSkillSubmission,signal?:AbortSignal):Promise<NativeSkillPreflight>{
+ return api(`/api/projects/${encodeURIComponent(projectId)}/operations/skills/${encodeURIComponent(skillId)}/preflight`,{method:'POST',body:{...submission,input:submission.input.trim()},signal});
+}
+
+export function NativeSkillInputs({schema,assets,assetIds,parameters,onAssetsChange,onParametersChange,disabled=false,loading=false,error='',retry,onOpenAssets}:{schema:NativeSkillInputSchema;assets:Asset[];assetIds:string[];parameters:NativeSkillParameters;onAssetsChange:(ids:string[])=>void;onParametersChange:(values:NativeSkillParameters)=>void;disabled?:boolean;loading?:boolean;error?:string;retry?:()=>void;onOpenAssets?:()=>void}){
+ const available=assets.filter(asset=>asset.rights==='authorized'&&(!schema.accepted_kinds?.length||schema.accepted_kinds.includes(asset.kind))&&(!schema.requires_model_authorization||asset.metadata_json?.model_processing_authorized===true));
+ return <div className="native-skill-inputs">
+  {(schema.accepts_assets||schema.requires_assets)&&<fieldset className="native-skill-assets" disabled={disabled}><legend>输入素材{schema.requires_assets?' · 必选':''}</legend><p>{schema.requires_model_authorization?'仅列出当前项目已授权且允许 AI 处理的素材。':'仅列出当前项目已授权的素材，AI 处理用途由服务端再次校验。'}</p>
+   {loading?<Loading text="正在读取本项目素材…"/>:error?<ErrorNotice message={`素材暂未读取：${error}`} retry={retry}/>:available.length?<div className="native-skill-asset-list">{available.map(asset=><label key={asset.id}><input type="checkbox" value={asset.id} checked={assetIds.includes(asset.id)} disabled={disabled||assetIds.length>=12&&!assetIds.includes(asset.id)} onChange={event=>onAssetsChange(event.target.checked?[...assetIds,asset.id]:assetIds.filter(id=>id!==asset.id))}/><span><strong>{asset.name}</strong><small>{{image:'图片',video:'视频',audio:'音频',document:'文档',subtitle:'字幕'}[asset.kind]||asset.kind} · {asset.metadata_json?.model_processing_authorized===true?'AI 处理已授权':'AI 处理未授权'}</small></span></label>)}</div>:<p className="native-skill-empty">没有符合此技能用途的素材，请先在素材库确认来源与授权。</p>}
+   <div className="native-skill-selection"><span>已选 {assetIds.length} 份，最多 12 份</span>{assetIds.length>0&&<Button disabled={disabled} onClick={()=>onAssetsChange([])}>清空选择</Button>}</div>
+   {onOpenAssets&&<Button icon="image" onClick={onOpenAssets}>前往素材库</Button>}
+  </fieldset>}
+  {(schema.parameters||[]).length>0&&<div className="native-skill-parameters">{schema.parameters.map(parameter=>{
+   const value=parameters[parameter.key],textValue=typeof value==='boolean'?'':value??'',label=nativeSkillParameterLabel(parameter);
+   const hint=parameter.hint||parameter.description||(parameter.format==='json'?`请输入有效 JSON（对象或数组）。${jsonHints[parameter.key]||'提交后由项目服务解析。'}`:parameter.key==='negative_prompt'?'写明希望避免的元素，如模糊画面或多余文字；可留空。':parameter.key==='seed'?'相同输入与种子有助于复现；留空时由模型选择。':parameter.type==='number'&&(parameter.min!==undefined||parameter.max!==undefined)?`允许范围：${parameter.min??'无下限'} 至 ${parameter.max??'无上限'}${parameter.integer?'，填写整数。':'。'}`:undefined);
+   if(parameter.type==='boolean')return <label key={parameter.key} className="native-skill-boolean"><input type="checkbox" checked={value===true} disabled={disabled} onChange={event=>onParametersChange({...parameters,[parameter.key]:event.target.checked})}/><span>{label}</span></label>;
+   if(parameter.key.endsWith('_index')&&parameter.type==='number')return <Field key={parameter.key} label={label} hint="从当前所选素材中指定用途。"><select value={textValue} required={parameter.required} disabled={disabled} onChange={event=>{const next={...parameters};if(event.target.value==='')delete next[parameter.key];else next[parameter.key]=Number(event.target.value);onParametersChange(next);}}><option value="">使用默认素材</option>{assetIds.map((id,index)=><option key={id} value={index}>第 {index+1} 份 · {assets.find(asset=>asset.id===id)?.name||'所选素材'}</option>)}</select></Field>;
+   return <Field key={parameter.key} label={label} hint={hint}>{parameter.format==='json'?<textarea rows={4} spellCheck={false} value={textValue} required={parameter.required} disabled={disabled} placeholder={parameter.placeholder} onChange={event=>onParametersChange({...parameters,[parameter.key]:event.target.value})}/>:parameter.type==='select'?<select value={textValue} required={parameter.required} disabled={disabled} onChange={event=>{const value=event.target.value;if(value===''){const next={...parameters};delete next[parameter.key];onParametersChange(next);}else onParametersChange({...parameters,[parameter.key]:value});}}><option value="">使用默认设置</option>{parameter.options?.map(option=><option key={option.value} value={option.value}>{nativeSkillOptionLabel(option)}</option>)}</select>:<input type={parameter.type==='number'?'number':parameter.format==='date'?'date':'text'} min={parameter.type==='number'?parameter.min:undefined} max={parameter.type==='number'?parameter.max:undefined} step={parameter.type==='number'?(parameter.integer||parameter.key==='seed'?1:'any'):undefined} placeholder={parameter.placeholder} required={parameter.required} value={textValue} disabled={disabled} onChange={event=>{const value=event.target.value;if(parameter.type==='number'&&value===''){const next={...parameters};delete next[parameter.key];onParametersChange(next);}else onParametersChange({...parameters,[parameter.key]:parameter.type==='number'?Number(value):value});}}/>}</Field>;
+  })}</div>}
+ </div>;
+}

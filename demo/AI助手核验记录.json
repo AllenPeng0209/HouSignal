@@ -1,0 +1,50 @@
+{
+  "version": "v0.3",
+  "verified_at": "2026-10-12 Asia/Shanghai",
+  "mode": "本地项目记录检索对话 Demo，未接入模型或后端数据库",
+  "checks": {
+    "navigation": "AI 项目助手为主导航第一项；默认打开此页；团队信息在组织设置",
+    "overview": "当前项目总览包含资料完整度、真实素材、内容目标/进度、已核验事实、缺口、关键客户与下一步",
+    "client_query": "许先生精确查询；他的下一步追问沿用本项目客户上下文",
+    "source_navigation": "对话客户详情按钮打开对应客户记录",
+    "live_data_roundtrip": "在自有 HTTP 测试工作区保存示例跟进与下一步，再提问读到更新。源码种子数据保持原样",
+    "project_isolation": "栖岸·观澜暂无可跟进客户；切回云境·壹号恢复原对话，草稿分别保存",
+    "input": "Enter发送；Shift+Enter换行；刷新保留对话与草稿；中文输入法Enter guard",
+    "concurrency": "3项真实app回归覆盖重置前旧回调、新题隔离和切换项目时原对话回填",
+    "unknown_evidence": "待核验/过期/占位符不列为有效事实；模板/AI示意不计作项目实际素材；未知来源保留未知",
+    "mobile": {
+      "viewport": [
+        390,
+        844
+      ],
+      "document_width": 390,
+      "last_prompt_bottom": 655.359375,
+      "thread_bottom": 665.1875,
+      "composer_bottom": 801.3828125,
+      "horizontal_overflow": false
+    },
+    "desktop": {
+      "viewport": [
+        1280,
+        720
+      ],
+      "all_four_prompts_visible": true,
+      "footnote_bottom": 677.9921875
+    },
+    "browser_console_errors": [],
+    "tests": {
+      "total": 78,
+      "failed": 0,
+      "existing_model_and_project": 38,
+      "assistant_queries": 28,
+      "sessions": 9,
+      "app_wiring": 3
+    }
+  },
+  "screenshots": [
+    "screenshots/11_AI项目助手_欢迎.jpg",
+    "screenshots/12_AI项目助手_关键客户.jpg",
+    "screenshots/13_AI项目助手_手机对话.jpg",
+    "screenshots/14_AI项目助手_手机首页.jpg"
+  ]
+}

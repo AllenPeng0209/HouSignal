@@ -1,0 +1,13 @@
+{
+  "version": "v0.4.0",
+  "single_file": "dist/楼响_HouSignal_交互Demo.html",
+  "bytes": 1503087,
+  "sha256": "84f5eb4018426d13640b3d02e8f664c9f333f9200064e99fc1a9fc997ea7eccd",
+  "embedded_images": [
+    "assets/hero-interior.jpg",
+    "assets/interior-1.jpg",
+    "assets/interior-2.jpg",
+    "assets/interior-3.jpg"
+  ],
+  "external_dependencies": []
+}

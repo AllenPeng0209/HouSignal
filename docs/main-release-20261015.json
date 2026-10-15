@@ -1,0 +1,92 @@
+{
+  "date": "2026-10-15",
+  "repository": "https://github.com/AllenPeng0209/HouSignal",
+  "branch": "main",
+  "scope": "Complete HouSignal source baseline: API, Web, Expo mobile, Pi Agent Runtime, migrations, scripts, tests, documentation, prototype and third-party notices.",
+  "automated_tests": {
+    "backend_default_suite_passed": 2541,
+    "backend_opt_in_postgres_passed_separately": 5,
+    "backend_distinct_cases": 2546,
+    "web_passed": 279,
+    "agent_runtime_passed": 44,
+    "mobile_passed": 87,
+    "total_distinct_cases": 2978,
+    "failed": 0,
+    "postgres_isolation": "Dedicated temporary PostgreSQL cluster and private Unix socket; no application database touched.",
+    "native_runtime_auth_passed": 22,
+    "native_runtime_auth_subtests": 26,
+    "count_note": "Top-level test cases only; nested subtests and isolated workflow checks are reported separately."
+  },
+  "static_and_build_checks": {
+    "python_compileall": "passed",
+    "alembic_heads": 1,
+    "alembic_head": "c24101500002",
+    "alembic_revisions": 9,
+    "orm_tables": 28,
+    "orm_foreign_keys": 72,
+    "web_typescript": "passed",
+    "web_production_build": "passed",
+    "mobile_typescript": "passed",
+    "mobile_lint": "passed",
+    "mobile_web_export": "passed",
+    "mobile_ios_android_hermes_exports": "passed",
+    "mobile_ios_build_workflow_fixture_checks": 14,
+    "source_export_regressions": "passed",
+    "docker_compose_config": "passed"
+  },
+  "live_acceptance": {
+    "fixture_boundary": "New clearly marked synthetic project, actual configured model and renderer; no external publication or customer contact.",
+    "actual_model_responses": 1,
+    "actual_model_input_tokens": 2320,
+    "actual_model_output_tokens": 691,
+    "actual_video_seconds": 20.021333,
+    "actual_video_dimensions": [
+      720,
+      1280
+    ],
+    "actual_video_codecs": [
+      "h264",
+      "aac"
+    ],
+    "full_decode": "passed",
+    "private_download_hash": "matches asset record",
+    "anonymous_download_http": 401,
+    "catalog_categories_counts": [
+      4,
+      3,
+      2,
+      3,
+      3
+    ],
+    "existing_reference_count": 6,
+    "official_player": {
+      "platform": "bilibili",
+      "video_id": "BV12z5VzPE3P",
+      "first_observed_seconds": 12.970651,
+      "last_observed_seconds": 28.737291,
+      "duration_seconds": 2143,
+      "paused": false,
+      "error": null,
+      "whole_video_watched": false
+    },
+    "reference_to_planning_handoff": "passed; source lacking original analysis remains explicitly a hypothesis"
+  },
+  "publication_safety": {
+    "hardcoded_development_login_shortcut": "removed",
+    "acceptance_password_fallbacks": "removed; missing credentials fail before HTTP",
+    "weak_password_rejection": "retained",
+    "credentials_runtime_databases_user_media_raw_reports_exports": "excluded from Git",
+    "third_party_notices": "preserved",
+    "test_credential_fixtures": "Runtime-generated samples preserve credential non-disclosure, authentication and redaction assertions; security hooks remain enabled.",
+    "workflow_identifiers": "Phone-shaped digits inside authorized task UUIDs are preserved without exempting free-form business contact data from PII redaction.",
+    "workflow_uuid_regressions": "Four deterministic UUID/contact-data boundary cases passed; the original random-UUID workflow test remains in the full suite."
+  },
+  "remaining_boundaries": [
+    "One fresh Bilibili native public search was blocked by platform risk control and returned zero accepted works; this is not a successful viral-content recall test.",
+    "Douyin existing-account metadata remains unverified; no new login, CAPTCHA action or public-search success is claimed.",
+    "Mobile source and Hermes exports were verified; fresh APK/app binaries, simulator/device execution and store release were not performed.",
+    "Raw local receipts and synthetic media are intentionally excluded from the public repository.",
+    "No external publication, real customer outreach, commercial result, cloud deployment, or nationwide ranking coverage is established.",
+    "Full 5–10 minute model-generated production was not rerun in this release; the fresh 20-second synthetic clip does not establish longform generation quality or real business outcomes."
+  ]
+}

@@ -1,0 +1,688 @@
+{
+  "schema_version": 1,
+  "group": "project",
+  "cases": [
+    {
+      "case_id": "project-asset-manager",
+      "skill_name": "asset-manager",
+      "input": "只在技能验收项目执行；这是明确模拟验收数据，不能冒充真实平台表现。",
+      "parameters": {
+        "action": "export"
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "commercial_scope": "base",
+      "prerequisites": [
+        "root已通过真实API将8种验收素材上传到当前项目；本技能按项目DB读取导出，不接受body.asset_ids"
+      ],
+      "quality": {
+        "min_text_chars": 80,
+        "required_artifact_suffixes": [
+          ".json",
+          ".md"
+        ],
+        "required_fields": [
+          "assets",
+          "total_bytes"
+        ],
+        "require_sources": false
+      }
+    },
+    {
+      "case_id": "project-template-library",
+      "skill_name": "template-library",
+      "input": "只在技能验收项目执行；这是明确模拟验收数据，不能冒充真实平台表现。",
+      "parameters": {
+        "action": "apply",
+        "template_id": "space-card",
+        "record": {
+          "title": "验收｜客厅空间卡片模板计划",
+          "channel": "抖音",
+          "account_id": "{{account_id}}",
+          "scheduled_for": "2026-10-16"
+        }
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "commercial_scope": "base",
+      "prerequisites": [],
+      "quality": {
+        "min_text_chars": 80,
+        "required_artifact_suffixes": [
+          ".json",
+          ".md"
+        ],
+        "required_fields": [
+          "templates",
+          "record",
+          "changed_plan_id"
+        ],
+        "require_sources": false
+      },
+      "account_fixture_name": "primary"
+    },
+    {
+      "case_id": "project-skill-content-calendar",
+      "skill_name": "skill-content-calendar",
+      "input": "只在技能验收项目执行；这是明确模拟验收数据，不能冒充真实平台表现。",
+      "parameters": {
+        "action": "export",
+        "start_date": "2026-10-14",
+        "end_date": "2026-10-21"
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "commercial_scope": "base",
+      "prerequisites": [
+        "按cases顺序执行；template-library已生成2026-10-16的本项目候选计划"
+      ],
+      "quality": {
+        "min_text_chars": 80,
+        "required_artifact_suffixes": [
+          ".json",
+          ".md"
+        ],
+        "required_fields": [
+          "plans",
+          "publications",
+          "today"
+        ],
+        "require_sources": false
+      }
+    },
+    {
+      "case_id": "project-skill-content-calendar-log",
+      "skill_name": "skill-content-calendar-log",
+      "input": "只在技能验收项目执行；这是明确模拟验收数据，不能冒充真实平台表现。",
+      "parameters": {
+        "action": "create",
+        "record": {
+          "title": "验收｜采光实拍候选日历",
+          "channel": "抖音",
+          "scheduled_for": "2026-10-17",
+          "account_id": "{{account_id}}",
+          "topic_id": "light",
+          "brief": "仅保存验收候选计划；后续使用已核验事实与授权素材制作并人工审核。"
+        }
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "commercial_scope": "base",
+      "prerequisites": [
+        "此base验收以可下载JSON及真实已保存record为主要交付；短文字回执只作确认，必须逐字段核对scope/status/账号关联/画像内容，不能只凭字数通过"
+      ],
+      "quality": {
+        "min_text_chars": 30,
+        "required_artifact_suffixes": [
+          ".json",
+          ".md"
+        ],
+        "required_fields": [
+          "record",
+          "changed_plan_id"
+        ],
+        "require_sources": false,
+        "semantic_review_required": true
+      },
+      "account_fixture_name": "primary"
+    },
+    {
+      "case_id": "project-skill-event-calendar",
+      "skill_name": "skill-event-calendar",
+      "input": "验收固定日期锚点：2025春节应为01-29、中秋应为10-06；这里只验证农历换算，不验证政府调休安排。",
+      "parameters": {
+        "action": "export",
+        "year": 2025
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "commercial_scope": "base",
+      "prerequisites": [],
+      "quality": {
+        "min_text_chars": 80,
+        "required_artifact_suffixes": [
+          ".json",
+          ".md"
+        ],
+        "required_fields": [
+          "events",
+          "year",
+          "note"
+        ],
+        "require_sources": false
+      }
+    },
+    {
+      "case_id": "project-skill-profile-builder",
+      "skill_name": "skill-profile-builder",
+      "input": "只在技能验收项目执行；这是明确模拟验收数据，不能冒充真实平台表现。",
+      "parameters": {
+        "action": "create",
+        "record": {
+          "name": "验收｜备用小红书空间账号",
+          "platform": "小红书",
+          "positioning": "用已核验空间事实和授权实拍素材回答改善家庭问题",
+          "audience": "改善家庭",
+          "voice": "清楚、克制、可核对",
+          "red_lines": "不承诺投资回报，不虚构面积价格或客户数据",
+          "status": "managed"
+        }
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "commercial_scope": "base",
+      "prerequisites": [
+        "此base验收以可下载JSON及真实已保存record为主要交付；短文字回执只作确认，必须逐字段核对scope/status/账号关联/画像内容，不能只凭字数通过"
+      ],
+      "quality": {
+        "min_text_chars": 30,
+        "required_artifact_suffixes": [
+          ".json",
+          ".md"
+        ],
+        "required_fields": [
+          "record",
+          "changed_account_id"
+        ],
+        "require_sources": false,
+        "semantic_review_required": true
+      }
+    },
+    {
+      "case_id": "project-skill-profile-manager",
+      "skill_name": "skill-profile-manager",
+      "input": "只在技能验收项目执行；这是明确模拟验收数据，不能冒充真实平台表现。",
+      "parameters": {
+        "action": "update",
+        "target_account_id": "{{account_id}}",
+        "record": {
+          "voice": "验收规范：用短句说明实拍空间与可核对事实，保留咨询引导，不作收益承诺",
+          "red_lines": "验收规范：模拟记录只用于测试，不对外发布或冒充真实项目"
+        }
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "commercial_scope": "base",
+      "prerequisites": [
+        "此base验收以可下载JSON及真实已保存record为主要交付；短文字回执只作确认，必须逐字段核对scope/status/账号关联/画像内容，不能只凭字数通过"
+      ],
+      "quality": {
+        "min_text_chars": 30,
+        "required_artifact_suffixes": [
+          ".json",
+          ".md"
+        ],
+        "required_fields": [
+          "record",
+          "changed_account_id"
+        ],
+        "require_sources": false,
+        "semantic_review_required": true
+      },
+      "account_fixture_name": "primary"
+    },
+    {
+      "case_id": "project-skill-publish-scheduler",
+      "skill_name": "skill-publish-scheduler",
+      "input": "只在技能验收项目执行；这是明确模拟验收数据，不能冒充真实平台表现。",
+      "parameters": {
+        "action": "export",
+        "due_only": true,
+        "today": "2026-10-20"
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "commercial_scope": "base",
+      "prerequisites": [
+        "本轮只验到期计算与候选队列；实际定时发布、平台执行和回执由发布验收组另验"
+      ],
+      "quality": {
+        "min_text_chars": 80,
+        "required_artifact_suffixes": [
+          ".json",
+          ".md"
+        ],
+        "required_fields": [
+          "plans",
+          "today"
+        ],
+        "require_sources": false
+      },
+      "account_fixture_name": "primary"
+    },
+    {
+      "case_id": "project-skill-publish-log",
+      "skill_name": "skill-publish-log",
+      "input": "只在技能验收项目执行；这是明确模拟验收数据，不能冒充真实平台表现。",
+      "parameters": {
+        "action": "export"
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "blocked",
+      "commercial_scope": "full",
+      "prerequisites": [
+        "中央验收项目没有真实Publication；不能造verified/live记录或用空导出冒充日志交付",
+        "完成内容审核并取得本项目真实发布回执后再读取导出"
+      ],
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "publications"
+        ],
+        "require_sources": false
+      }
+    },
+    {
+      "case_id": "project-roi-calculator",
+      "skill_name": "roi-calculator",
+      "input": "对明确模拟输入真实计算ROI并排序：A利润250、成本150、ROI166.6666667%；B利润-50、成本250、ROI-20%。不代表已发生营收。",
+      "parameters": {
+        "records": [
+          {
+            "name": "明确模拟验收投放A",
+            "ad_spend": 100,
+            "production_cost": 50,
+            "impressions": 1000,
+            "clicks": 100,
+            "engagements": 50,
+            "conversions": 10,
+            "avg_order_value": 40
+          },
+          {
+            "name": "明确模拟验收投放B",
+            "ad_spend": 200,
+            "production_cost": 50,
+            "impressions": 2000,
+            "clicks": 80,
+            "engagements": 20,
+            "conversions": 10,
+            "avg_order_value": 20
+          }
+        ]
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "commercial_scope": "base",
+      "prerequisites": [],
+      "quality": {
+        "min_text_chars": 80,
+        "required_artifact_suffixes": [
+          ".json",
+          ".md"
+        ],
+        "required_fields": [
+          "summary",
+          "ranking",
+          "data_quality"
+        ],
+        "require_sources": false
+      }
+    },
+    {
+      "case_id": "project-skill-comment-insights",
+      "skill_name": "skill-comment-insights",
+      "input": "对5条明确模拟评论运行本地情感与诉求规则，输出原始计数和代表评论；规则结果须标注人工复核。",
+      "parameters": {
+        "records": [
+          {
+            "content": "非常喜欢这个采光，想了解价格"
+          },
+          {
+            "content": "太差了，骗人"
+          },
+          {
+            "content": "位置在哪里？"
+          },
+          {
+            "content": "靠谱，想预约看房"
+          },
+          {
+            "content": "这个角度看不清楚"
+          }
+        ],
+        "column": "content",
+        "top": 12
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "commercial_scope": "base",
+      "prerequisites": [],
+      "quality": {
+        "min_text_chars": 80,
+        "required_artifact_suffixes": [
+          ".json",
+          ".md"
+        ],
+        "required_fields": [
+          "total",
+          "sentiment",
+          "intents",
+          "keywords"
+        ],
+        "require_sources": false
+      }
+    },
+    {
+      "case_id": "project-skill-content-postmortem",
+      "skill_name": "skill-content-postmortem",
+      "input": "真实计算3条模拟作品互动分：中位数10，第三条130；第三条达到中位数3倍。不能据此虚构爆款因果。",
+      "parameters": {
+        "records": [
+          {
+            "title": "明确模拟普通作品A",
+            "likes": 10,
+            "comments": 0,
+            "views": 500,
+            "channel": "抖音"
+          },
+          {
+            "title": "明确模拟普通作品B",
+            "likes": 10,
+            "comments": 0,
+            "views": 500,
+            "channel": "抖音"
+          },
+          {
+            "title": "明确模拟高互动作品",
+            "likes": 100,
+            "comments": 10,
+            "views": 1000,
+            "channel": "抖音"
+          }
+        ]
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "commercial_scope": "base",
+      "prerequisites": [],
+      "quality": {
+        "min_text_chars": 80,
+        "required_artifact_suffixes": [
+          ".json",
+          ".md"
+        ],
+        "required_fields": [
+          "summary",
+          "cohort",
+          "high_performers",
+          "data_quality"
+        ],
+        "require_sources": false
+      }
+    },
+    {
+      "case_id": "project-skill-data-tracker",
+      "skill_name": "skill-data-tracker",
+      "input": "对明确模拟粉丝快照真实计算增量；10-10到10-13增加20、增幅20%、间隔3天；10-11缺失必须保持null。",
+      "parameters": {
+        "records": [
+          {
+            "date": "2026-10-10",
+            "followers": 100,
+            "account_id": "{{account_id}}"
+          },
+          {
+            "date": "2026-10-11",
+            "followers": null,
+            "account_id": "{{account_id}}"
+          },
+          {
+            "date": "2026-10-13",
+            "followers": 120,
+            "account_id": "{{account_id}}"
+          }
+        ]
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "commercial_scope": "base",
+      "prerequisites": [],
+      "quality": {
+        "min_text_chars": 80,
+        "required_artifact_suffixes": [
+          ".json",
+          ".md"
+        ],
+        "required_fields": [
+          "follower_series",
+          "follower_changes",
+          "data_quality"
+        ],
+        "require_sources": false
+      },
+      "account_fixture_name": "primary"
+    },
+    {
+      "case_id": "project-skill-post-scorer",
+      "skill_name": "skill-post-scorer",
+      "input": "真实按点赞+评论×3给3条模拟作品排序；评论驱动作评分35为第一；这不是对未发布草稿的效果保证。",
+      "parameters": {
+        "records": [
+          {
+            "title": "明确模拟作品A",
+            "likes": 10,
+            "comments": 0
+          },
+          {
+            "title": "明确模拟作品B",
+            "likes": 20,
+            "comments": 0
+          },
+          {
+            "title": "明确模拟评论驱动作品",
+            "likes": 5,
+            "comments": 10
+          }
+        ],
+        "top_percent": 34
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "commercial_scope": "base",
+      "prerequisites": [],
+      "quality": {
+        "min_text_chars": 80,
+        "required_artifact_suffixes": [
+          ".json",
+          ".md"
+        ],
+        "required_fields": [
+          "summary",
+          "top_posts",
+          "data_quality"
+        ],
+        "require_sources": false
+      }
+    },
+    {
+      "case_id": "project-skill-publish-analytics",
+      "skill_name": "skill-publish-analytics",
+      "input": "对明确模拟D7数据真实计算：总播放1500、互动162、可比样本互动率10.8%，按两平台分组。",
+      "parameters": {
+        "records": [
+          {
+            "title": "明确模拟抖音作品",
+            "channel": "抖音",
+            "views": 1000,
+            "likes": 100,
+            "comments": 10,
+            "saves": 5
+          },
+          {
+            "title": "明确模拟小红书作品",
+            "channel": "小红书",
+            "views": 500,
+            "likes": 40,
+            "comments": 5,
+            "saves": 2
+          }
+        ],
+        "metric_window": "D7"
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "commercial_scope": "base",
+      "prerequisites": [],
+      "quality": {
+        "min_text_chars": 80,
+        "required_artifact_suffixes": [
+          ".json",
+          ".md"
+        ],
+        "required_fields": [
+          "summary",
+          "by_channel",
+          "rows",
+          "data_quality"
+        ],
+        "require_sources": false
+      }
+    },
+    {
+      "case_id": "project-skill-social-performance-review",
+      "skill_name": "skill-social-performance-review",
+      "input": "用明确模拟数据生成可核对效果复盘：每平台作品数、播放和互动，以及待验证下一步；不虚构增长原因。",
+      "parameters": {
+        "records": [
+          {
+            "title": "明确模拟抖音作品",
+            "channel": "抖音",
+            "views": 1000,
+            "likes": 100,
+            "comments": 10,
+            "saves": 5
+          },
+          {
+            "title": "明确模拟小红书作品",
+            "channel": "小红书",
+            "views": 500,
+            "likes": 40,
+            "comments": 5,
+            "saves": 2
+          }
+        ],
+        "metric_window": "D7"
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "commercial_scope": "base",
+      "prerequisites": [],
+      "quality": {
+        "min_text_chars": 80,
+        "required_artifact_suffixes": [
+          ".json",
+          ".md"
+        ],
+        "required_fields": [
+          "summary",
+          "review_items",
+          "by_channel",
+          "data_quality"
+        ],
+        "require_sources": false
+      }
+    },
+    {
+      "case_id": "project-skill-my-account",
+      "skill_name": "skill-my-account",
+      "input": "实际核验验收项目抖音登录身份；未登录必须409，不能用账号画像姓名冒充平台账号。",
+      "parameters": {
+        "action": "verify",
+        "platform": "douyin",
+        "account_id": "{{account_id}}"
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "blocked",
+      "commercial_scope": "full",
+      "prerequisites": [
+        "验收新项目需真人在账号页登录抖音且平台当前身份校验通过",
+        "粉丝/作品需同session真实采集快照与observed_at；primary画像和Synthetic Publication不能替代真实账号"
+      ],
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "verified_identity",
+          "operational_snapshots"
+        ],
+        "require_sources": false
+      },
+      "account_fixture_name": "primary"
+    },
+    {
+      "case_id": "project-skill-short-link",
+      "skill_name": "skill-short-link",
+      "input": "准备具体公开验收URL；只有服务真实返回short_url及HTTP回执才能通过完整短链验收。本轮不实际向外部服务提交。",
+      "parameters": {
+        "action": "shorten",
+        "url": "https://example.org/housignal-acceptance?case=project",
+        "source": "douyin",
+        "medium": "social",
+        "campaign": "明确模拟验收项目"
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "blocked",
+      "commercial_scope": "full",
+      "prerequisites": [
+        "需事先配置NATIVE_SHORT_LINK_BASE_URL、NATIVE_SHORT_LINK_API_KEY、NATIVE_SHORT_LINK_ALLOWED_HOSTS",
+        "本轮没有外部创建授权：配置存在时必须跳过真实请求，先展示待缩短公开URL；UTM结果不计为真实短链"
+      ],
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "shortened",
+          "short_url",
+          "receipt"
+        ],
+        "require_sources": false
+      }
+    },
+    {
+      "case_id": "project-skill-publish-notify",
+      "skill_name": "skill-publish-notify",
+      "input": "准备验收项目发布状态通知，脱敏联系方式和私密链接；本轮不发送，不用通知草稿冒充真实送达。",
+      "parameters": {
+        "action": "send",
+        "confirmed": false
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "blocked",
+      "commercial_scope": "full",
+      "prerequisites": [
+        "需事先配置NATIVE_NOTIFICATION_WEBHOOK_URL、NATIVE_NOTIFICATION_KEY及NATIVE_NOTIFICATION_ALLOWED_HOSTS",
+        "先以draft准备本项目发布通知正文并展示目标名称；本轮confirmed=false，禁止实际发送",
+        "须明确授权后改confirmed=true，且服务返回受理回执；draft/sent=false不得计为发送验收成功"
+      ],
+      "quality": {
+        "min_text_chars": 0,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "sent",
+          "receipt"
+        ],
+        "require_sources": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,2561 @@
+{
+  "schema_version": 1,
+  "skills": [
+    {
+      "name": "ai-image-gen",
+      "title": "AI 生图",
+      "layer": "text_visual",
+      "description": "使用已授权项目素材与原生媒体流程完成AI 生图，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "ai-music",
+      "title": "AI 音乐",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成AI 音乐，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "ai-video-gen",
+      "title": "AI 视频",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成AI 视频，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "asset-manager",
+      "title": "项目素材管理",
+      "layer": "text_visual",
+      "description": "在当前项目授权范围内完成项目素材管理，使用项目持久记录。",
+      "engine": "project",
+      "target": "assets",
+      "instructions": [
+        "读取当前项目真实账号、计划或回执，重新核对访问权限。",
+        "根据明确的操作参数进行查询、计算或项目更新，记录来源与修改范围。",
+        "缺字段时保持未知，不读取外部账号记忆，不伪造实际表现。"
+      ],
+      "output_requirements": [
+        "输出实际项目记录、计算口径或明确的操作结果；不存在的数据写缺资料。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "audio-denoise",
+      "title": "音频降噪",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成音频降噪，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "audio-editing",
+      "title": "音频剪辑",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成音频剪辑，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "audio-mix",
+      "title": "音频混音",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成音频混音，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "audio-visualizer",
+      "title": "音频可视化",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成音频可视化，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "auto-short-video",
+      "title": "主题短视频",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成主题短视频，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "auto-subtitle",
+      "title": "自动字幕",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成自动字幕，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "batch-process",
+      "title": "媒体批处理",
+      "layer": "text_visual",
+      "description": "使用已授权项目素材与原生媒体流程完成媒体批处理，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "beat-sync-video",
+      "title": "音乐卡点视频",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成音乐卡点视频，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "card-design",
+      "title": "社媒卡片设计",
+      "layer": "text_visual",
+      "description": "使用已授权项目素材与原生媒体流程完成社媒卡片设计，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "card-quote",
+      "title": "金句卡片",
+      "layer": "text_visual",
+      "description": "使用已授权项目素材与原生媒体流程完成金句卡片，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "card-xiaohongshu",
+      "title": "小红书知识卡",
+      "layer": "text_visual",
+      "description": "使用已授权项目素材与原生媒体流程完成小红书知识卡，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "chart-visualization",
+      "title": "数据图表",
+      "layer": "text_visual",
+      "description": "使用已授权项目素材与原生媒体流程完成数据图表，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "clipify",
+      "title": "智能视频切片",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成智能视频切片，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "comparison-card",
+      "title": "对比卡片",
+      "layer": "text_visual",
+      "description": "使用已授权项目素材与原生媒体流程完成对比卡片，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "copywriting",
+      "title": "营销文案",
+      "layer": "text_visual",
+      "description": "围绕明确受众、产品信息和转化目标撰写可核验文案。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "拆解受众痛点、购买场景、真实卖点与行动目标。",
+        "按问题-影响-解法或注意-兴趣-欲望-行动组织内容，选择适合任务的结构。",
+        "用事实与例证替代夸大承诺，回应价格、适用对象及常见异议。"
+      ],
+      "output_requirements": [
+        "提供标题、正文、行动引导和需要补齐的证据。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "data-report",
+      "title": "可视化数据报告",
+      "layer": "text_visual",
+      "description": "使用已授权项目素材与原生媒体流程完成可视化数据报告，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "doc-convert",
+      "title": "文稿排版导出",
+      "layer": "text_visual",
+      "description": "使用已授权项目素材与原生媒体流程完成文稿排版导出，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "ecom-details-image",
+      "title": "电商详情图",
+      "layer": "text_visual",
+      "description": "使用已授权项目素材与原生媒体流程完成电商详情图，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "green-screen",
+      "title": "绿幕合成",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成绿幕合成，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "gzh-design",
+      "title": "公众号排版",
+      "layer": "text_visual",
+      "description": "使用已授权项目素材与原生媒体流程完成公众号排版，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "image-editing",
+      "title": "图片编辑",
+      "layer": "text_visual",
+      "description": "使用已授权项目素材与原生媒体流程完成图片编辑，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "image-enhance",
+      "title": "图片增强",
+      "layer": "text_visual",
+      "description": "使用已授权项目素材与原生媒体流程完成图片增强，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "infographic",
+      "title": "信息图",
+      "layer": "text_visual",
+      "description": "使用已授权项目素材与原生媒体流程完成信息图，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "meme-generator",
+      "title": "梗图制作",
+      "layer": "text_visual",
+      "description": "使用已授权项目素材与原生媒体流程完成梗图制作，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "mindmap",
+      "title": "思维导图",
+      "layer": "text_visual",
+      "description": "使用已授权项目素材与原生媒体流程完成思维导图，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "multi-voice-dubbing",
+      "title": "多角色配音",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成多角色配音，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "novel-writer",
+      "title": "小说创作",
+      "layer": "text_visual",
+      "description": "根据用户设定创作虚构故事并保持角色与前情一致。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "明确题材、世界观、视角、人物动机与目标篇幅。",
+        "将情节拆为冲突、推进、转折和后果，保持人物行为可解释。",
+        "参照用户提供的前情维护人物关系与未解决线索，避免重复铺陈。"
+      ],
+      "output_requirements": [
+        "按用户请求提交完整故事正文或明确要求的大纲；正文交付只含标题与故事，不附分析、结构框架、连续性说明或自报字数。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "paper-explainer",
+      "title": "论文解读",
+      "layer": "text_visual",
+      "description": "解析当前项目授权论文，核对研究问题、方法与局限，并制作可核验的解读图文或媒体交付。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "只分析实际提供的论文文本或经过授权识别的内容，缺正文时说明资料不足。",
+        "区分作者贡献、实验设置、定量结果、对比基线与解读者推断。",
+        "用通俗语言解释关键方法，核对符号、数据集、指标和结论范围。"
+      ],
+      "output_requirements": [
+        "输出研究问题、贡献、方法步骤、证据、局限与原文依据，并按媒体任务实际制作图文与交付文件；缺正文不编造论文，缺语音服务不声明生成带声视频。"
+      ],
+      "input_schema": {
+        "accepts_assets": true,
+        "requires_model_authorization": true,
+        "input_required": true,
+        "parameters": [],
+        "accepted_kinds": [
+          "document"
+        ]
+      }
+    },
+    {
+      "name": "post-formatter",
+      "title": "内容表达框架",
+      "layer": "text_visual",
+      "description": "把已提供的内容组织为适合读者和平台的表达结构。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "确认读者、传播目标、平台字数和原文事实。",
+        "在问题-解法、前后对比、故事递进、清单或论证结构中选择合适骨架。",
+        "调整开头、段落顺序与行动引导，不改变原事实或论点。"
+      ],
+      "output_requirements": [
+        "输出排好结构的完整文案及结构选择说明。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "poster-hero",
+      "title": "宣传海报",
+      "layer": "text_visual",
+      "description": "使用已授权项目素材与原生媒体流程完成宣传海报，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "remove-bg",
+      "title": "去背景",
+      "layer": "text_visual",
+      "description": "使用已授权项目素材与原生媒体流程完成去背景，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "roi-calculator",
+      "title": "投入产出分析",
+      "layer": "publish_attribute",
+      "description": "在当前项目授权范围内完成投入产出分析，使用项目持久记录。",
+      "engine": "project",
+      "target": "reports",
+      "instructions": [
+        "读取当前项目真实账号、计划或回执，重新核对访问权限。",
+        "根据明确的操作参数进行查询、计算或项目更新，记录来源与修改范围。",
+        "缺字段时保持未知，不读取外部账号记忆，不伪造实际表现。"
+      ],
+      "output_requirements": [
+        "输出实际项目记录、计算口径或明确的操作结果；不存在的数据写缺资料。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "short-drama",
+      "title": "短剧制作",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成短剧制作，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-account-diagnosis",
+      "title": "账号诊断",
+      "layer": "plan",
+      "description": "依据当前项目账号定位与已登记表现诊断运营问题。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "核对定位、受众、表达风格和当前项目真实内容记录。",
+        "检查选题垂直度、受众一致性、内容形式与表现分布，缺失数据保持未知。",
+        "按影响与实施成本排序问题，提出可测试的具体改善动作。"
+      ],
+      "output_requirements": [
+        "输出证据、问题、建议与验证指标；不推测平台限流或真实成交。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-algorithm-updates",
+      "title": "平台规则动态",
+      "layer": "discover",
+      "description": "基于实际取得的公开来源完成平台规则动态，保留来源链接与获取时间。",
+      "engine": "research",
+      "target": "studio",
+      "instructions": [
+        "针对用户指定平台与时间问题检索真实规则资料。",
+        "优先说明平台官方规则与公告，将第三方解读、经验或传闻单独标记。",
+        "区分推荐机制、内容审核、搜索、商业化与账号操作规则，保留版本和日期缺口。",
+        "只提出有来源支持的影响与需要人工验证的调整，不承诺曝光或判定账号限流。"
+      ],
+      "output_requirements": [
+        "输出规则变化、依据链接、影响范围、建议与不确定性；非官方来源不能表述为确定的新平台规则。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-article-outline",
+      "title": "文章大纲",
+      "layer": "plan",
+      "description": "为长文建立清楚的论证与段落安排。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "确认读者问题、核心观点、已有材料和字数预算。",
+        "设计引入、论证分节、案例、反方观点及收束。",
+        "逐节列出主旨、需要的证据、例子和图表位置。"
+      ],
+      "output_requirements": [
+        "提供层级大纲、段落目标、资料缺口与可选标题。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-audience-profiler",
+      "title": "受众画像分析",
+      "layer": "plan",
+      "description": "建立有依据的受众假设与需求画像。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "以当前项目受众和用户提供的公开材料为依据，区别事实与假设。",
+        "整理需求、使用场景、决策阻力、常见提问与内容偏好。",
+        "将人群与选题、表达方式和触达路径连接。"
+      ],
+      "output_requirements": [
+        "输出受众分组、需求、依据、内容方向与待验证问题，不虚构个人身份。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-bilibili-upload",
+      "title": "B站发布",
+      "layer": "publish_attribute",
+      "description": "通过当前项目账号流程完成B站发布，核对真实平台状态与回执。",
+      "engine": "platform",
+      "target": "accounts",
+      "instructions": [
+        "核对当前项目平台账号、授权与最终内容审批。",
+        "通过项目账号流程准备或提交平台操作，保留真实状态与任务记录。",
+        "提交不等于发布成功，实际平台链接与公开状态另行核验。"
+      ],
+      "output_requirements": [
+        "返回实际平台任务状态或待完成步骤；文字回复不能代替登录、提交或真实回执。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-brand-onboarding",
+      "title": "品牌账号入驻策划",
+      "layer": "plan",
+      "description": "为品牌或新账号形成可执行的运营入驻方案。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "梳理业务目标、可信资产、目标受众和表达限制。",
+        "建立内容支柱、账号简介、语言风格与首批内容方案。",
+        "列出资料准备、协作责任与试运行验证步骤。"
+      ],
+      "output_requirements": [
+        "输出品牌定位、账号表达草稿、首批选题与入驻任务清单；实际账号修改走项目流程。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-campaign-planner",
+      "title": "营销活动策划",
+      "layer": "plan",
+      "description": "规划有明确目标与衡量口径的营销活动。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "核对活动目标、受众、可用素材、日期与用户提供的预算。",
+        "按预热、进行、收尾安排渠道、内容与责任。",
+        "列出参与机制、效果指标、风险与替代方案，未知预算不补数。"
+      ],
+      "output_requirements": [
+        "输出阶段计划、内容交付、预算假设、衡量指标与准备事项。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-carousel-planner",
+      "title": "轮播图文策划",
+      "layer": "plan",
+      "description": "将主题规划为便于滑动阅读的多页图文。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "确定主观点、受众阅读任务和页数。",
+        "设计封面钩子、逐页信息推进、例证和结束行动引导。",
+        "控制每页信息密度，列出标题、主文、视觉建议和事实依据。"
+      ],
+      "output_requirements": [
+        "输出逐页文案与布局说明；这是策划内容，不声明已生成卡片图片。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-channels-upload",
+      "title": "视频号发布",
+      "layer": "publish_attribute",
+      "description": "通过当前项目账号流程完成视频号发布，核对真实平台状态与回执。",
+      "engine": "platform",
+      "target": "accounts",
+      "instructions": [
+        "核对当前项目平台账号、授权与最终内容审批。",
+        "通过项目账号流程准备或提交平台操作，保留真实状态与任务记录。",
+        "提交不等于发布成功，实际平台链接与公开状态另行核验。"
+      ],
+      "output_requirements": [
+        "返回实际平台任务状态或待完成步骤；文字回复不能代替登录、提交或真实回执。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-collab-proposal",
+      "title": "商业合作方案",
+      "layer": "plan",
+      "description": "为商业合作明确需求、交付与评估方式。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "整理合作方目标、当前账号特点及可提供内容形式。",
+        "提出合作内容、交付数量、使用范围、时间安排与评估方式。",
+        "列出报价依据和授权事项，缺真实报价时使用待确认标记。"
+      ],
+      "output_requirements": [
+        "输出合作方案草稿、交付清单、待确认事项与沟通提纲。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-comment-insights",
+      "title": "评论洞察",
+      "layer": "publish_attribute",
+      "description": "在当前项目授权范围内完成评论洞察，使用项目持久记录。",
+      "engine": "project",
+      "target": "studio",
+      "instructions": [
+        "读取当前项目真实账号、计划或回执，重新核对访问权限。",
+        "根据明确的操作参数进行查询、计算或项目更新，记录来源与修改范围。",
+        "缺字段时保持未知，不读取外部账号记忆，不伪造实际表现。"
+      ],
+      "output_requirements": [
+        "输出实际项目记录、计算口径或明确的操作结果；不存在的数据写缺资料。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-community-ops",
+      "title": "评论区运营策划",
+      "layer": "publish_attribute",
+      "description": "为评论区互动与舆情响应制定文字策略。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "按赞美、咨询、质疑、投诉和恶意攻击归类用户提供的评论。",
+        "匹配账号语言风格，形成具体且不过度承诺的回复。",
+        "区分日常回复、升级人工核验和紧急响应，不自动联系或删除评论。"
+      ],
+      "output_requirements": [
+        "输出评论分类、回复草稿、升级条件与后续选题建议。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-competitor-analysis",
+      "title": "竞品研究",
+      "layer": "discover",
+      "description": "基于实际取得的公开来源完成竞品研究，保留来源链接与获取时间。",
+      "engine": "research",
+      "target": "studio",
+      "instructions": [
+        "围绕用户提供的公开竞品名称、平台或链接取得实际公开材料。",
+        "按定位、受众、主题支柱、表达形式、内容节奏与互动证据对照。",
+        "仅有网页标题时不补造正文、粉丝数、播放量或运营表现，字段缺失保持未知。",
+        "把可核对的共同点与差异转化为当前项目可验证的差异化内容实验。"
+      ],
+      "output_requirements": [
+        "输出比较表、各项证据、内容规律假设、差异化机会与验证动作；不凭索引链接制造完整账号画像。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-content-calendar-log",
+      "title": "内容日历更新",
+      "layer": "publish_attribute",
+      "description": "在当前项目授权范围内完成内容日历更新，使用项目持久记录。",
+      "engine": "project",
+      "target": "studio",
+      "instructions": [
+        "读取当前项目真实账号、计划或回执，重新核对访问权限。",
+        "根据明确的操作参数进行查询、计算或项目更新，记录来源与修改范围。",
+        "缺字段时保持未知，不读取外部账号记忆，不伪造实际表现。"
+      ],
+      "output_requirements": [
+        "输出实际项目记录、计算口径或明确的操作结果；不存在的数据写缺资料。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-content-calendar",
+      "title": "内容日历",
+      "layer": "plan",
+      "description": "在当前项目授权范围内完成内容日历，使用项目持久记录。",
+      "engine": "project",
+      "target": "studio",
+      "instructions": [
+        "读取当前项目真实账号、计划或回执，重新核对访问权限。",
+        "根据明确的操作参数进行查询、计算或项目更新，记录来源与修改范围。",
+        "缺字段时保持未知，不读取外部账号记忆，不伪造实际表现。"
+      ],
+      "output_requirements": [
+        "输出实际项目记录、计算口径或明确的操作结果；不存在的数据写缺资料。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-content-gap-analysis",
+      "title": "内容缺口研究",
+      "layer": "discover",
+      "description": "基于实际取得的公开来源完成内容缺口研究，保留来源链接与获取时间。",
+      "engine": "research",
+      "target": "studio",
+      "instructions": [
+        "围绕行业、受众问题与用户指定的竞争范围取得真实来源。",
+        "分别整理需求线索、现有内容主题与尚未找到可靠解答的问题。",
+        "将内容缺口视为待验证机会；有限检索未命中不能证明市场无人覆盖。",
+        "评估机会与当前账号匹配、资料准备、制作成本和潜在误导风险。"
+      ],
+      "output_requirements": [
+        "输出需求-已有供给-缺口假设表、来源链接、建议选题与验证计划。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-content-matrix",
+      "title": "选题矩阵",
+      "layer": "plan",
+      "description": "将受众需求与内容支柱组合为可执行选题矩阵。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "核对账号定位、真实业务资料和受众问题。",
+        "交叉主题支柱、需求阶段、表达形式和发布渠道。",
+        "去掉重复选题，标注素材准备、证据缺口与优先级。"
+      ],
+      "output_requirements": [
+        "输出主题矩阵、具体选题、角度、形式及准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-content-postmortem",
+      "title": "内容复盘",
+      "layer": "publish_attribute",
+      "description": "在当前项目授权范围内完成内容复盘，使用项目持久记录。",
+      "engine": "project",
+      "target": "reports",
+      "instructions": [
+        "读取当前项目真实账号、计划或回执，重新核对访问权限。",
+        "根据明确的操作参数进行查询、计算或项目更新，记录来源与修改范围。",
+        "缺字段时保持未知，不读取外部账号记忆，不伪造实际表现。"
+      ],
+      "output_requirements": [
+        "输出实际项目记录、计算口径或明确的操作结果；不存在的数据写缺资料。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-content-repurposing",
+      "title": "跨平台内容改编",
+      "layer": "publish_attribute",
+      "description": "把同一核心内容改编为多平台原生文案。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "提取核心事实、观点和不可改变的表达边界。",
+        "根据目标平台阅读习惯、字数、标题与标签组织不同版本。",
+        "调整开场、段落和行动引导，保留引用与授权限制。"
+      ],
+      "output_requirements": [
+        "按平台输出完整文案或脚本，列明画幅和素材建议；不宣称已发布。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-content-strategy",
+      "title": "内容策略",
+      "layer": "plan",
+      "description": "制定内容支柱、系列结构与持续运营节奏。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "以当前项目目标、账号定位、受众与已有内容表现为依据。",
+        "定义内容支柱、系列承诺、常见问题与每期目标。",
+        "设置可实施的制作节奏、内容组合及评估节点。"
+      ],
+      "output_requirements": [
+        "输出内容支柱、系列规划、样例选题、制作安排与验证指标。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-cross-platform-diff",
+      "title": "跨平台受众研究",
+      "layer": "discover",
+      "description": "基于实际取得的公开来源完成跨平台受众研究，保留来源链接与获取时间。",
+      "engine": "research",
+      "target": "studio",
+      "instructions": [
+        "围绕同一主题与指定平台取得各平台的实际公开来源。",
+        "比较可观察的标题、内容形式、表达方式与互动字段，缺少正文或指标时保持未知。",
+        "区分平台整体规则、个别样本差异和当前项目受众假设，避免以小样本推断全部平台。",
+        "给出同一核心主题在各平台的可测试改编方案。"
+      ],
+      "output_requirements": [
+        "输出平台比较、样本与来源、内容改编建议和验证指标；不得虚构跨平台数据。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-cross-platform-publish",
+      "title": "多平台发布",
+      "layer": "publish_attribute",
+      "description": "通过当前项目账号流程完成多平台发布，核对真实平台状态与回执。",
+      "engine": "platform",
+      "target": "accounts",
+      "instructions": [
+        "核对当前项目平台账号、授权与最终内容审批。",
+        "通过项目账号流程准备或提交平台操作，保留真实状态与任务记录。",
+        "提交不等于发布成功，实际平台链接与公开状态另行核验。"
+      ],
+      "output_requirements": [
+        "返回实际平台任务状态或待完成步骤；文字回复不能代替登录、提交或真实回执。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-data-tracker",
+      "title": "内容数据跟踪",
+      "layer": "publish_attribute",
+      "description": "在当前项目授权范围内完成内容数据跟踪，使用项目持久记录。",
+      "engine": "project",
+      "target": "reports",
+      "instructions": [
+        "读取当前项目真实账号、计划或回执，重新核对访问权限。",
+        "根据明确的操作参数进行查询、计算或项目更新，记录来源与修改范围。",
+        "缺字段时保持未知，不读取外部账号记忆，不伪造实际表现。"
+      ],
+      "output_requirements": [
+        "输出实际项目记录、计算口径或明确的操作结果；不存在的数据写缺资料。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-douyin-upload",
+      "title": "抖音发布",
+      "layer": "publish_attribute",
+      "description": "通过当前项目账号流程完成抖音发布，核对真实平台状态与回执。",
+      "engine": "platform",
+      "target": "accounts",
+      "instructions": [
+        "核对当前项目平台账号、授权与最终内容审批。",
+        "通过项目账号流程准备或提交平台操作，保留真实状态与任务记录。",
+        "提交不等于发布成功，实际平台链接与公开状态另行核验。"
+      ],
+      "output_requirements": [
+        "返回实际平台任务状态或待完成步骤；文字回复不能代替登录、提交或真实回执。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-event-calendar",
+      "title": "节日与事件日历",
+      "layer": "discover",
+      "description": "在当前项目授权范围内完成节日与事件日历，使用项目持久记录。",
+      "engine": "project",
+      "target": "studio",
+      "instructions": [
+        "读取当前项目真实账号、计划或回执，重新核对访问权限。",
+        "根据明确的操作参数进行查询、计算或项目更新，记录来源与修改范围。",
+        "缺字段时保持未知，不读取外部账号记忆，不伪造实际表现。"
+      ],
+      "output_requirements": [
+        "输出实际项目记录、计算口径或明确的操作结果；不存在的数据写缺资料。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-hook-generator",
+      "title": "标题与开场钩子",
+      "layer": "plan",
+      "description": "为明确主题生成多种标题与开场钩子。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "提取受众需求、真实价值与主题限制。",
+        "分别生成问题、对比、场景、具体收益和认知差异等角度。",
+        "检查准确性、简洁度、标题与正文一致性，去掉夸大与误导。"
+      ],
+      "output_requirements": [
+        "提供候选标题、开场文案、适用平台与选择理由。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-kuaishou-upload",
+      "title": "快手发布",
+      "layer": "publish_attribute",
+      "description": "通过当前项目账号流程完成快手发布，核对真实平台状态与回执。",
+      "engine": "platform",
+      "target": "accounts",
+      "instructions": [
+        "核对当前项目平台账号、授权与最终内容审批。",
+        "通过项目账号流程准备或提交平台操作，保留真实状态与任务记录。",
+        "提交不等于发布成功，实际平台链接与公开状态另行核验。"
+      ],
+      "output_requirements": [
+        "返回实际平台任务状态或待完成步骤；文字回复不能代替登录、提交或真实回执。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-livestream",
+      "title": "直播策划",
+      "layer": "plan",
+      "description": "围绕用户目标组织直播流程与话术。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "明确主题、受众、时长、真实信息与互动目标。",
+        "安排开场、内容段落、互动、转场和结束引导。",
+        "为常见问题与资料不足准备回复，分清主持与协作任务。"
+      ],
+      "output_requirements": [
+        "输出时间分配、环节目标、具体话术、互动提问和准备清单。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-my-account",
+      "title": "项目账号数据",
+      "layer": "text_visual",
+      "description": "在当前项目授权范围内完成项目账号数据，使用项目持久记录。",
+      "engine": "project",
+      "target": "accounts",
+      "instructions": [
+        "读取当前项目真实账号、计划或回执，重新核对访问权限。",
+        "根据明确的操作参数进行查询、计算或项目更新，记录来源与修改范围。",
+        "缺字段时保持未知，不读取外部账号记忆，不伪造实际表现。"
+      ],
+      "output_requirements": [
+        "输出实际项目记录、计算口径或明确的操作结果；不存在的数据写缺资料。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-news-intelligence",
+      "title": "行业资讯研究",
+      "layer": "discover",
+      "description": "基于实际取得的公开来源完成行业资讯研究，保留来源链接与获取时间。",
+      "engine": "research",
+      "target": "studio",
+      "instructions": [
+        "围绕明确行业、日期范围和公开关键词取得真实网页来源。",
+        "整理新闻事件、变化点、影响对象与内容机会，区分来源事实、报道转述和分析推断。",
+        "同一事件合并来源；只有标题线索时列为待阅读，不能补写报道细节。",
+        "说明来源的观察时间与未知的发布时间，给出适合当前账号的后续选题。"
+      ],
+      "output_requirements": [
+        "输出资讯摘要、可核对链接、依据、潜在选题与资料缺口；不能把检索时间当作事件发生时间。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-persona-check",
+      "title": "账号表达一致性检查",
+      "layer": "publish_attribute",
+      "description": "检查内容与当前项目账号表达是否一致。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "对照真实账号定位、受众、语气和明确红线。",
+        "标出角色不一致、夸大承诺、陌生术语或风格漂移的位置。",
+        "提出保留核心信息的具体改写。"
+      ],
+      "output_requirements": [
+        "输出问题位置、依据与替代文案；不得凭空新建人设。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-positioning-analysis",
+      "title": "差异化定位",
+      "layer": "plan",
+      "description": "根据现有信息提出差异化定位假设。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "核对当前账号目标、真实优势、受众需求和用户提供的竞品材料。",
+        "比较受众、价值主张、表达风格和内容形式，区分已知与待研究。",
+        "提出可检验的差异化方向及优先验证方法。"
+      ],
+      "output_requirements": [
+        "输出定位陈述、差异依据、内容支柱与验证问题。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-post-scorer",
+      "title": "内容评分",
+      "layer": "publish_attribute",
+      "description": "在当前项目授权范围内完成内容评分，使用项目持久记录。",
+      "engine": "project",
+      "target": "reports",
+      "instructions": [
+        "读取当前项目真实账号、计划或回执，重新核对访问权限。",
+        "根据明确的操作参数进行查询、计算或项目更新，记录来源与修改范围。",
+        "缺字段时保持未知，不读取外部账号记忆，不伪造实际表现。"
+      ],
+      "output_requirements": [
+        "输出实际项目记录、计算口径或明确的操作结果；不存在的数据写缺资料。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-profile-builder",
+      "title": "项目账号画像创建",
+      "layer": "text_visual",
+      "description": "在当前项目授权范围内完成项目账号画像创建，使用项目持久记录。",
+      "engine": "project",
+      "target": "accounts",
+      "instructions": [
+        "读取当前项目真实账号、计划或回执，重新核对访问权限。",
+        "根据明确的操作参数进行查询、计算或项目更新，记录来源与修改范围。",
+        "缺字段时保持未知，不读取外部账号记忆，不伪造实际表现。"
+      ],
+      "output_requirements": [
+        "输出实际项目记录、计算口径或明确的操作结果；不存在的数据写缺资料。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-profile-manager",
+      "title": "项目账号画像维护",
+      "layer": "text_visual",
+      "description": "在当前项目授权范围内完成项目账号画像维护，使用项目持久记录。",
+      "engine": "project",
+      "target": "accounts",
+      "instructions": [
+        "读取当前项目真实账号、计划或回执，重新核对访问权限。",
+        "根据明确的操作参数进行查询、计算或项目更新，记录来源与修改范围。",
+        "缺字段时保持未知，不读取外部账号记忆，不伪造实际表现。"
+      ],
+      "output_requirements": [
+        "输出实际项目记录、计算口径或明确的操作结果；不存在的数据写缺资料。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-publish-analytics",
+      "title": "发布归因分析",
+      "layer": "publish_attribute",
+      "description": "在当前项目授权范围内完成发布归因分析，使用项目持久记录。",
+      "engine": "project",
+      "target": "reports",
+      "instructions": [
+        "读取当前项目真实账号、计划或回执，重新核对访问权限。",
+        "根据明确的操作参数进行查询、计算或项目更新，记录来源与修改范围。",
+        "缺字段时保持未知，不读取外部账号记忆，不伪造实际表现。"
+      ],
+      "output_requirements": [
+        "输出实际项目记录、计算口径或明确的操作结果；不存在的数据写缺资料。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-publish-checklist",
+      "title": "发布准备清单",
+      "layer": "publish_attribute",
+      "description": "逐项检查内容发布准备是否齐全。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "核对标题、正文、封面计划、标签、链接、行动引导和平台格式。",
+        "检查事实来源、素材授权、审核状态与账号选择是否已确认。",
+        "把未完成项列为阻断条件并指定补齐动作。"
+      ],
+      "output_requirements": [
+        "输出已具备、需补齐、需人工确认的发布清单；不能宣布已提交或已发布。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-publish-log",
+      "title": "发布回执管理",
+      "layer": "publish_attribute",
+      "description": "在当前项目授权范围内完成发布回执管理，使用项目持久记录。",
+      "engine": "project",
+      "target": "studio",
+      "instructions": [
+        "读取当前项目真实账号、计划或回执，重新核对访问权限。",
+        "根据明确的操作参数进行查询、计算或项目更新，记录来源与修改范围。",
+        "缺字段时保持未知，不读取外部账号记忆，不伪造实际表现。"
+      ],
+      "output_requirements": [
+        "输出实际项目记录、计算口径或明确的操作结果；不存在的数据写缺资料。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-publish-notify",
+      "title": "发布通知草稿",
+      "layer": "publish_attribute",
+      "description": "在当前项目授权范围内完成发布通知草稿，使用项目持久记录。",
+      "engine": "project",
+      "target": "studio",
+      "instructions": [
+        "读取当前项目真实账号、计划或回执，重新核对访问权限。",
+        "根据明确的操作参数进行查询、计算或项目更新，记录来源与修改范围。",
+        "缺字段时保持未知，不读取外部账号记忆，不伪造实际表现。"
+      ],
+      "output_requirements": [
+        "输出实际项目记录、计算口径或明确的操作结果；不存在的数据写缺资料。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-publish-scheduler",
+      "title": "发布排期",
+      "layer": "publish_attribute",
+      "description": "在当前项目授权范围内完成发布排期，使用项目持久记录。",
+      "engine": "project",
+      "target": "studio",
+      "instructions": [
+        "读取当前项目真实账号、计划或回执，重新核对访问权限。",
+        "根据明确的操作参数进行查询、计算或项目更新，记录来源与修改范围。",
+        "缺字段时保持未知，不读取外部账号记忆，不伪造实际表现。"
+      ],
+      "output_requirements": [
+        "输出实际项目记录、计算口径或明确的操作结果；不存在的数据写缺资料。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-quality-gate",
+      "title": "内容质量审查",
+      "layer": "publish_attribute",
+      "description": "从事实、表达、平台格式与授权证据审查内容。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "核对真实项目数值、引用、夸大表达与目标平台要求。",
+        "检查结构完整性、读者可理解性、内容具体性和输出格式。",
+        "区分文字建议与必须人工核验的法律、平台或授权事项。"
+      ],
+      "output_requirements": [
+        "输出问题位置、严重程度、修改建议和缺少的核验材料；不生成真实审批回执。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-risk-scanner",
+      "title": "原创与授权风险评估",
+      "layer": "publish_attribute",
+      "description": "依据提供材料提示原创、引用与授权风险。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "区分原创文字、直接引用、改写内容和外部素材。",
+        "检查引用标记、授权证据、容易造成混淆的相似表达与商业使用范围。",
+        "提出可执行的替换、补证或人工核查动作。"
+      ],
+      "output_requirements": [
+        "输出具体风险线索与核验步骤；不宣称完成技术查重、侵权认定或授权验证。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-rss-aggregator",
+      "title": "订阅源聚合",
+      "layer": "discover",
+      "description": "基于实际取得的公开来源完成订阅源聚合，保留来源链接与获取时间。",
+      "engine": "research",
+      "target": "studio",
+      "instructions": [
+        "读取用户提供的公开 RSS 或 Atom 订阅源，检查地址与网络范围。",
+        "解析真实条目标题、链接、摘要和来源发布时间，去重并按可选关键词筛选。",
+        "来源不可读取或发布日期未知时明确说明，不用模型文字补造资讯。"
+      ],
+      "output_requirements": [
+        "返回可核对的来源、观察时间、方法与局限；不能用模型生成文本冒充真实检索或作品指标。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": [
+          {
+            "key": "feeds",
+            "label": "公开 RSS / Atom 地址（每行一个）",
+            "type": "text"
+          }
+        ]
+      }
+    },
+    {
+      "name": "skill-seo-quality",
+      "title": "平台搜索优化",
+      "layer": "publish_attribute",
+      "description": "优化平台搜索可理解的关键词与表达。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "确定目标受众问题、核心关键词与原文真实内容。",
+        "检查标题、首段、段落、封面文案和标签中的自然关键词布局。",
+        "减少重复堆词，确保搜索承诺与正文一致。"
+      ],
+      "output_requirements": [
+        "输出修改前后文案、关键词安排和待测试指标；不保证搜索排名。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-short-link",
+      "title": "推广链接参数",
+      "layer": "publish_attribute",
+      "description": "在当前项目授权范围内完成推广链接参数，使用项目持久记录。",
+      "engine": "project",
+      "target": "studio",
+      "instructions": [
+        "读取当前项目真实账号、计划或回执，重新核对访问权限。",
+        "根据明确的操作参数进行查询、计算或项目更新，记录来源与修改范围。",
+        "缺字段时保持未知，不读取外部账号记忆，不伪造实际表现。"
+      ],
+      "output_requirements": [
+        "输出实际项目记录、计算口径或明确的操作结果；不存在的数据写缺资料。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-social-performance-review",
+      "title": "月度内容效果复盘",
+      "layer": "publish_attribute",
+      "description": "在当前项目授权范围内完成月度内容效果复盘，使用项目持久记录。",
+      "engine": "project",
+      "target": "reports",
+      "instructions": [
+        "读取当前项目真实账号、计划或回执，重新核对访问权限。",
+        "根据明确的操作参数进行查询、计算或项目更新，记录来源与修改范围。",
+        "缺字段时保持未知，不读取外部账号记忆，不伪造实际表现。"
+      ],
+      "output_requirements": [
+        "输出实际项目记录、计算口径或明确的操作结果；不存在的数据写缺资料。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-strategy-advisor",
+      "title": "运营策略调整",
+      "layer": "publish_attribute",
+      "description": "根据当前项目真实内容记录迭代运营策略。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "整理账号定位、已有内容、已登记表现和资料缺口。",
+        "识别稳定表现与少量样本的差别，避免把相关性当因果。",
+        "给出下一阶段选题、形式、节奏与实验优先级。"
+      ],
+      "output_requirements": [
+        "输出证据、调整建议、实验计划与衡量指标。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-topic-evaluator",
+      "title": "选题评分",
+      "layer": "plan",
+      "description": "按统一维度评估单个选题并给出取舍建议。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "核对主题、账号匹配、目标受众、证据与素材准备。",
+        "分别评估需求、差异、时效、制作成本、转化路径和风险。",
+        "说明每一判断依据和缺少信息，对不确定项不给伪精确分数。"
+      ],
+      "output_requirements": [
+        "输出评分理由、做或不做或改方向建议，以及改写后的角度。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-trend-rider",
+      "title": "热点内容策划",
+      "layer": "plan",
+      "description": "把已有可信热点材料与账号定位组合成选题。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "只使用用户提供或真实检索得到的热点信息，不补造事件。",
+        "检查热点与受众、账号表达和业务目标的关联。",
+        "给出切入角度、内容形式、标题及误解风险。"
+      ],
+      "output_requirements": [
+        "输出具体方案、事实依据与待核验事项；没有热点证据时明确缺资料。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-trending-topics",
+      "title": "公开热榜",
+      "layer": "discover",
+      "description": "基于实际取得的公开来源完成公开热榜，保留来源链接与获取时间。",
+      "engine": "research",
+      "target": "studio",
+      "instructions": [
+        "通过固定公开榜单来源读取实际话题与来源热度，短时缓存保留真实获取时间。",
+        "按用户可选关键词筛选实际榜单标题，返回原始链接和观察时间。",
+        "来源失败则说明无法读取，不把获取时间视为事件发布时间，不生成虚构热度。"
+      ],
+      "output_requirements": [
+        "返回可核对的来源、观察时间、方法与局限；不能用模型生成文本冒充真实检索或作品指标。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": [
+          {
+            "key": "platform",
+            "label": "公开热榜平台",
+            "type": "select",
+            "default": "weibo",
+            "options": [
+              {
+                "value": "weibo",
+                "label": "微博"
+              },
+              {
+                "value": "douyin",
+                "label": "抖音"
+              },
+              {
+                "value": "zhihu",
+                "label": "知乎"
+              },
+              {
+                "value": "bilibili",
+                "label": "B站"
+              }
+            ]
+          },
+          {
+            "key": "limit",
+            "label": "返回条数",
+            "type": "number",
+            "default": 12,
+            "min": 1,
+            "max": 30
+          }
+        ]
+      }
+    },
+    {
+      "name": "skill-ugc-discovery",
+      "title": "用户口碑研究",
+      "layer": "discover",
+      "description": "基于实际取得的公开来源完成用户口碑研究，保留来源链接与获取时间。",
+      "engine": "research",
+      "target": "studio",
+      "instructions": [
+        "围绕用户明确的品牌、产品或账号公开关键词寻找实际用户讨论与测评来源。",
+        "区分真实用户体验、媒体报道、品牌内容和无法确认身份的线索。",
+        "整理问题、情绪、使用场景与被反复提及的内容诉求。",
+        "把建议分为内容选题、资料补充与待人工判断的互动机会，不自动联系用户。"
+      ],
+      "output_requirements": [
+        "输出公开UGC来源、主题归纳、证据与建议；不把品牌同名或索引摘要直接认定为真实用户口碑。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-voice-builder",
+      "title": "账号语言风格",
+      "layer": "plan",
+      "description": "根据真实写作样本与用户表达偏好建立语言风格。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "提取句长、用词、语气、节奏、修辞和互动方式。",
+        "将偏好整理为可以检查的写作规则与禁用表达。",
+        "给出同一内容的改写样例供用户核对。"
+      ],
+      "output_requirements": [
+        "输出语言风格建议、示例与待确认选项；写入账号资料由项目流程完成。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-wechat-publisher",
+      "title": "微信公众号发布",
+      "layer": "publish_attribute",
+      "description": "通过当前项目账号流程完成微信公众号发布，核对真实平台状态与回执。",
+      "engine": "platform",
+      "target": "accounts",
+      "instructions": [
+        "核对当前项目平台账号、授权与最终内容审批。",
+        "通过项目账号流程准备或提交平台操作，保留真实状态与任务记录。",
+        "提交不等于发布成功，实际平台链接与公开状态另行核验。"
+      ],
+      "output_requirements": [
+        "返回实际平台任务状态或待完成步骤；文字回复不能代替登录、提交或真实回执。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-xhs-analyzer",
+      "title": "小红书作品数据分析",
+      "layer": "publish_attribute",
+      "description": "读取小红书公开作品页面的实际正文、作者与互动字段后分析，页面受限时明确说明。",
+      "engine": "research",
+      "target": "studio",
+      "instructions": [
+        "核对用户提供的公开笔记链接，或先获取真实搜索来源中的笔记候选。",
+        "通过公开作品适配读取真实正文、作者与互动数据，字段缺失保持未知。",
+        "仅分析已取得的数据；公开页面不可读时停止，不把索引链接当作账号表现或限流证据。"
+      ],
+      "output_requirements": [
+        "返回可核对的来源、观察时间、方法与局限；不能用模型生成文本冒充真实检索或作品指标。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-xhs-comment-reply",
+      "title": "小红书评论互动",
+      "layer": "publish_attribute",
+      "description": "通过当前项目账号流程完成小红书评论互动，核对真实平台状态与回执。",
+      "engine": "platform",
+      "target": "accounts",
+      "instructions": [
+        "核对当前项目平台账号、授权与最终内容审批。",
+        "通过项目账号流程准备或提交平台操作，保留真实状态与任务记录。",
+        "提交不等于发布成功，实际平台链接与公开状态另行核验。"
+      ],
+      "output_requirements": [
+        "返回实际平台任务状态或待完成步骤；文字回复不能代替登录、提交或真实回执。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-xhs-publisher",
+      "title": "小红书发布",
+      "layer": "publish_attribute",
+      "description": "通过当前项目账号流程完成小红书发布，核对真实平台状态与回执。",
+      "engine": "platform",
+      "target": "accounts",
+      "instructions": [
+        "核对当前项目平台账号、授权与最终内容审批。",
+        "通过项目账号流程准备或提交平台操作，保留真实状态与任务记录。",
+        "提交不等于发布成功，实际平台链接与公开状态另行核验。"
+      ],
+      "output_requirements": [
+        "返回实际平台任务状态或待完成步骤；文字回复不能代替登录、提交或真实回执。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-zhihu-answer",
+      "title": "知乎回答发布",
+      "layer": "publish_attribute",
+      "description": "通过当前项目账号流程完成知乎回答发布，核对真实平台状态与回执。",
+      "engine": "platform",
+      "target": "accounts",
+      "instructions": [
+        "核对当前项目平台账号、授权与最终内容审批。",
+        "通过项目账号流程准备或提交平台操作，保留真实状态与任务记录。",
+        "提交不等于发布成功，实际平台链接与公开状态另行核验。"
+      ],
+      "output_requirements": [
+        "返回实际平台任务状态或待完成步骤；文字回复不能代替登录、提交或真实回执。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "skill-zhihu-publisher",
+      "title": "知乎专栏发布",
+      "layer": "publish_attribute",
+      "description": "通过当前项目账号流程完成知乎专栏发布，核对真实平台状态与回执。",
+      "engine": "platform",
+      "target": "accounts",
+      "instructions": [
+        "核对当前项目平台账号、授权与最终内容审批。",
+        "通过项目账号流程准备或提交平台操作，保留真实状态与任务记录。",
+        "提交不等于发布成功，实际平台链接与公开状态另行核验。"
+      ],
+      "output_requirements": [
+        "返回实际平台任务状态或待完成步骤；文字回复不能代替登录、提交或真实回执。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "slideshow-video",
+      "title": "图片相册视频",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成图片相册视频，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "social-content",
+      "title": "社媒内容创作",
+      "layer": "text_visual",
+      "description": "为当前项目和目标平台生成具体自然的社媒文案。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "确定受众、主题、传播目标和当前账号表达。",
+        "组织准确的标题、开场、正文、标签与互动提问。",
+        "逐项检查已核验项目事实、缺失资料和夸大承诺。"
+      ],
+      "output_requirements": [
+        "输出完整可编辑草稿、候选标题与待核验事项。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "style-transfer",
+      "title": "文本风格迁移",
+      "layer": "text_visual",
+      "description": "按目标语气重写文本，保持事实与作者意图。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "提取原文事实、主张、必留细节和不能改变的含义。",
+        "分析用户提供的目标风格或描述的语气特征。",
+        "调整词汇、句长、节奏和修辞，检查改写后事实一致。"
+      ],
+      "output_requirements": [
+        "输出改写全文，必要时解释风格选择与保留的信息。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "subtitle-translate",
+      "title": "字幕翻译",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成字幕翻译，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "template-library",
+      "title": "内容模板管理",
+      "layer": "text_visual",
+      "description": "在当前项目授权范围内完成内容模板管理，使用项目持久记录。",
+      "engine": "project",
+      "target": "studio",
+      "instructions": [
+        "读取当前项目真实账号、计划或回执，重新核对访问权限。",
+        "根据明确的操作参数进行查询、计算或项目更新，记录来源与修改范围。",
+        "缺字段时保持未知，不读取外部账号记忆，不伪造实际表现。"
+      ],
+      "output_requirements": [
+        "输出实际项目记录、计算口径或明确的操作结果；不存在的数据写缺资料。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "text-condenser",
+      "title": "文本摘要与字数压缩",
+      "layer": "text_visual",
+      "description": "在保留关键事实的前提下压缩或提炼文本。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "明确目标字数、摘要或金句模式，以及必须保留的信息。",
+        "删减重复、赘述与次要例子，保留逻辑关系和重要限制条件。",
+        "检查关键信息是否遗漏，严格字数任务按中文字符核对。"
+      ],
+      "output_requirements": [
+        "输出压缩文本或摘要，并说明删减范围与仍需核验的内容。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "text-polisher",
+      "title": "文本润色",
+      "layer": "text_visual",
+      "description": "从七个维度改善文案并保留事实。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "依次检查清晰度、语气、读者价值、证据、具体性、情感和风险。",
+        "删空泛套话，增加已有材料支持的细节，使用自然句式。",
+        "核对数字、引用、观点和原文意图，不凭空丰富事实。"
+      ],
+      "output_requirements": [
+        "输出润色后全文及少量关键修改说明。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "tts-voiceover",
+      "title": "文字转语音",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成文字转语音，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "video-chapters",
+      "title": "视频章节",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成视频章节，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "video-editing",
+      "title": "视频剪辑",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成视频剪辑，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "video-highlights",
+      "title": "视频高光",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成视频高光，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "video-intro-outro",
+      "title": "视频片头片尾",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成视频片头片尾，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "video-production",
+      "title": "视频包装成片",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成视频包装成片，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "video-reframe",
+      "title": "视频画幅转换",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成视频画幅转换，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "video-script",
+      "title": "视频脚本",
+      "layer": "text_visual",
+      "description": "生成适合目标时长与画幅的视频脚本。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "确认时长、受众、平台、已有素材与已核验事实。",
+        "短视频安排开场、展开、转折与结束；长视频安排章节、留存钩子与节奏变化。",
+        "把画面、旁白、字幕、时长和素材需求逐镜对应。"
+      ],
+      "output_requirements": [
+        "输出标题、完整脚本、分镜与字幕文案；脚本完成不等于媒体成片。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "video-strategy",
+      "title": "视频制作策略",
+      "layer": "text_visual",
+      "description": "为目标视频规划内容结构、制作方式与资源安排。",
+      "engine": "text",
+      "target": "studio",
+      "instructions": [
+        "核对业务目标、受众、预算依据、可用素材和目标画幅。",
+        "比较实拍、图文动态、解说、访谈或生成镜头等适用方式。",
+        "拆出脚本、素材、声音、字幕、剪辑和质检任务。"
+      ],
+      "output_requirements": [
+        "输出制作方案、步骤、资源清单与风险；工具服务价格和规格未知时明确待核验。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    },
+    {
+      "name": "video-to-article",
+      "title": "视频转图文",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成视频转图文，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "voice-clone",
+      "title": "授权音色创建",
+      "layer": "audio_video",
+      "description": "使用已授权项目素材与原生媒体流程完成授权音色创建，返回实际产物。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "核对输入素材、授权范围、画幅和操作参数。",
+        "通过媒体处理流程生成实际文件，核验格式、内容与任务状态。",
+        "需要模型处理时检查用户授权与服务配置，不用文字结果冒充文件。"
+      ],
+      "output_requirements": [
+        "返回实际产物与可核对参数；缺少素材或服务时明确准备条件。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": false,
+        "parameters": []
+      }
+    },
+    {
+      "name": "xhs-note-creator",
+      "title": "小红书笔记创作",
+      "layer": "text_visual",
+      "description": "创作小红书完整笔记并制作实际卡片组，使用当前项目授权素材与已核验信息。",
+      "engine": "media",
+      "target": "studio",
+      "instructions": [
+        "确认受众场景、主题、真实卖点与授权素材。",
+        "生成标题、正文、标签与互动引导，规划逐页信息递进。",
+        "检查广告化表达、夸大承诺、信息密度与文案自然度。"
+      ],
+      "output_requirements": [
+        "输出标题、正文、标签、逐页结构，并实际制作3到9张可预览卡片与交付文件；生成成功不等于发布。"
+      ],
+      "input_schema": {
+        "accepts_assets": false,
+        "requires_model_authorization": false,
+        "input_required": true,
+        "parameters": []
+      }
+    }
+  ]
+}

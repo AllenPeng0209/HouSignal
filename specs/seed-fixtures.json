@@ -1,0 +1,611 @@
+{
+  "schemaVersion": 1,
+  "activeProjectId": "project-yunjing",
+  "team": {
+    "name": "云境内容团队"
+  },
+  "projects": [
+    {
+      "id": "project-yunjing",
+      "state": {
+        "demo": true,
+        "property": {
+          "id": "project-yunjing",
+          "name": "云境·壹号",
+          "subtitle": "上海 · 滨江改善",
+          "unit": "A-1801",
+          "size": "328",
+          "status": "示例楼盘",
+          "city": "上海",
+          "propertyType": "滨江改善住宅",
+          "owner": "林嘉宁",
+          "audience": "家庭改善",
+          "salesOwner": "林顾问",
+          "entryMode": "manual_native",
+          "heroSrc": "assets/hero-interior.jpg",
+          "visualLabel": "AI 空间示意",
+          "marketingPermission": {
+            "confirmed": true,
+            "evidence": "示例营销范围确认记录 · 仅用于本地产品演示"
+          }
+        },
+        "campaign": {
+          "id": "CMP-2026-001",
+          "name": "让空间，回应生活",
+          "channel": "抖音",
+          "coverTitle": null,
+          "aspectRatio": "9:16",
+          "subtitleStyle": "standard",
+          "topicId": null,
+          "step": "topics",
+          "script": "",
+          "scriptVersion": 0,
+          "renderedVersion": null,
+          "release": null,
+          "reviewDecision": null,
+          "exported": false,
+          "factRefs": []
+        },
+        "facts": [
+          {
+            "id": "F01",
+            "label": "建筑面积",
+            "value": "328",
+            "unit": "㎡",
+            "source": "示例销售资料 · 第 2 页",
+            "status": "verified",
+            "updatedAt": "2026-10-09",
+            "required": true
+          },
+          {
+            "id": "F02",
+            "label": "客厅开间",
+            "value": "8.2",
+            "unit": "米",
+            "source": "示例实测记录 · 客厅镜头 00:16",
+            "status": "verified",
+            "updatedAt": "2026-10-09",
+            "required": true
+          },
+          {
+            "id": "F03",
+            "label": "卧室布局",
+            "value": "4 房同层",
+            "unit": "",
+            "source": "示例户型图 · A-1801",
+            "status": "verified",
+            "updatedAt": "2026-10-09",
+            "required": true
+          },
+          {
+            "id": "F04",
+            "label": "厨餐关系",
+            "value": "厨房与餐厅相邻",
+            "unit": "",
+            "source": "示例现场拍摄 · 厨餐镜头 00:32",
+            "status": "verified",
+            "updatedAt": "2026-10-09",
+            "required": true
+          },
+          {
+            "id": "F05",
+            "label": "具体房源报价",
+            "value": "待负责人确认",
+            "unit": "",
+            "source": "未提供当前有效报价凭据",
+            "status": "unverified",
+            "updatedAt": "2026-10-08",
+            "required": false
+          },
+          {
+            "id": "F06",
+            "label": "可预约时间",
+            "value": "需销售逐次确认",
+            "unit": "",
+            "source": "示例接待说明 · 第 1 页",
+            "status": "verified",
+            "updatedAt": "2026-10-10",
+            "required": false
+          }
+        ],
+        "assets": [
+          {
+            "id": "A01",
+            "name": "客厅全景 · 空间分镜示意",
+            "space": "会客",
+            "type": "image",
+            "duration": "—",
+            "rights": "authorized",
+            "src": "assets/interior-1.jpg",
+            "previewType": "template_photo",
+            "note": "模板照片预览，非本楼盘现场素材；仅演示分镜布局。"
+          },
+          {
+            "id": "A02",
+            "name": "厨餐动线 · 空间分镜示意",
+            "space": "厨餐",
+            "type": "image",
+            "duration": "—",
+            "rights": "authorized",
+            "src": "assets/interior-2.jpg",
+            "previewType": "template_photo",
+            "note": "模板照片预览，非本楼盘现场素材；仅演示分镜布局。"
+          },
+          {
+            "id": "A03",
+            "name": "家庭起居 · 空间分镜示意",
+            "space": "起居",
+            "type": "image",
+            "duration": "—",
+            "rights": "authorized",
+            "src": "assets/interior-3.jpg",
+            "previewType": "template_photo",
+            "note": "模板照片预览，非本楼盘现场素材；仅演示分镜布局。"
+          },
+          {
+            "id": "A04",
+            "name": "私密休息 · 空间分镜示意",
+            "space": "私密",
+            "type": "image",
+            "duration": "—",
+            "rights": "authorized",
+            "src": "assets/interior-1.jpg",
+            "previewType": "template_photo",
+            "note": "模板照片预览，非本楼盘现场素材；仅演示分镜布局。"
+          }
+        ],
+        "topics": [
+          {
+            "id": "T01",
+            "title": "大客厅之后，家的尺度在哪里？",
+            "audience": "重视日常会客与家庭共处的改善家庭",
+            "angle": "从开间到起居，用真实尺度解释一家人的相处方式",
+            "refs": [
+              "F01",
+              "F02"
+            ],
+            "tag": "空间尺度"
+          },
+          {
+            "id": "T02",
+            "title": "三代同住，先看每天怎么走",
+            "audience": "有长辈同住需求的家庭",
+            "angle": "关注同层卧室与厨餐动线，同时提醒现场确认无障碍细节",
+            "refs": [
+              "F03",
+              "F04"
+            ],
+            "tag": "生活动线"
+          },
+          {
+            "id": "T03",
+            "title": "厨房和餐厅之间，藏着日常生活",
+            "audience": "经常在家做饭、招待朋友的家庭",
+            "angle": "比较真实厨餐距离，解释备餐与交流的生活场景",
+            "refs": [
+              "F04"
+            ],
+            "tag": "厨餐日常"
+          },
+          {
+            "id": "T04",
+            "title": "328 ㎡，哪些面积真正为你所用？",
+            "audience": "重视空间效率的改善购房者",
+            "angle": "区分建筑面积与实际使用感，不推导未核验套内面积",
+            "refs": [
+              "F01",
+              "F03"
+            ],
+            "tag": "专业取舍"
+          },
+          {
+            "id": "T05",
+            "title": "好房的标准，从一场真实看房开始",
+            "audience": "希望现场理解居住适配的购房者",
+            "angle": "以事实和问题清单组织看房，把专业判断交还给客户",
+            "refs": [
+              "F02",
+              "F03",
+              "F04",
+              "F06"
+            ],
+            "tag": "看房准备"
+          }
+        ],
+        "inquiries": [
+          {
+            "id": "INQ001",
+            "name": "陈女士",
+            "channel": "抖音",
+            "sourceConfidence": "confirmed",
+            "sourceText": "示例作品 PUB001 · 站内主动咨询",
+            "need": "希望了解长辈同住的动线安排",
+            "contactable": true,
+            "consent": true,
+            "qualified": true,
+            "owner": "林顾问",
+            "lastAt": "今天 08:40",
+            "avatar": "陈"
+          },
+          {
+            "id": "INQ002",
+            "name": "许先生",
+            "channel": "抖音",
+            "sourceConfidence": "confirmed",
+            "sourceText": "示例作品 PUB001 · 人工核对原会话",
+            "need": "日常在家会客，关注客厅与餐厅关系",
+            "contactable": true,
+            "consent": true,
+            "qualified": true,
+            "owner": "林顾问",
+            "lastAt": "昨天 16:20",
+            "avatar": "许"
+          },
+          {
+            "id": "INQ003",
+            "name": "周女士",
+            "channel": "抖音",
+            "sourceConfidence": "self_reported",
+            "sourceText": "客户自述看过厨餐内容，作品关联待核对",
+            "need": "改善自住，关注厨房动线与房间安排",
+            "contactable": true,
+            "consent": true,
+            "qualified": true,
+            "owner": "孟顾问",
+            "lastAt": "昨天 11:30",
+            "avatar": "周"
+          },
+          {
+            "id": "INQ004",
+            "name": "一位咨询者",
+            "channel": "抖音",
+            "sourceConfidence": "unknown",
+            "sourceText": "尚未确认具体作品或其他来源",
+            "need": "询问房源资料，具体需求待销售确认",
+            "contactable": false,
+            "consent": false,
+            "qualified": false,
+            "owner": "待分配",
+            "lastAt": "今天 08:55",
+            "avatar": "询"
+          }
+        ],
+        "leads": [
+          {
+            "id": "LEAD001",
+            "inquiryId": "INQ001",
+            "name": "陈女士",
+            "stage": "qualified",
+            "need": "长辈同住，确认日常动线及空间适配",
+            "owner": "林顾问",
+            "sourceConfidence": "confirmed",
+            "lastAt": "今天 08:40",
+            "nextAction": "通过已授权原会话回应动线问题",
+            "notes": [],
+            "stageHistory": [
+              {
+                "stage": "qualified",
+                "at": "2026-10-11T08:40:00+08:00"
+              }
+            ]
+          },
+          {
+            "id": "LEAD002",
+            "inquiryId": "INQ002",
+            "name": "许先生",
+            "stage": "appointment",
+            "need": "经常在家会客，希望现场感受客厅尺度",
+            "owner": "林顾问",
+            "sourceConfidence": "confirmed",
+            "lastAt": "昨天 16:20",
+            "nextAction": "再次确认双方已约定的看房时间",
+            "notes": [],
+            "stageHistory": [
+              {
+                "stage": "qualified",
+                "at": "2026-10-09T10:00:00+08:00"
+              },
+              {
+                "stage": "appointment",
+                "at": "2026-10-10T16:20:00+08:00"
+              }
+            ]
+          },
+          {
+            "id": "LEAD003",
+            "inquiryId": "INQ003",
+            "name": "周女士",
+            "stage": "visit_completed",
+            "need": "改善自住，已实地查看厨餐动线",
+            "owner": "孟顾问",
+            "sourceConfidence": "self_reported",
+            "lastAt": "昨天 11:30",
+            "nextAction": "收集实地看房后的取舍与疑问",
+            "notes": [],
+            "stageHistory": [
+              {
+                "stage": "qualified",
+                "at": "2026-10-07T10:00:00+08:00"
+              },
+              {
+                "stage": "appointment",
+                "at": "2026-10-08T14:00:00+08:00"
+              },
+              {
+                "stage": "visit_completed",
+                "at": "2026-10-10T11:30:00+08:00"
+              }
+            ]
+          }
+        ],
+        "publications": [
+          {
+            "id": "PUB001",
+            "title": "三代同住，先看每天怎么走",
+            "channel": "抖音",
+            "status": "verified",
+            "platformState": "live",
+            "views": 9800,
+            "inquiries": 2,
+            "qualified": 2,
+            "at": "2026-10-01",
+            "window": "D7",
+            "url": "https://example.com/demo/PUB001",
+            "demo": true
+          },
+          {
+            "id": "PUB002",
+            "title": "厨房和餐厅之间，藏着日常生活",
+            "channel": "抖音",
+            "status": "verified",
+            "platformState": "live",
+            "views": 4300,
+            "inquiries": 1,
+            "qualified": 1,
+            "at": "2026-10-03",
+            "window": "D7",
+            "url": "https://example.com/demo/PUB002",
+            "demo": true
+          },
+          {
+            "id": "PUB003",
+            "title": "328 ㎡，哪些面积真正为你所用？",
+            "channel": "抖音",
+            "status": "recorded",
+            "platformState": "review_pending",
+            "views": null,
+            "inquiries": null,
+            "qualified": null,
+            "at": "2026-10-10",
+            "window": "D7",
+            "url": "https://example.com/demo/PUB003",
+            "demo": true
+          }
+        ],
+        "proposals": [
+          {
+            "id": "P01",
+            "title": "下一条，讲清楚长辈的日常动线",
+            "reason": "销售匿名反馈出现同层居住与无障碍细节问题；先补核验再创作",
+            "status": "pending",
+            "refs": [
+              "F03",
+              "INQ001"
+            ]
+          },
+          {
+            "id": "P02",
+            "title": "用一组真实镜头解释厨餐关系",
+            "reason": "已有厨餐选题关联 1 条资格线索；增加具体生活场景并保留取舍",
+            "status": "pending",
+            "refs": [
+              "F04",
+              "PUB002"
+            ]
+          },
+          {
+            "id": "P03",
+            "title": "把未知来源的咨询交还销售确认",
+            "reason": "1 条咨询没有可确认的内容来源；继续保留未知，主动询问而不推断",
+            "status": "pending",
+            "refs": [
+              "INQ004"
+            ]
+          }
+        ],
+        "activities": [
+          {
+            "id": "ACT001",
+            "title": "示例资料负责人已核验 4 项核心事实",
+            "at": "今天 08:30",
+            "type": "fact",
+            "demo": true
+          },
+          {
+            "id": "ACT002",
+            "title": "陈女士已由销售确认真实需求",
+            "at": "今天 08:40",
+            "type": "lead",
+            "demo": true
+          },
+          {
+            "id": "ACT003",
+            "title": "1 条新咨询等待销售确认",
+            "at": "今天 08:55",
+            "type": "inquiry",
+            "demo": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "project-qian",
+      "state": {
+        "demo": true,
+        "property": {
+          "name": "栖岸·观澜",
+          "city": "杭州",
+          "propertyType": "低密庭院住宅",
+          "owner": "沈负责人",
+          "audience": "庭院生活家庭",
+          "salesOwner": "沈顾问",
+          "entryMode": "manual_native",
+          "heroSrc": null,
+          "visualLabel": "项目资料待完善",
+          "unit": "",
+          "size": "268",
+          "subtitle": "杭州 · 低密庭院住宅",
+          "status": "示例楼盘",
+          "marketingPermission": {
+            "confirmed": false,
+            "evidence": ""
+          },
+          "id": "project-qian"
+        },
+        "campaign": {
+          "id": "CMP-project-qian",
+          "name": "项目内容任务",
+          "channel": "抖音",
+          "coverTitle": null,
+          "aspectRatio": "9:16",
+          "subtitleStyle": "standard",
+          "topicId": null,
+          "step": "topics",
+          "script": "",
+          "scriptVersion": 0,
+          "renderedVersion": null,
+          "release": null,
+          "reviewDecision": null,
+          "exported": false,
+          "factRefs": []
+        },
+        "facts": [
+          {
+            "id": "F01",
+            "label": "建筑面积",
+            "unit": "㎡",
+            "required": true,
+            "value": "268",
+            "source": "栖岸示例销售资料 · 第 1 页",
+            "status": "verified",
+            "updatedAt": "2026-10-10"
+          },
+          {
+            "id": "F02",
+            "label": "客厅开间",
+            "unit": "米",
+            "required": true,
+            "value": "7.1",
+            "source": "栖岸示例现场记录 · 等待负责人核对",
+            "status": "unverified",
+            "updatedAt": "2026-10-10"
+          },
+          {
+            "id": "F03",
+            "label": "卧室布局",
+            "unit": "",
+            "required": true,
+            "value": "3 房＋多功能厅",
+            "source": "栖岸示例户型图 · 第 2 页",
+            "status": "verified",
+            "updatedAt": "2026-10-10"
+          },
+          {
+            "id": "F04",
+            "label": "厨餐关系",
+            "unit": "",
+            "required": true,
+            "value": "中岛连接餐厅",
+            "source": "栖岸示例现场记录 · 等待负责人核对",
+            "status": "unverified",
+            "updatedAt": "2026-10-10"
+          },
+          {
+            "id": "F05",
+            "label": "具体房源报价",
+            "unit": "",
+            "required": false,
+            "value": "",
+            "source": "",
+            "status": "unverified",
+            "updatedAt": "—"
+          },
+          {
+            "id": "F06",
+            "label": "可预约时间",
+            "unit": "",
+            "required": false,
+            "value": "",
+            "source": "",
+            "status": "unverified",
+            "updatedAt": "—"
+          }
+        ],
+        "assets": [],
+        "topics": [
+          {
+            "id": "T01",
+            "title": "家的尺度，如何回应日常生活？",
+            "audience": "待补充目标客户",
+            "angle": "结合已核验面积与开间，解释真实交流距离",
+            "refs": [
+              "F01",
+              "F02"
+            ],
+            "tag": "空间尺度"
+          },
+          {
+            "id": "T02",
+            "title": "一家人的日常，先看怎么走",
+            "audience": "待补充目标客户",
+            "angle": "核对卧室安排与厨餐关系，再解释日常生活动线",
+            "refs": [
+              "F03",
+              "F04"
+            ],
+            "tag": "生活动线"
+          },
+          {
+            "id": "T03",
+            "title": "厨房与餐厅，如何连接生活？",
+            "audience": "待补充目标客户",
+            "angle": "用项目实际厨餐关系说明备餐与家人交流",
+            "refs": [
+              "F04"
+            ],
+            "tag": "厨餐日常"
+          },
+          {
+            "id": "T04",
+            "title": "面积之外，怎样理解使用价值？",
+            "audience": "待补充目标客户",
+            "angle": "区分面积口径，结合已核验房型讨论居住适配",
+            "refs": [
+              "F01",
+              "F03"
+            ],
+            "tag": "专业取舍"
+          },
+          {
+            "id": "T05",
+            "title": "带着真实问题，安排一场看房",
+            "audience": "待补充目标客户",
+            "angle": "从已核验事实准备现场问题，并由销售确认预约",
+            "refs": [
+              "F02",
+              "F03",
+              "F04",
+              "F06"
+            ],
+            "tag": "看房准备"
+          }
+        ],
+        "inquiries": [],
+        "leads": [],
+        "publications": [],
+        "proposals": [],
+        "activities": []
+      }
+    }
+  ]
+}

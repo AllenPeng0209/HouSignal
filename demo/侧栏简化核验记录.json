@@ -1,0 +1,44 @@
+{
+  "version": "v0.2.1",
+  "verified_at": "2026-10-11 Asia/Shanghai",
+  "scope": "移除侧栏团队下拉，当前项目直接位于 Logo 下方",
+  "checks": {
+    "sidebar_order": [
+      "brand",
+      "project-selector",
+      "sidebar-search",
+      "nav-label",
+      "nav-list",
+      "sidebar-bottom"
+    ],
+    "team_dropdown_count": 0,
+    "switch_project": "云境·壹号 → 栖岸·观澜 → 刷新保留当前项目 → 云境·壹号，资料和统计分别恢复",
+    "new_project_entry": "新建豪宅项目表单与创建按钮正常可达；本次不另建项目",
+    "completeness_entry": "栖岸·观澜显示 3/7、43%，七项清单和补充入口可达",
+    "team_settings": "组织设置仍显示云境内容团队与角色责任",
+    "mobile": {
+      "viewport": [
+        390,
+        844
+      ],
+      "document_width": 390,
+      "project_trigger_visible": true,
+      "settings_button_bottom": 825.703125
+    },
+    "console_errors": [],
+    "model_tests": {
+      "passed": 38,
+      "failed": 0
+    },
+    "unchanged_sources": [
+      "dist/model.js",
+      "dist/project-store.js",
+      "dist/views.js"
+    ]
+  },
+  "screenshots": [
+    "screenshots/09_简化项目侧栏.jpg",
+    "screenshots/10_手机项目侧栏.jpg"
+  ],
+  "verification_boundary": "本地 HTML 演示；无真实模型、平台或 CRM 服务接入"
+}

@@ -1,0 +1,1390 @@
+{
+  "schema_version": 1,
+  "engine": "platform",
+  "observed_at": "2026-10-14T02:01:47.333276+08:00",
+  "cases": [
+    {
+      "case_id": "skill-bilibili-upload-commercial",
+      "skill_name": "skill-bilibili-upload",
+      "skill_id": "bilibili-publish",
+      "engine": "platform",
+      "platforms": [
+        "bilibili"
+      ],
+      "actual_action": "Upload one reviewed video and reconcile its platform receipt.",
+      "current_entry_behavior": "navigate_to_project_accounts",
+      "read_requests": [
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/skills",
+          "retain_fields": [
+            "id",
+            "skill_name",
+            "status",
+            "execution_mode",
+            "execution_engine"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts",
+          "retain_fields": [
+            "platform",
+            "supported",
+            "ready",
+            "loggedIn",
+            "verified",
+            "scope",
+            "official_api.configured",
+            "official_api.verified",
+            "official_api.capabilities"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-analytics",
+          "retain_fields": [
+            "platform",
+            "status",
+            "observed_at",
+            "source_observed_at",
+            "cached",
+            "limitations",
+            "metrics",
+            "period_metrics.scope_verified"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts/bilibili/status",
+          "retain_fields": [
+            "state",
+            "loggedIn",
+            "verified",
+            "qrReady"
+          ]
+        }
+      ],
+      "execution_policy": {
+        "free_only": true,
+        "external_writes_allowed": false,
+        "credentials_or_login_creation_allowed": false
+      },
+      "fixture": {
+        "kind": "root_managed_acceptance_project",
+        "required_inputs": [
+          "fresh_verified_platform_session",
+          "reviewed_content_version",
+          "approved_release_snapshot",
+          "authorized_source_assets",
+          "human_confirmation_of_specific_external_action"
+        ],
+        "optional_inputs": []
+      },
+      "dependencies": [
+        "project-scoped operating account",
+        "fixed native adapter",
+        "Python runtime",
+        "Chromium/Playwright (or Bilibili cookie/QR adapter)",
+        "platform account permission",
+        "current identity probe"
+      ],
+      "quality_gates": [
+        "Project/tenant/role and account-session scope match at enqueue and execution.",
+        "Approved version, release snapshot, facts, asset rights/revisions and exact media bytes remain valid.",
+        "Actual media decodes; content is nonempty and fits the intended platform, title and channel constraints.",
+        "Explicit confirmation binds the reviewed content/release and current account session.",
+        "Supplier receipt provides submission evidence; exit code alone, navigation, preparation and draft are insufficient.",
+        "Public completion requires a genuine target work URL/ID, matching content and identity, verified receipt and live visibility.",
+        "Unknown/interrupted submissions require reconciliation and cannot be automatically resubmitted.",
+        "Cached analytics retain original session and observation time; missing/partial metrics are not zero or commercial success."
+      ],
+      "commercial_status": "blocked",
+      "blockers": [
+        "No freshly verified operating account in the acceptance project has been established.",
+        "No confirmed reviewed content/target and authorized external write were supplied for this acceptance.",
+        "No real platform publication/interaction receipt and live visibility evidence were obtained."
+      ],
+      "forbidden_acceptance_shortcuts": [
+        "catalog_entry_exists",
+        "status_ready",
+        "navigation_succeeded",
+        "mocked_submission",
+        "dry_run_package",
+        "draft_saved",
+        "process_exit_zero_without_receipt",
+        "fixture_publication_claimed_live"
+      ],
+      "free_readonly_preflight_status": "passed",
+      "actual_write_status": "blocked",
+      "current_account_states": [
+        {
+          "platform": "bilibili",
+          "http_status": 200,
+          "state": "unknown",
+          "loggedIn": false,
+          "verified": false,
+          "qrReady": false
+        }
+      ]
+    },
+    {
+      "case_id": "skill-channels-upload-commercial",
+      "skill_name": "skill-channels-upload",
+      "skill_id": "channels-publish",
+      "engine": "platform",
+      "platforms": [
+        "weixin-channels"
+      ],
+      "actual_action": "Submit one reviewed video, resolve platform review and record actual visibility.",
+      "current_entry_behavior": "navigate_to_project_accounts",
+      "read_requests": [
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/skills",
+          "retain_fields": [
+            "id",
+            "skill_name",
+            "status",
+            "execution_mode",
+            "execution_engine"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts",
+          "retain_fields": [
+            "platform",
+            "supported",
+            "ready",
+            "loggedIn",
+            "verified",
+            "scope",
+            "official_api.configured",
+            "official_api.verified",
+            "official_api.capabilities"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-analytics",
+          "retain_fields": [
+            "platform",
+            "status",
+            "observed_at",
+            "source_observed_at",
+            "cached",
+            "limitations",
+            "metrics",
+            "period_metrics.scope_verified"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts/weixin-channels/status",
+          "retain_fields": [
+            "state",
+            "loggedIn",
+            "verified",
+            "qrReady"
+          ]
+        }
+      ],
+      "execution_policy": {
+        "free_only": true,
+        "external_writes_allowed": false,
+        "credentials_or_login_creation_allowed": false
+      },
+      "fixture": {
+        "kind": "root_managed_acceptance_project",
+        "required_inputs": [
+          "fresh_verified_platform_session",
+          "reviewed_content_version",
+          "approved_release_snapshot",
+          "authorized_source_assets",
+          "human_confirmation_of_specific_external_action"
+        ],
+        "optional_inputs": []
+      },
+      "dependencies": [
+        "project-scoped operating account",
+        "fixed native adapter",
+        "Python runtime",
+        "Chromium/Playwright (or Bilibili cookie/QR adapter)",
+        "platform account permission",
+        "current identity probe"
+      ],
+      "quality_gates": [
+        "Project/tenant/role and account-session scope match at enqueue and execution.",
+        "Approved version, release snapshot, facts, asset rights/revisions and exact media bytes remain valid.",
+        "Actual media decodes; content is nonempty and fits the intended platform, title and channel constraints.",
+        "Explicit confirmation binds the reviewed content/release and current account session.",
+        "Supplier receipt provides submission evidence; exit code alone, navigation, preparation and draft are insufficient.",
+        "Public completion requires a genuine target work URL/ID, matching content and identity, verified receipt and live visibility.",
+        "Unknown/interrupted submissions require reconciliation and cannot be automatically resubmitted.",
+        "Cached analytics retain original session and observation time; missing/partial metrics are not zero or commercial success."
+      ],
+      "commercial_status": "blocked",
+      "blockers": [
+        "No freshly verified operating account in the acceptance project has been established.",
+        "No confirmed reviewed content/target and authorized external write were supplied for this acceptance.",
+        "No real platform publication/interaction receipt and live visibility evidence were obtained."
+      ],
+      "forbidden_acceptance_shortcuts": [
+        "catalog_entry_exists",
+        "status_ready",
+        "navigation_succeeded",
+        "mocked_submission",
+        "dry_run_package",
+        "draft_saved",
+        "process_exit_zero_without_receipt",
+        "fixture_publication_claimed_live"
+      ],
+      "free_readonly_preflight_status": "passed",
+      "actual_write_status": "blocked",
+      "current_account_states": [
+        {
+          "platform": "weixin-channels",
+          "http_status": 200,
+          "state": "unknown",
+          "loggedIn": false,
+          "verified": false,
+          "qrReady": false
+        }
+      ]
+    },
+    {
+      "case_id": "skill-cross-platform-publish-commercial",
+      "skill_name": "skill-cross-platform-publish",
+      "skill_id": "native:skill-cross-platform-publish",
+      "engine": "platform",
+      "platforms": [
+        "xiaohongshu",
+        "kuaishou",
+        "weixin-channels",
+        "zhihu",
+        "bilibili",
+        "douyin",
+        "wechat-oa"
+      ],
+      "actual_action": "Submit separately approved channel versions to selected platforms and reconcile each target.",
+      "current_entry_behavior": "navigate_to_project_accounts",
+      "read_requests": [
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/skills",
+          "retain_fields": [
+            "id",
+            "skill_name",
+            "status",
+            "execution_mode",
+            "execution_engine"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts",
+          "retain_fields": [
+            "platform",
+            "supported",
+            "ready",
+            "loggedIn",
+            "verified",
+            "scope",
+            "official_api.configured",
+            "official_api.verified",
+            "official_api.capabilities"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-analytics",
+          "retain_fields": [
+            "platform",
+            "status",
+            "observed_at",
+            "source_observed_at",
+            "cached",
+            "limitations",
+            "metrics",
+            "period_metrics.scope_verified"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts/xiaohongshu/status",
+          "retain_fields": [
+            "state",
+            "loggedIn",
+            "verified",
+            "qrReady"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts/kuaishou/status",
+          "retain_fields": [
+            "state",
+            "loggedIn",
+            "verified",
+            "qrReady"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts/weixin-channels/status",
+          "retain_fields": [
+            "state",
+            "loggedIn",
+            "verified",
+            "qrReady"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts/zhihu/status",
+          "retain_fields": [
+            "state",
+            "loggedIn",
+            "verified",
+            "qrReady"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts/bilibili/status",
+          "retain_fields": [
+            "state",
+            "loggedIn",
+            "verified",
+            "qrReady"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts/douyin/status",
+          "retain_fields": [
+            "state",
+            "loggedIn",
+            "verified",
+            "qrReady"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts/wechat-oa/status",
+          "retain_fields": [
+            "state",
+            "loggedIn",
+            "verified",
+            "qrReady"
+          ]
+        }
+      ],
+      "execution_policy": {
+        "free_only": true,
+        "external_writes_allowed": false,
+        "credentials_or_login_creation_allowed": false
+      },
+      "fixture": {
+        "kind": "root_managed_acceptance_project",
+        "required_inputs": [
+          "fresh_verified_platform_session",
+          "reviewed_content_version",
+          "approved_release_snapshot",
+          "authorized_source_assets",
+          "human_confirmation_of_specific_external_action"
+        ],
+        "optional_inputs": [
+          "approved_version_per_target"
+        ]
+      },
+      "dependencies": [
+        "project-scoped operating account",
+        "fixed native adapter",
+        "Python runtime",
+        "Chromium/Playwright (or Bilibili cookie/QR adapter)",
+        "platform account permission",
+        "current identity probe"
+      ],
+      "quality_gates": [
+        "Project/tenant/role and account-session scope match at enqueue and execution.",
+        "Approved version, release snapshot, facts, asset rights/revisions and exact media bytes remain valid.",
+        "Actual media decodes; content is nonempty and fits the intended platform, title and channel constraints.",
+        "Explicit confirmation binds the reviewed content/release and current account session.",
+        "Supplier receipt provides submission evidence; exit code alone, navigation, preparation and draft are insufficient.",
+        "Public completion requires a genuine target work URL/ID, matching content and identity, verified receipt and live visibility.",
+        "Unknown/interrupted submissions require reconciliation and cannot be automatically resubmitted.",
+        "Cached analytics retain original session and observation time; missing/partial metrics are not zero or commercial success."
+      ],
+      "commercial_status": "blocked",
+      "blockers": [
+        "No cross-platform coordinator, per-target approved version binding or partial-failure reconciliation API.",
+        "No freshly verified operating account in the acceptance project has been established.",
+        "No confirmed reviewed content/target and authorized external write were supplied for this acceptance.",
+        "No real platform publication/interaction receipt and live visibility evidence were obtained."
+      ],
+      "forbidden_acceptance_shortcuts": [
+        "catalog_entry_exists",
+        "status_ready",
+        "navigation_succeeded",
+        "mocked_submission",
+        "dry_run_package",
+        "draft_saved",
+        "process_exit_zero_without_receipt",
+        "fixture_publication_claimed_live"
+      ],
+      "free_readonly_preflight_status": "passed",
+      "actual_write_status": "blocked",
+      "current_account_states": [
+        {
+          "platform": "xiaohongshu",
+          "http_status": 200,
+          "state": "unknown",
+          "loggedIn": false,
+          "verified": false,
+          "qrReady": false
+        },
+        {
+          "platform": "kuaishou",
+          "http_status": 200,
+          "state": "unknown",
+          "loggedIn": false,
+          "verified": false,
+          "qrReady": false
+        },
+        {
+          "platform": "weixin-channels",
+          "http_status": 200,
+          "state": "unknown",
+          "loggedIn": false,
+          "verified": false,
+          "qrReady": false
+        },
+        {
+          "platform": "zhihu",
+          "http_status": 200,
+          "state": "unknown",
+          "loggedIn": false,
+          "verified": false,
+          "qrReady": false
+        },
+        {
+          "platform": "bilibili",
+          "http_status": 200,
+          "state": "unknown",
+          "loggedIn": false,
+          "verified": false,
+          "qrReady": false
+        },
+        {
+          "platform": "douyin",
+          "http_status": 200,
+          "state": "unknown",
+          "loggedIn": false,
+          "verified": false,
+          "qrReady": false
+        },
+        {
+          "platform": "wechat-oa",
+          "http_status": 200,
+          "state": "unknown",
+          "loggedIn": false,
+          "verified": false,
+          "qrReady": false
+        }
+      ]
+    },
+    {
+      "case_id": "skill-douyin-upload-commercial",
+      "skill_name": "skill-douyin-upload",
+      "skill_id": "douyin-publish",
+      "engine": "platform",
+      "platforms": [
+        "douyin"
+      ],
+      "actual_action": "Submit one reviewed video, reconcile account identity, review state and actual work URL.",
+      "current_entry_behavior": "navigate_to_project_accounts",
+      "read_requests": [
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/skills",
+          "retain_fields": [
+            "id",
+            "skill_name",
+            "status",
+            "execution_mode",
+            "execution_engine"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts",
+          "retain_fields": [
+            "platform",
+            "supported",
+            "ready",
+            "loggedIn",
+            "verified",
+            "scope",
+            "official_api.configured",
+            "official_api.verified",
+            "official_api.capabilities"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-analytics",
+          "retain_fields": [
+            "platform",
+            "status",
+            "observed_at",
+            "source_observed_at",
+            "cached",
+            "limitations",
+            "metrics",
+            "period_metrics.scope_verified"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts/douyin/status",
+          "retain_fields": [
+            "state",
+            "loggedIn",
+            "verified",
+            "qrReady"
+          ]
+        }
+      ],
+      "execution_policy": {
+        "free_only": true,
+        "external_writes_allowed": false,
+        "credentials_or_login_creation_allowed": false
+      },
+      "fixture": {
+        "kind": "root_managed_acceptance_project",
+        "required_inputs": [
+          "fresh_verified_platform_session",
+          "reviewed_content_version",
+          "approved_release_snapshot",
+          "authorized_source_assets",
+          "human_confirmation_of_specific_external_action"
+        ],
+        "optional_inputs": []
+      },
+      "dependencies": [
+        "project-scoped operating account",
+        "fixed native adapter",
+        "Python runtime",
+        "Chromium/Playwright (or Bilibili cookie/QR adapter)",
+        "platform account permission",
+        "current identity probe"
+      ],
+      "quality_gates": [
+        "Project/tenant/role and account-session scope match at enqueue and execution.",
+        "Approved version, release snapshot, facts, asset rights/revisions and exact media bytes remain valid.",
+        "Actual media decodes; content is nonempty and fits the intended platform, title and channel constraints.",
+        "Explicit confirmation binds the reviewed content/release and current account session.",
+        "Supplier receipt provides submission evidence; exit code alone, navigation, preparation and draft are insufficient.",
+        "Public completion requires a genuine target work URL/ID, matching content and identity, verified receipt and live visibility.",
+        "Unknown/interrupted submissions require reconciliation and cannot be automatically resubmitted.",
+        "Cached analytics retain original session and observation time; missing/partial metrics are not zero or commercial success."
+      ],
+      "commercial_status": "blocked",
+      "blockers": [
+        "No freshly verified operating account in the acceptance project has been established.",
+        "No confirmed reviewed content/target and authorized external write were supplied for this acceptance.",
+        "No real platform publication/interaction receipt and live visibility evidence were obtained."
+      ],
+      "forbidden_acceptance_shortcuts": [
+        "catalog_entry_exists",
+        "status_ready",
+        "navigation_succeeded",
+        "mocked_submission",
+        "dry_run_package",
+        "draft_saved",
+        "process_exit_zero_without_receipt",
+        "fixture_publication_claimed_live"
+      ],
+      "free_readonly_preflight_status": "passed",
+      "actual_write_status": "blocked",
+      "current_account_states": [
+        {
+          "platform": "douyin",
+          "http_status": 200,
+          "state": "unknown",
+          "loggedIn": false,
+          "verified": false,
+          "qrReady": false
+        }
+      ]
+    },
+    {
+      "case_id": "skill-kuaishou-upload-commercial",
+      "skill_name": "skill-kuaishou-upload",
+      "skill_id": "kuaishou-publish",
+      "engine": "platform",
+      "platforms": [
+        "kuaishou"
+      ],
+      "actual_action": "Submit one reviewed video or image and reconcile the platform work.",
+      "current_entry_behavior": "navigate_to_project_accounts",
+      "read_requests": [
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/skills",
+          "retain_fields": [
+            "id",
+            "skill_name",
+            "status",
+            "execution_mode",
+            "execution_engine"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts",
+          "retain_fields": [
+            "platform",
+            "supported",
+            "ready",
+            "loggedIn",
+            "verified",
+            "scope",
+            "official_api.configured",
+            "official_api.verified",
+            "official_api.capabilities"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-analytics",
+          "retain_fields": [
+            "platform",
+            "status",
+            "observed_at",
+            "source_observed_at",
+            "cached",
+            "limitations",
+            "metrics",
+            "period_metrics.scope_verified"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts/kuaishou/status",
+          "retain_fields": [
+            "state",
+            "loggedIn",
+            "verified",
+            "qrReady"
+          ]
+        }
+      ],
+      "execution_policy": {
+        "free_only": true,
+        "external_writes_allowed": false,
+        "credentials_or_login_creation_allowed": false
+      },
+      "fixture": {
+        "kind": "root_managed_acceptance_project",
+        "required_inputs": [
+          "fresh_verified_platform_session",
+          "reviewed_content_version",
+          "approved_release_snapshot",
+          "authorized_source_assets",
+          "human_confirmation_of_specific_external_action"
+        ],
+        "optional_inputs": []
+      },
+      "dependencies": [
+        "project-scoped operating account",
+        "fixed native adapter",
+        "Python runtime",
+        "Chromium/Playwright (or Bilibili cookie/QR adapter)",
+        "platform account permission",
+        "current identity probe"
+      ],
+      "quality_gates": [
+        "Project/tenant/role and account-session scope match at enqueue and execution.",
+        "Approved version, release snapshot, facts, asset rights/revisions and exact media bytes remain valid.",
+        "Actual media decodes; content is nonempty and fits the intended platform, title and channel constraints.",
+        "Explicit confirmation binds the reviewed content/release and current account session.",
+        "Supplier receipt provides submission evidence; exit code alone, navigation, preparation and draft are insufficient.",
+        "Public completion requires a genuine target work URL/ID, matching content and identity, verified receipt and live visibility.",
+        "Unknown/interrupted submissions require reconciliation and cannot be automatically resubmitted.",
+        "Cached analytics retain original session and observation time; missing/partial metrics are not zero or commercial success."
+      ],
+      "commercial_status": "blocked",
+      "blockers": [
+        "No freshly verified operating account in the acceptance project has been established.",
+        "No confirmed reviewed content/target and authorized external write were supplied for this acceptance.",
+        "No real platform publication/interaction receipt and live visibility evidence were obtained."
+      ],
+      "forbidden_acceptance_shortcuts": [
+        "catalog_entry_exists",
+        "status_ready",
+        "navigation_succeeded",
+        "mocked_submission",
+        "dry_run_package",
+        "draft_saved",
+        "process_exit_zero_without_receipt",
+        "fixture_publication_claimed_live"
+      ],
+      "free_readonly_preflight_status": "passed",
+      "actual_write_status": "blocked",
+      "current_account_states": [
+        {
+          "platform": "kuaishou",
+          "http_status": 200,
+          "state": "unknown",
+          "loggedIn": false,
+          "verified": false,
+          "qrReady": false
+        }
+      ]
+    },
+    {
+      "case_id": "skill-wechat-publisher-commercial",
+      "skill_name": "skill-wechat-publisher",
+      "skill_id": "wechat-publish",
+      "engine": "platform",
+      "platforms": [
+        "wechat-oa"
+      ],
+      "actual_action": "Publish an approved official-account article; current adapter only uploads material and saves a draft.",
+      "current_entry_behavior": "navigate_to_project_accounts",
+      "read_requests": [
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/skills",
+          "retain_fields": [
+            "id",
+            "skill_name",
+            "status",
+            "execution_mode",
+            "execution_engine"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts",
+          "retain_fields": [
+            "platform",
+            "supported",
+            "ready",
+            "loggedIn",
+            "verified",
+            "scope",
+            "official_api.configured",
+            "official_api.verified",
+            "official_api.capabilities"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-analytics",
+          "retain_fields": [
+            "platform",
+            "status",
+            "observed_at",
+            "source_observed_at",
+            "cached",
+            "limitations",
+            "metrics",
+            "period_metrics.scope_verified"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts/wechat-oa/status",
+          "retain_fields": [
+            "state",
+            "loggedIn",
+            "verified",
+            "qrReady"
+          ]
+        }
+      ],
+      "execution_policy": {
+        "free_only": true,
+        "external_writes_allowed": false,
+        "credentials_or_login_creation_allowed": false
+      },
+      "fixture": {
+        "kind": "root_managed_acceptance_project",
+        "required_inputs": [
+          "fresh_verified_platform_session",
+          "reviewed_content_version",
+          "approved_release_snapshot",
+          "authorized_source_assets",
+          "human_confirmation_of_specific_external_action"
+        ],
+        "optional_inputs": []
+      },
+      "dependencies": [
+        "project-scoped operating account",
+        "fixed native adapter",
+        "Python runtime",
+        "Chromium/Playwright (or Bilibili cookie/QR adapter)",
+        "platform account permission",
+        "current identity probe"
+      ],
+      "quality_gates": [
+        "Project/tenant/role and account-session scope match at enqueue and execution.",
+        "Approved version, release snapshot, facts, asset rights/revisions and exact media bytes remain valid.",
+        "Actual media decodes; content is nonempty and fits the intended platform, title and channel constraints.",
+        "Explicit confirmation binds the reviewed content/release and current account session.",
+        "Supplier receipt provides submission evidence; exit code alone, navigation, preparation and draft are insufficient.",
+        "Public completion requires a genuine target work URL/ID, matching content and identity, verified receipt and live visibility.",
+        "Unknown/interrupted submissions require reconciliation and cannot be automatically resubmitted.",
+        "Cached analytics retain original session and observation time; missing/partial metrics are not zero or commercial success."
+      ],
+      "commercial_status": "blocked",
+      "blockers": [
+        "Current native platform adapter saves official-account drafts only; draft_saved is not published.",
+        "No freshly verified operating account in the acceptance project has been established.",
+        "No confirmed reviewed content/target and authorized external write were supplied for this acceptance.",
+        "No real platform publication/interaction receipt and live visibility evidence were obtained."
+      ],
+      "forbidden_acceptance_shortcuts": [
+        "catalog_entry_exists",
+        "status_ready",
+        "navigation_succeeded",
+        "mocked_submission",
+        "dry_run_package",
+        "draft_saved",
+        "process_exit_zero_without_receipt",
+        "fixture_publication_claimed_live"
+      ],
+      "free_readonly_preflight_status": "passed",
+      "actual_write_status": "blocked",
+      "current_account_states": [
+        {
+          "platform": "wechat-oa",
+          "http_status": 200,
+          "state": "unknown",
+          "loggedIn": false,
+          "verified": false,
+          "qrReady": false
+        }
+      ]
+    },
+    {
+      "case_id": "skill-xhs-comment-reply-commercial",
+      "skill_name": "skill-xhs-comment-reply",
+      "skill_id": "native:skill-xhs-comment-reply",
+      "engine": "platform",
+      "platforms": [
+        "xiaohongshu"
+      ],
+      "actual_action": "Reply to one explicitly identified public comment using the confirmed reply text.",
+      "current_entry_behavior": "navigate_to_project_accounts",
+      "read_requests": [
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/skills",
+          "retain_fields": [
+            "id",
+            "skill_name",
+            "status",
+            "execution_mode",
+            "execution_engine"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts",
+          "retain_fields": [
+            "platform",
+            "supported",
+            "ready",
+            "loggedIn",
+            "verified",
+            "scope",
+            "official_api.configured",
+            "official_api.verified",
+            "official_api.capabilities"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-analytics",
+          "retain_fields": [
+            "platform",
+            "status",
+            "observed_at",
+            "source_observed_at",
+            "cached",
+            "limitations",
+            "metrics",
+            "period_metrics.scope_verified"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts/xiaohongshu/status",
+          "retain_fields": [
+            "state",
+            "loggedIn",
+            "verified",
+            "qrReady"
+          ]
+        }
+      ],
+      "execution_policy": {
+        "free_only": true,
+        "external_writes_allowed": false,
+        "credentials_or_login_creation_allowed": false
+      },
+      "fixture": {
+        "kind": "root_managed_acceptance_project",
+        "required_inputs": [
+          "fresh_verified_platform_session",
+          "reviewed_content_version",
+          "approved_release_snapshot",
+          "authorized_source_assets",
+          "human_confirmation_of_specific_external_action"
+        ],
+        "optional_inputs": [
+          "specific_note_and_comment_id",
+          "confirmed_reply_text"
+        ]
+      },
+      "dependencies": [
+        "project-scoped operating account",
+        "fixed native adapter",
+        "Python runtime",
+        "Chromium/Playwright (or Bilibili cookie/QR adapter)",
+        "platform account permission",
+        "current identity probe"
+      ],
+      "quality_gates": [
+        "Project/tenant/role and account-session scope match at enqueue and execution.",
+        "Approved version, release snapshot, facts, asset rights/revisions and exact media bytes remain valid.",
+        "Actual media decodes; content is nonempty and fits the intended platform, title and channel constraints.",
+        "Explicit confirmation binds the reviewed content/release and current account session.",
+        "Supplier receipt provides submission evidence; exit code alone, navigation, preparation and draft are insufficient.",
+        "Public completion requires a genuine target work URL/ID, matching content and identity, verified receipt and live visibility.",
+        "Unknown/interrupted submissions require reconciliation and cannot be automatically resubmitted.",
+        "Cached analytics retain original session and observation time; missing/partial metrics are not zero or commercial success."
+      ],
+      "commercial_status": "blocked",
+      "blockers": [
+        "No comment/reply target identifier or project-owned comment write adapter/API.",
+        "No freshly verified operating account in the acceptance project has been established.",
+        "No confirmed reviewed content/target and authorized external write were supplied for this acceptance.",
+        "No real platform publication/interaction receipt and live visibility evidence were obtained."
+      ],
+      "forbidden_acceptance_shortcuts": [
+        "catalog_entry_exists",
+        "status_ready",
+        "navigation_succeeded",
+        "mocked_submission",
+        "dry_run_package",
+        "draft_saved",
+        "process_exit_zero_without_receipt",
+        "fixture_publication_claimed_live"
+      ],
+      "free_readonly_preflight_status": "passed",
+      "actual_write_status": "blocked",
+      "current_account_states": [
+        {
+          "platform": "xiaohongshu",
+          "http_status": 200,
+          "state": "unknown",
+          "loggedIn": false,
+          "verified": false,
+          "qrReady": false
+        }
+      ]
+    },
+    {
+      "case_id": "skill-xhs-publisher-commercial",
+      "skill_name": "skill-xhs-publisher",
+      "skill_id": "xiaohongshu-publish",
+      "engine": "platform",
+      "platforms": [
+        "xiaohongshu"
+      ],
+      "actual_action": "Submit approved image/video content and reconcile the actual public note.",
+      "current_entry_behavior": "navigate_to_project_accounts",
+      "read_requests": [
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/skills",
+          "retain_fields": [
+            "id",
+            "skill_name",
+            "status",
+            "execution_mode",
+            "execution_engine"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts",
+          "retain_fields": [
+            "platform",
+            "supported",
+            "ready",
+            "loggedIn",
+            "verified",
+            "scope",
+            "official_api.configured",
+            "official_api.verified",
+            "official_api.capabilities"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-analytics",
+          "retain_fields": [
+            "platform",
+            "status",
+            "observed_at",
+            "source_observed_at",
+            "cached",
+            "limitations",
+            "metrics",
+            "period_metrics.scope_verified"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts/xiaohongshu/status",
+          "retain_fields": [
+            "state",
+            "loggedIn",
+            "verified",
+            "qrReady"
+          ]
+        }
+      ],
+      "execution_policy": {
+        "free_only": true,
+        "external_writes_allowed": false,
+        "credentials_or_login_creation_allowed": false
+      },
+      "fixture": {
+        "kind": "root_managed_acceptance_project",
+        "required_inputs": [
+          "fresh_verified_platform_session",
+          "reviewed_content_version",
+          "approved_release_snapshot",
+          "authorized_source_assets",
+          "human_confirmation_of_specific_external_action"
+        ],
+        "optional_inputs": []
+      },
+      "dependencies": [
+        "project-scoped operating account",
+        "fixed native adapter",
+        "Python runtime",
+        "Chromium/Playwright (or Bilibili cookie/QR adapter)",
+        "platform account permission",
+        "current identity probe"
+      ],
+      "quality_gates": [
+        "Project/tenant/role and account-session scope match at enqueue and execution.",
+        "Approved version, release snapshot, facts, asset rights/revisions and exact media bytes remain valid.",
+        "Actual media decodes; content is nonempty and fits the intended platform, title and channel constraints.",
+        "Explicit confirmation binds the reviewed content/release and current account session.",
+        "Supplier receipt provides submission evidence; exit code alone, navigation, preparation and draft are insufficient.",
+        "Public completion requires a genuine target work URL/ID, matching content and identity, verified receipt and live visibility.",
+        "Unknown/interrupted submissions require reconciliation and cannot be automatically resubmitted.",
+        "Cached analytics retain original session and observation time; missing/partial metrics are not zero or commercial success."
+      ],
+      "commercial_status": "blocked",
+      "blockers": [
+        "No freshly verified operating account in the acceptance project has been established.",
+        "No confirmed reviewed content/target and authorized external write were supplied for this acceptance.",
+        "No real platform publication/interaction receipt and live visibility evidence were obtained."
+      ],
+      "forbidden_acceptance_shortcuts": [
+        "catalog_entry_exists",
+        "status_ready",
+        "navigation_succeeded",
+        "mocked_submission",
+        "dry_run_package",
+        "draft_saved",
+        "process_exit_zero_without_receipt",
+        "fixture_publication_claimed_live"
+      ],
+      "free_readonly_preflight_status": "passed",
+      "actual_write_status": "blocked",
+      "current_account_states": [
+        {
+          "platform": "xiaohongshu",
+          "http_status": 200,
+          "state": "unknown",
+          "loggedIn": false,
+          "verified": false,
+          "qrReady": false
+        }
+      ]
+    },
+    {
+      "case_id": "skill-zhihu-answer-commercial",
+      "skill_name": "skill-zhihu-answer",
+      "skill_id": "native:skill-zhihu-answer",
+      "engine": "platform",
+      "platforms": [
+        "zhihu"
+      ],
+      "actual_action": "Publish a confirmed answer to a specific real question and reconcile its answer URL.",
+      "current_entry_behavior": "navigate_to_project_accounts",
+      "read_requests": [
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/skills",
+          "retain_fields": [
+            "id",
+            "skill_name",
+            "status",
+            "execution_mode",
+            "execution_engine"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts",
+          "retain_fields": [
+            "platform",
+            "supported",
+            "ready",
+            "loggedIn",
+            "verified",
+            "scope",
+            "official_api.configured",
+            "official_api.verified",
+            "official_api.capabilities"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-analytics",
+          "retain_fields": [
+            "platform",
+            "status",
+            "observed_at",
+            "source_observed_at",
+            "cached",
+            "limitations",
+            "metrics",
+            "period_metrics.scope_verified"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts/zhihu/status",
+          "retain_fields": [
+            "state",
+            "loggedIn",
+            "verified",
+            "qrReady"
+          ]
+        }
+      ],
+      "execution_policy": {
+        "free_only": true,
+        "external_writes_allowed": false,
+        "credentials_or_login_creation_allowed": false
+      },
+      "fixture": {
+        "kind": "root_managed_acceptance_project",
+        "required_inputs": [
+          "fresh_verified_platform_session",
+          "reviewed_content_version",
+          "approved_release_snapshot",
+          "authorized_source_assets",
+          "human_confirmation_of_specific_external_action"
+        ],
+        "optional_inputs": [
+          "specific_question_url",
+          "confirmed_answer_text"
+        ]
+      },
+      "dependencies": [
+        "project-scoped operating account",
+        "fixed native adapter",
+        "Python runtime",
+        "Chromium/Playwright (or Bilibili cookie/QR adapter)",
+        "platform account permission",
+        "current identity probe"
+      ],
+      "quality_gates": [
+        "Project/tenant/role and account-session scope match at enqueue and execution.",
+        "Approved version, release snapshot, facts, asset rights/revisions and exact media bytes remain valid.",
+        "Actual media decodes; content is nonempty and fits the intended platform, title and channel constraints.",
+        "Explicit confirmation binds the reviewed content/release and current account session.",
+        "Supplier receipt provides submission evidence; exit code alone, navigation, preparation and draft are insufficient.",
+        "Public completion requires a genuine target work URL/ID, matching content and identity, verified receipt and live visibility.",
+        "Unknown/interrupted submissions require reconciliation and cannot be automatically resubmitted.",
+        "Cached analytics retain original session and observation time; missing/partial metrics are not zero or commercial success."
+      ],
+      "commercial_status": "blocked",
+      "blockers": [
+        "No question identifier or answer-target API; current Zhihu command is generic publisher/column flow.",
+        "No freshly verified operating account in the acceptance project has been established.",
+        "No confirmed reviewed content/target and authorized external write were supplied for this acceptance.",
+        "No real platform publication/interaction receipt and live visibility evidence were obtained."
+      ],
+      "forbidden_acceptance_shortcuts": [
+        "catalog_entry_exists",
+        "status_ready",
+        "navigation_succeeded",
+        "mocked_submission",
+        "dry_run_package",
+        "draft_saved",
+        "process_exit_zero_without_receipt",
+        "fixture_publication_claimed_live"
+      ],
+      "free_readonly_preflight_status": "passed",
+      "actual_write_status": "blocked",
+      "current_account_states": [
+        {
+          "platform": "zhihu",
+          "http_status": 200,
+          "state": "unknown",
+          "loggedIn": false,
+          "verified": false,
+          "qrReady": false
+        }
+      ]
+    },
+    {
+      "case_id": "skill-zhihu-publisher-commercial",
+      "skill_name": "skill-zhihu-publisher",
+      "skill_id": "zhihu-publish",
+      "engine": "platform",
+      "platforms": [
+        "zhihu"
+      ],
+      "actual_action": "Publish an approved Zhihu column article and reconcile the actual public article.",
+      "current_entry_behavior": "navigate_to_project_accounts",
+      "read_requests": [
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/skills",
+          "retain_fields": [
+            "id",
+            "skill_name",
+            "status",
+            "execution_mode",
+            "execution_engine"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts",
+          "retain_fields": [
+            "platform",
+            "supported",
+            "ready",
+            "loggedIn",
+            "verified",
+            "scope",
+            "official_api.configured",
+            "official_api.verified",
+            "official_api.capabilities"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-analytics",
+          "retain_fields": [
+            "platform",
+            "status",
+            "observed_at",
+            "source_observed_at",
+            "cached",
+            "limitations",
+            "metrics",
+            "period_metrics.scope_verified"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/projects/{project_id}/operations/platform-accounts/zhihu/status",
+          "retain_fields": [
+            "state",
+            "loggedIn",
+            "verified",
+            "qrReady"
+          ]
+        }
+      ],
+      "execution_policy": {
+        "free_only": true,
+        "external_writes_allowed": false,
+        "credentials_or_login_creation_allowed": false
+      },
+      "fixture": {
+        "kind": "root_managed_acceptance_project",
+        "required_inputs": [
+          "fresh_verified_platform_session",
+          "reviewed_content_version",
+          "approved_release_snapshot",
+          "authorized_source_assets",
+          "human_confirmation_of_specific_external_action"
+        ],
+        "optional_inputs": []
+      },
+      "dependencies": [
+        "project-scoped operating account",
+        "fixed native adapter",
+        "Python runtime",
+        "Chromium/Playwright (or Bilibili cookie/QR adapter)",
+        "platform account permission",
+        "current identity probe"
+      ],
+      "quality_gates": [
+        "Project/tenant/role and account-session scope match at enqueue and execution.",
+        "Approved version, release snapshot, facts, asset rights/revisions and exact media bytes remain valid.",
+        "Actual media decodes; content is nonempty and fits the intended platform, title and channel constraints.",
+        "Explicit confirmation binds the reviewed content/release and current account session.",
+        "Supplier receipt provides submission evidence; exit code alone, navigation, preparation and draft are insufficient.",
+        "Public completion requires a genuine target work URL/ID, matching content and identity, verified receipt and live visibility.",
+        "Unknown/interrupted submissions require reconciliation and cannot be automatically resubmitted.",
+        "Cached analytics retain original session and observation time; missing/partial metrics are not zero or commercial success."
+      ],
+      "commercial_status": "blocked",
+      "blockers": [
+        "No freshly verified operating account in the acceptance project has been established.",
+        "No confirmed reviewed content/target and authorized external write were supplied for this acceptance.",
+        "No real platform publication/interaction receipt and live visibility evidence were obtained."
+      ],
+      "forbidden_acceptance_shortcuts": [
+        "catalog_entry_exists",
+        "status_ready",
+        "navigation_succeeded",
+        "mocked_submission",
+        "dry_run_package",
+        "draft_saved",
+        "process_exit_zero_without_receipt",
+        "fixture_publication_claimed_live"
+      ],
+      "free_readonly_preflight_status": "passed",
+      "actual_write_status": "blocked",
+      "current_account_states": [
+        {
+          "platform": "zhihu",
+          "http_status": 200,
+          "state": "unknown",
+          "loggedIn": false,
+          "verified": false,
+          "qrReady": false
+        }
+      ]
+    }
+  ],
+  "overall_commercial_status": "blocked",
+  "notes": [
+    "Only the root acceptance runner may populate real authenticated project API observations.",
+    "These cases authorize GET observations only; listed real actions remain pending explicit action authorization."
+  ],
+  "actual_readonly_evidence_ref": "reports/skill-acceptance/platform-audit.json#/live_readonly_evidence/current_acceptance_project_api",
+  "acceptance_project_id": "2863582a-4cd0-4cea-9686-1ffba39c5839"
+}

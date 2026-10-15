@@ -1,0 +1,1392 @@
+{
+  "schema_version": 1,
+  "group": "text_research",
+  "cases": [
+    {
+      "case_id": "text_research:copywriting:primary",
+      "skill_name": "copywriting",
+      "input": "为当前项目写一份改善家庭咨询落地文案：3个标题、约300字正文、FAQ 3问、预约看房CTA。只用项目已核验事实；不得补写价格、学区、回报承诺。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "account_fixture_name": "primary",
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "3个不同角度标题",
+          "正文与CTA可直接编辑",
+          "FAQ回应真实资料与未知字段",
+          "没有收益或学校承诺"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "已核验项目事实",
+        "primary项目账号",
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:novel-writer:primary",
+      "skill_name": "novel-writer",
+      "input": "创作悬疑小说第一章，1800到2200个中文字符。人物阿岚在旧桥栏杆发现铜钥匙，黎明必须去钟楼；第三人称有限视角，以新的线索收尾。所有人物地点为文学虚构，不是当前项目或真实客户。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 1500,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "完整第一章正文",
+          "人物动机与冲突清楚",
+          "第三人称有限视角一致",
+          "铜钥匙与黎明钟楼线索保留",
+          "真实text_metrics可核对篇幅"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "6000 tokens完整输出预算",
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:post-formatter:primary",
+      "skill_name": "post-formatter",
+      "input": "把以下受控文稿分别整理成PAS和BAB两种营销结构，每种约250字，保留限制条件：很多家庭看房只问面积，但日常使用还要看动线、收纳和多人同时使用厨房的安排；户型是否适合应结合实际家庭人数与生活方式，不能仅凭面积下结论。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "PAS与BAB各一版",
+          "原文限制条件完整保留",
+          "开头到CTA逻辑连贯",
+          "没有把户型推测写成真实项目卖点"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-account-diagnosis:primary",
+      "skill_name": "skill-account-diagnosis",
+      "input": "分析当前primary账号定位与项目已登记内容/回执：按定位、选题垂直度、形式、受众一致性四维给诊断表，列3个优先改进动作。指标未登记必须写未知，不推测平台限流。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "account_fixture_name": "primary",
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "依据当前项目账号字段",
+          "分析使用真实回执状态与指标",
+          "缺失指标保持未知",
+          "3个动作各有验证指标"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "primary项目账号",
+        "至少3条同项目内容/发布回执（含缺失指标）",
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-algorithm-updates:primary",
+      "skill_name": "skill-algorithm-updates",
+      "input": "研究抖音创作者中心公开内容规则，优先官方资料；解释可核对的规则、来源日期、版本/生效信息与未知项，不能编造近期变化。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "metered",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 120,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "source_refs"
+        ],
+        "require_sources": true,
+        "required_semantics": [
+          "至少1个可核对官方来源",
+          "关键规则有正文或公告依据",
+          "第三方解读分开",
+          "日期/版本未知保持未知"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "原生真实联网检索",
+        "可读取的官方规则正文"
+      ]
+    },
+    {
+      "case_id": "text_research:skill-article-outline:primary",
+      "skill_name": "skill-article-outline",
+      "input": "为改善家庭写《看大平层之前，先梳理一天的生活动线》2000字文章大纲，包含5节、每节论点/证据/示例/预计字数、2个反方观点和资料缺口；不能创造真实楼盘数据。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "5节结构与段落目的",
+          "预计字数合计合理",
+          "2个反方观点有回应",
+          "证据与未知信息分开"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-audience-profiler:primary",
+      "skill_name": "skill-audience-profiler",
+      "input": "基于当前项目受众与primary账号，提出3类改善家庭画像假设；每类列需求、场景、决策阻力、内容问题和验证办法。不得创造真实人的职业收入或身份。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "account_fixture_name": "primary",
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "3类画像明确为假设",
+          "需求与内容问题具体",
+          "依据可追溯到项目字段",
+          "每类有验证办法"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "primary项目账号",
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-brand-onboarding:primary",
+      "skill_name": "skill-brand-onboarding",
+      "input": "为当前项目primary账号做入驻方案：定位一句话、简介草稿、3个内容支柱、首周7条选题、团队准备清单。明确这是策划，未创建平台账号、未写回资料、未发布。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "account_fixture_name": "primary",
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "定位与简介可编辑",
+          "3个支柱不重复",
+          "7条选题对应受众问题",
+          "操作结果不冒充实际账号变更"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "primary项目账号",
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-campaign-planner:primary",
+      "skill_name": "skill-campaign-planner",
+      "input": "策划一场7天线上预约看房内容活动；假设策划预算10000元（不是实际支出），目标是获取已授权咨询。按预热/进行/收尾给内容、负责人角色、预算分配、衡量指标、风险与备选方案。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "阶段计划完整",
+          "假设预算分配合计10000且标为假设",
+          "责任与交付时间具体",
+          "不伪造实际咨询量或ROI"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-carousel-planner:primary",
+      "skill_name": "skill-carousel-planner",
+      "input": "规划5页《一家四口的厨房动线怎么观察》轮播图文：每页标题不超过12个中文字符、正文不超过60字、布局和配图建议、末页行动引导。只策划文字，不声明图片已经生成。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "恰好5页且信息递进",
+          "逐页标题与正文满足长度约束",
+          "每页布局/配图建议可执行",
+          "明确没有实际卡片产物"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-collab-proposal:primary",
+      "skill_name": "skill-collab-proposal",
+      "input": "为当前项目与一个假设家居品牌写合作方案：合作目标、受众、2条视频+1篇图文交付、两周排期、内容使用范围、评价指标和待确认报价/授权。假设品牌与报价不得写成真实合同。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "交付数量明确",
+          "两周排期可执行",
+          "使用范围与授权待确认",
+          "不编造已签合同或收费"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "primary项目账号",
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-community-ops:primary",
+      "skill_name": "skill-community-ops",
+      "input": "给以下5条受控模拟评论归类并写回复草稿：1动线讲得清楚；2三口之家适合多大；3价格是不是一定会涨；4你们之前答复不及时；5全是广告。每条写分类、回复、需升级人工的原因；不实际发送或删除。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "5条评论逐条对应",
+          "问题/投诉升级规则明确",
+          "拒绝收益承诺但回复自然",
+          "没有实际联系/回复/删除声明"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "primary项目账号",
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-competitor-analysis:primary",
+      "skill_name": "skill-competitor-analysis",
+      "input": "比较公开的住宅户型科普内容与装修展示内容，明确账号/作品样本链接；按定位、形式、受众问题、互动证据分析，不凭网页标题制造粉丝数或表现。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "metered",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 120,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "source_refs"
+        ],
+        "require_sources": true,
+        "required_semantics": [
+          "至少2个实际作品样本",
+          "正文/形式/指标有实际读取依据",
+          "缺指标保持未知",
+          "比较与建议能追溯来源"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "原生真实联网检索",
+        "至少2个可公开读取的作品样本"
+      ]
+    },
+    {
+      "case_id": "text_research:skill-content-gap-analysis:primary",
+      "skill_name": "skill-content-gap-analysis",
+      "input": "研究改善家庭关于厨房动线的公开问题与已有内容；列需求-供给-缺口假设、具体选题与验证办法。有限搜索未命中不能证明市场无人覆盖。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "metered",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 120,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "source_refs"
+        ],
+        "require_sources": true,
+        "required_semantics": [
+          "至少3个问题或内容来源",
+          "正文需求线索可核对",
+          "缺口明确为假设",
+          "有验证计划而非必爆承诺"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "原生真实联网检索",
+        "公开需求与供给正文材料"
+      ]
+    },
+    {
+      "case_id": "text_research:skill-content-matrix:primary",
+      "skill_name": "skill-content-matrix",
+      "input": "用受众需求阶段（了解/比较/决策）×内容形式（讲解/清单/对比）生成3×3矩阵，共9条不同选题；每条给角度、素材准备、事实缺口和优先级。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "9个不同选题对应矩阵",
+          "角度具体非重复套话",
+          "素材和证据缺口明确",
+          "优先级有依据"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "primary项目账号",
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-content-repurposing:primary",
+      "skill_name": "skill-content-repurposing",
+      "input": "将这段受控原文分别改编为小红书笔记、抖音45秒脚本、微信公众号短文：看房不仅看面积，还要观察厨房到餐桌、玄关到储物区的日常路径；没有一个户型能适合所有家庭，应按真实生活方式判断。保留限制条件，各写完整版本与CTA。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "3个平台各有完整版本",
+          "平台形式确有差别",
+          "原文限制条件保留",
+          "不宣称已发布或生成视频"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-content-strategy:primary",
+      "skill_name": "skill-content-strategy",
+      "input": "为primary账号制定未来4周内容策略：3个支柱、每周3条内容、系列承诺、制作任务、评估节点。依据当前项目资料和真实回执，缺指标写未知，不将策略建议冒充已执行排期。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "account_fixture_name": "primary",
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "4周共12条内容",
+          "3个支柱与系列承诺一致",
+          "制作责任与评估节点可执行",
+          "依据/假设/建议分开"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "primary项目账号",
+        "同项目已登记回执",
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-cross-platform-diff:primary",
+      "skill_name": "skill-cross-platform-diff",
+      "input": "比较同一厨房动线主题在小红书和B站的公开样本；保留作品链接与实际正文/形式/指标，分清样本差异与平台整体结论。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "metered",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 120,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "source_refs"
+        ],
+        "require_sources": true,
+        "required_semantics": [
+          "至少2个平台实际样本",
+          "每平台至少1个可读作品",
+          "实际字段与未知字段分开",
+          "不可用平台不被补造"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "原生真实联网检索",
+        "跨平台公开作品适配可用"
+      ]
+    },
+    {
+      "case_id": "text_research:skill-hook-generator:primary",
+      "skill_name": "skill-hook-generator",
+      "input": "为《看房时如何观察厨房动线》生成12组标题与前3秒口播；每个标题不超过18个中文字符，分问题/对比/场景/误区4类，标注适用平台与选择理由。禁止最强、保值、学区等无证据承诺。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "12组不重复标题+开场",
+          "4类各有样例",
+          "每标题长度可确定性复核",
+          "标题兑现正文主题"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-livestream:primary",
+      "skill_name": "skill-livestream",
+      "input": "策划30分钟改善家庭看房直播：按分钟列开场、3个主题段、互动、转场、结束；写具体主持话术和5个常见问题回复，价格/学校资料不足时不能补造。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "环节时长合计30分钟",
+          "具体可读的话术与转场",
+          "5个问题有安全答复",
+          "主持与协作准备完整"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "primary项目账号",
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-news-intelligence:primary",
+      "skill_name": "skill-news-intelligence",
+      "input": "研究住宅空间设计的公开行业资讯，日期范围为最近30天；逐条给事件、来源发布时间、正文依据、影响与不确定性，无法核对发布日期的条目标记未知。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "metered",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 120,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "source_refs"
+        ],
+        "require_sources": true,
+        "required_semantics": [
+          "至少3条去重资讯来源",
+          "来源发布时间与获取时间分开",
+          "事件细节有正文依据",
+          "观点与事实分开"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "原生真实联网检索",
+        "可读取新闻正文与发布时间"
+      ]
+    },
+    {
+      "case_id": "text_research:skill-persona-check:primary",
+      "skill_name": "skill-persona-check",
+      "input": "核对以下受控草稿与primary账号表达：这套房绝对让你稳赚，周边肯定是顶级学校，买了就一步到位。输出逐句问题、当前账号依据、可替换文案，不发帖、不修改账号。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "account_fixture_name": "primary",
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "每句夸大或未知事实均被识别",
+          "依据实际账号红线",
+          "替代文案具体可用",
+          "不宣称已改平台资料"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "primary项目账号",
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-positioning-analysis:primary",
+      "skill_name": "skill-positioning-analysis",
+      "input": "基于当前项目优势与受众，为账号提出3个可验证定位方向。竞品资料只使用这里提供的受控样例：A偏装修展示，B偏户型科普；明确样例是假设。给差异比较、定位陈述、内容支柱和验证实验。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "3个定位有明确差异",
+          "受控竞品不冒充真实研究",
+          "定位依据来自当前项目或显式假设",
+          "实验目标/指标/周期明确"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "primary项目账号",
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-publish-checklist:primary",
+      "skill_name": "skill-publish-checklist",
+      "input": "检查这份受控发布包：标题有，正文有，封面未做，标签未定，价格来源未核验，素材授权待确认，目标账号已选择但内容尚未审批。按已具备/需补齐/阻断项列清单，不能判定可发布。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "所有明确缺项被定位",
+          "事实/授权/审批为阻断",
+          "逐项补齐动作明确",
+          "不声明已审批/已发布"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-quality-gate:primary",
+      "skill_name": "skill-quality-gate",
+      "input": "审查受控文案：本项目全城最低价，三年收益翻倍，所有家庭都适合；配图为网上下载且授权未知。按事实、表达、平台格式、素材授权四维定位问题并改写，不作正式法律/平台审批结论。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "最低价/收益/泛化均识别",
+          "未知授权被阻断",
+          "修改建议对症具体",
+          "正式审批仍需人工"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-risk-scanner:primary",
+      "skill_name": "skill-risk-scanner",
+      "input": "评估受控材料：正文含未标引的整段他人文章；配图为无授权截图；背景音乐仅有个人会员订阅；用户想商业发布。输出风险线索、需要核查的使用范围、替代方案和补证清单，不宣称技术查重或侵权认定。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "文字/图片/音乐分项风险",
+          "不把个人会员当商业授权",
+          "补证和替代动作具体",
+          "不冒充查重或法律认定"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-rss-aggregator:primary",
+      "skill_name": "skill-rss-aggregator",
+      "input": "",
+      "parameters": {
+        "feeds": "https://www.nasa.gov/feed/"
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 120,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "source_refs"
+        ],
+        "require_sources": true,
+        "required_semantics": [
+          "至少1条真实RSS或Atom条目",
+          "标题/链接/摘要/来源时间可核对",
+          "获取时间不冒充发布时间",
+          "重复来源去重"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "公开RSS源可达且含真实条目"
+      ]
+    },
+    {
+      "case_id": "text_research:skill-seo-quality:primary",
+      "skill_name": "skill-seo-quality",
+      "input": "优化小红书文案，目标关键词厨房动线和改善户型。原文：看看这个房子，特别好，很适合大家。给标题、首段、正文结构、封面字、5个标签的前后对比；自然布局关键词，不保证排名。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "前后对比可编辑",
+          "关键词自然进入标题与首段",
+          "5个相关标签不堆砌",
+          "没有搜索排名保证"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-strategy-advisor:primary",
+      "skill_name": "skill-strategy-advisor",
+      "input": "根据当前项目账号与已登记内容表现，提出下一月策略：保留/停止/试验各3项，并为试验写假设、内容安排、指标、停止条件。缺失或小样本指标保持不确定，不补造效果。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "保留/停止/试验各3项",
+          "建议有真实依据或明确假设",
+          "每项试验有停止条件",
+          "不把相关性当因果"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "primary项目账号",
+        "至少3条同项目真实登记指标（含未知）",
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-topic-evaluator:primary",
+      "skill_name": "skill-topic-evaluator",
+      "input": "评估受控选题：329㎡是不是一定更适合一家四口。按需求、账号匹配、差异、时效、成本、转化与风险七维给依据，缺数据不伪精确打分；给做/不做/改方向和替代角度。329㎡仅能在项目已核验时当事实，否则视为题设。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "七维均有依据或未知标记",
+          "面积不等于适合的泛化被识别",
+          "取舍建议与改写角度明确",
+          "不预测必爆/必成交"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "primary项目账号",
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-trend-rider:primary",
+      "skill_name": "skill-trend-rider",
+      "input": "做一次受控选题演练：模拟讨论主题是家庭成员同时做早餐时的厨房路径，不能称真实热榜或今日事件。结合primary账号定位提出3个切入角度、形式、标题、资料需求和风险。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "account_fixture_name": "primary",
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "3个角度具体不重复",
+          "模拟主题始终标为演练",
+          "账号匹配与资料准备明确",
+          "不补造真实热点日期/热度"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "primary项目账号",
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-trending-topics:primary",
+      "skill_name": "skill-trending-topics",
+      "input": "",
+      "parameters": {
+        "platform": "bilibili",
+        "limit": 5
+      },
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 120,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "source_refs"
+        ],
+        "require_sources": true,
+        "required_semantics": [
+          "至少1条实际公开榜单话题",
+          "热度原值或未知不能补造",
+          "来源链接与获取时间齐全",
+          "关键词零匹配不成功"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "Bilibili第一方公开热词接口实际返回成功与非空list；排名分数不冒充具体热度单位"
+      ]
+    },
+    {
+      "case_id": "text_research:skill-ugc-discovery:primary",
+      "skill_name": "skill-ugc-discovery",
+      "input": "研究宜家厨房收纳的公开用户使用讨论与测评；区分用户体验、品牌内容、媒体内容和身份未知线索，给主题与内容机会。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "metered",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 120,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "source_refs"
+        ],
+        "require_sources": true,
+        "required_semantics": [
+          "至少3个真实讨论或测评样本",
+          "用户/品牌/媒体分类有依据",
+          "正文需求与体验可复核",
+          "不把品牌同名或标题认作真实口碑"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "原生真实联网检索",
+        "可读取公开讨论正文"
+      ]
+    },
+    {
+      "case_id": "text_research:skill-voice-builder:primary",
+      "skill_name": "skill-voice-builder",
+      "input": "从以下两段受控样本文字提炼账号语言风格：A先别急着看面积，想想你们一家早晨怎么出门；B好不好住，最好把一天的路径走一遍，再决定。输出语气/用词/句长/节奏规则、5个禁用表达和同一主题改写样例；不自动写入账号。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "样本特征有例证",
+          "写作规则可检查",
+          "5个禁用表达具体",
+          "改写保留事实且不写回账号"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "primary项目账号",
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:skill-xhs-analyzer:primary",
+      "skill_name": "skill-xhs-analyzer",
+      "input": "厨房动线 小红书 公开笔记",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "metered",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 120,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "source_refs"
+        ],
+        "require_sources": true,
+        "required_semantics": [
+          "至少1个公开笔记实际正文",
+          "作者/互动字段直接来自平台数据",
+          "字段缺失明确未知",
+          "受限页面不作为已分析样本",
+          "分析结论对应已读作品"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "至少1个可公开读取的小红书真实笔记",
+        "公开作品状态解析可用",
+        "文字模型可用（当前实现需要）"
+      ]
+    },
+    {
+      "case_id": "text_research:social-content:primary",
+      "skill_name": "social-content",
+      "input": "为改善家庭写一条小红书风格社媒文案，主题是看房先看生活动线：3个标题、250到350字正文、5个标签和1个互动问题。只用项目核验资料，不补写价格学区收益。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "account_fixture_name": "primary",
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "3标题/正文/5标签/问题齐全",
+          "受众和主题明确",
+          "未知房产信息不编造",
+          "正文能独立阅读并编辑"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "primary项目账号",
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:style-transfer:primary",
+      "skill_name": "style-transfer",
+      "input": "把受控原文改为自然口语且有一点幽默，保留事实和限制：这是一项观察居住路径的方法，结果需结合家庭人数、习惯和实际户型。它不能替代专业测量，也不能保证任何家庭的体验。输出全文，不能删掉限制。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "全文风格明显转换",
+          "限制条件逐项保留",
+          "无新增虚构项目卖点",
+          "语言自然非模板堆砌"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:text-condenser:primary",
+      "skill_name": "text-condenser",
+      "input": "将以下受控原文压缩到80至100个非空白字符，只输出摘要正文：看房时，面积只是一个观察维度。厨房到餐桌、玄关到储物区以及多人同时活动时的路径，也会影响日常体验。每个家庭人数、习惯和需求不同，不能仅凭面积或一张照片认定户型一定适合；应结合实际空间和自己的生活方式核对。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 80,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "真实非空白字符80至100",
+          "保留面积非唯一维度",
+          "保留不能凭照片下结论的限制",
+          "只输出正文无多余说明"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:text-polisher:primary",
+      "skill_name": "text-polisher",
+      "input": "润色这段受控文案，保留核心限制：在这个快节奏的时代，生活品质的重要性不言而喻。这房子特别高级，适合所有人。其实是否适合仍要结合家庭人数与真实户型观察。输出自然具体的改写和最多3条修改说明，不补造真实卖点。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "去掉空泛套话",
+          "删除适合所有人的过度泛化",
+          "保留必须结合实际户型的限制",
+          "不捏造未给出的具体设施"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:video-script:primary",
+      "skill_name": "video-script",
+      "input": "为抖音45秒视频写《看房先走一遍厨房动线》脚本：6个镜头，每镜有起止秒、画面、旁白、字幕、素材来源；总时长45秒，给标题、开头钩子与收尾CTA。不宣称已产视频。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "account_fixture_name": "primary",
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "恰好6个镜头",
+          "时间连续且合计45秒",
+          "每镜画面/旁白/字幕/素材齐全",
+          "口播篇幅能匹配45秒",
+          "只有脚本没有伪成片"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "primary项目账号",
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:video-strategy:primary",
+      "skill_name": "video-strategy",
+      "input": "为当前项目制定一条60秒户型观察视频制作方案：已有授权照片、无实拍视频，假设制作预算2000元。比较实拍/照片动态/解说的适用性，选方案并列脚本、素材、声音、字幕、剪辑、质检任务；不编造服务现价。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 300,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "方案依据实际素材条件",
+          "3种制作方式比较",
+          "分工与交付参数可执行",
+          "预算为显式假设而非实际购买",
+          "供应商价格不编造"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    },
+    {
+      "case_id": "text_research:novel-writer:continuation",
+      "skill_name": "novel-writer",
+      "input": "续写第二章，1800到2200个中文字符；沿用前章阿岚、铜钥匙、黎明钟楼的线索，不复述前章。解决一个悬念并留下一个新问题。仍为文学虚构。",
+      "parameters": {},
+      "asset_fixture_names": [],
+      "billing": "free",
+      "expected_outcome": "success",
+      "quality": {
+        "min_text_chars": 1500,
+        "required_artifact_suffixes": [],
+        "required_fields": [
+          "response",
+          "native_data"
+        ],
+        "require_sources": false,
+        "required_semantics": [
+          "实际读取同项目已成功第一章",
+          "角色/视角/线索一致",
+          "有新推进而非复述",
+          "实际字数可复核",
+          "不存在他项目或已取消章节内容"
+        ],
+        "empty_result_is_pass": false,
+        "mock_result_is_pass": false,
+        "semantic_review_required": true
+      },
+      "commercial_scope": "full",
+      "prerequisites": [
+        "text_research:novel-writer:primary已通过真实模型生成并在同项目保存成功Job",
+        "6000 tokens完整输出预算",
+        "本项目固定版本的本地Qwen已实际推理成功；禁止付费云回退"
+      ],
+      "timeout_seconds": 920
+    }
+  ]
+}

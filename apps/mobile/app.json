@@ -1,0 +1,88 @@
+{
+  "expo": {
+    "name": "楼响",
+    "slug": "housignal-mobile",
+    "scheme": "housignal",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/brand-icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.housignal.mobile",
+      "buildNumber": "1",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "NSLocalNetworkUsageDescription": "开发调试时连接你指定的楼响服务。"
+      }
+    },
+    "android": {
+      "blockedPermissions": [
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ],
+      "package": "com.housignal.mobile",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/brand-icon.png",
+        "backgroundColor": "#315BE8"
+      },
+      "predictiveBackGestureEnabled": true
+    },
+    "web": {
+      "favicon": "./assets/brand-icon.png",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": true
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "选择楼盘照片和视频，上传到当前项目素材库。",
+          "cameraPermission": "拍摄楼盘照片和视频，上传到当前项目素材库。",
+          "microphonePermission": "录制楼盘视频中的声音。"
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "记录现场语音，上传后由你决定是否授权转写。"
+        }
+      ],
+      "expo-document-picker",
+      "expo-video",
+      "expo-sharing",
+      "expo-notifications",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#F5F7FC",
+          "image": "./assets/brand-icon.png",
+          "imageWidth": 160
+        }
+      ],
+      "expo-asset",
+      "expo-system-ui",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "enableSceneSupport": true,
+            "deploymentTarget": "16.4"
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "backgroundColor": "#F5F7FC"
+  }
+}

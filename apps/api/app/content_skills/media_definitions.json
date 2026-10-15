@@ -1,0 +1,3463 @@
+{
+  "image-editing": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "image"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "op",
+        "label": "处理操作",
+        "type": "select",
+        "default": "info",
+        "options": [
+          {
+            "value": "info",
+            "label": "info"
+          },
+          {
+            "value": "resize",
+            "label": "resize"
+          },
+          {
+            "value": "crop",
+            "label": "crop"
+          },
+          {
+            "value": "pad",
+            "label": "pad"
+          },
+          {
+            "value": "convert",
+            "label": "convert"
+          },
+          {
+            "value": "compress",
+            "label": "compress"
+          },
+          {
+            "value": "watermark",
+            "label": "watermark"
+          },
+          {
+            "value": "round",
+            "label": "round"
+          },
+          {
+            "value": "collage",
+            "label": "collage"
+          },
+          {
+            "value": "thumbnail",
+            "label": "thumbnail"
+          }
+        ]
+      },
+      {
+        "key": "width",
+        "label": "宽度",
+        "type": "number"
+      },
+      {
+        "key": "height",
+        "label": "高度",
+        "type": "number"
+      },
+      {
+        "key": "ratio",
+        "label": "宽高比",
+        "type": "text",
+        "default": "1:1"
+      },
+      {
+        "key": "text",
+        "label": "水印文字",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "format",
+        "label": "产物格式",
+        "type": "select",
+        "default": "png",
+        "options": [
+          {
+            "value": "png",
+            "label": "png"
+          },
+          {
+            "value": "jpg",
+            "label": "jpg"
+          },
+          {
+            "value": "webp",
+            "label": "webp"
+          }
+        ]
+      }
+    ],
+    "accepted_parameters": [
+      "op",
+      "width",
+      "height",
+      "percent",
+      "keep_ratio",
+      "box",
+      "ratio",
+      "background",
+      "format",
+      "quality",
+      "max_kb",
+      "text",
+      "position",
+      "opacity",
+      "size",
+      "margin",
+      "color",
+      "watermark_asset_index",
+      "radius",
+      "radius_percent",
+      "mode",
+      "grid",
+      "gap",
+      "cell_width",
+      "cell_height"
+    ],
+    "assets_required": true
+  },
+  "image-enhance": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "image"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "scale",
+        "label": "放大倍数",
+        "type": "number",
+        "default": 2,
+        "min": 0.1,
+        "max": 8
+      },
+      {
+        "key": "auto",
+        "label": "自动增强",
+        "type": "boolean",
+        "default": true
+      },
+      {
+        "key": "denoise",
+        "label": "传统去噪",
+        "type": "boolean",
+        "default": false
+      },
+      {
+        "key": "sharpen",
+        "label": "sharpen",
+        "type": "number",
+        "default": 1,
+        "min": 0,
+        "max": 5
+      },
+      {
+        "key": "contrast",
+        "label": "contrast",
+        "type": "number",
+        "default": 1.05
+      },
+      {
+        "key": "saturation",
+        "label": "saturation",
+        "type": "number",
+        "default": 1.08
+      }
+    ],
+    "accepted_parameters": [
+      "scale",
+      "auto",
+      "denoise",
+      "sharpen",
+      "contrast",
+      "saturation",
+      "autocontrast",
+      "quality",
+      "format"
+    ],
+    "assets_required": true
+  },
+  "meme-generator": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "image"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "layout",
+        "label": "文字布局",
+        "type": "select",
+        "default": "overlay",
+        "options": [
+          {
+            "value": "overlay",
+            "label": "overlay"
+          },
+          {
+            "value": "top-bar",
+            "label": "top-bar"
+          },
+          {
+            "value": "bottom-bar",
+            "label": "bottom-bar"
+          }
+        ]
+      },
+      {
+        "key": "top",
+        "label": "顶部文字",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "bottom",
+        "label": "底部文字",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "caption",
+        "label": "配文",
+        "type": "text",
+        "default": ""
+      }
+    ],
+    "accepted_parameters": [
+      "layout",
+      "top",
+      "bottom",
+      "caption",
+      "bar_color",
+      "text_color",
+      "format",
+      "quality"
+    ],
+    "assets_required": true
+  },
+  "remove-bg": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "image"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "bg_color",
+        "label": "替换背景颜色",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "background_asset_index",
+        "label": "背景素材索引",
+        "type": "number"
+      }
+    ],
+    "accepted_parameters": [
+      "bg_color",
+      "background_asset_index",
+      "model",
+      "alpha_matting",
+      "format",
+      "quality"
+    ],
+    "assets_required": true
+  },
+  "ai-image-gen": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "image"
+    ],
+    "input_required": true,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "op",
+        "label": "生成方式",
+        "type": "select",
+        "default": "text2img",
+        "options": [
+          {
+            "value": "text2img",
+            "label": "text2img"
+          },
+          {
+            "value": "img2img",
+            "label": "img2img"
+          },
+          {
+            "value": "variations",
+            "label": "variations"
+          }
+        ]
+      },
+      {
+        "key": "size",
+        "label": "已确认画幅",
+        "type": "text",
+        "default": "1024x1024"
+      },
+      {
+        "key": "n",
+        "label": "图片数量",
+        "type": "number",
+        "default": 1,
+        "min": 1,
+        "max": 4
+      }
+    ],
+    "accepted_parameters": [
+      "op",
+      "size",
+      "n",
+      "negative_prompt",
+      "seed"
+    ],
+    "assets_required": false
+  },
+  "ai-video-gen": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "image"
+    ],
+    "input_required": true,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "size",
+        "label": "已确认画幅",
+        "type": "text",
+        "default": "1280x720"
+      },
+      {
+        "key": "duration",
+        "label": "时长秒",
+        "type": "number",
+        "default": 5,
+        "min": 2,
+        "max": 15
+      },
+      {
+        "key": "resolution",
+        "label": "清晰度",
+        "type": "select",
+        "default": "720P",
+        "options": [
+          {
+            "value": "720P",
+            "label": "720P"
+          },
+          {
+            "value": "1080P",
+            "label": "1080P"
+          }
+        ]
+      }
+    ],
+    "accepted_parameters": [
+      "size",
+      "duration",
+      "resolution",
+      "negative_prompt",
+      "seed"
+    ],
+    "assets_required": false
+  },
+  "ai-music": {
+    "accepts_assets": false,
+    "accepted_kinds": [],
+    "input_required": true,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "duration",
+        "label": "时长秒",
+        "type": "number",
+        "default": 30
+      },
+      {
+        "key": "instrumental",
+        "label": "纯音乐",
+        "type": "boolean",
+        "default": true
+      },
+      {
+        "key": "lyrics",
+        "label": "歌词",
+        "type": "text",
+        "default": ""
+      }
+    ],
+    "assets_required": false,
+    "accepted_parameters": [
+      "duration",
+      "instrumental",
+      "lyrics",
+      "format"
+    ]
+  },
+  "ecom-details-image": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "image"
+    ],
+    "input_required": true,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "op",
+        "label": "视觉方案或实际生图",
+        "type": "select",
+        "default": "brief",
+        "options": [
+          {
+            "value": "brief",
+            "label": "brief"
+          },
+          {
+            "value": "generate",
+            "label": "generate"
+          }
+        ]
+      },
+      {
+        "key": "size",
+        "label": "已确认画幅",
+        "type": "text",
+        "default": "1024x1024"
+      },
+      {
+        "key": "n",
+        "label": "图片数量",
+        "type": "number",
+        "default": 1,
+        "min": 1,
+        "max": 4
+      }
+    ],
+    "accepted_parameters": [
+      "op",
+      "size",
+      "n",
+      "negative_prompt",
+      "seed"
+    ],
+    "assets_required": false
+  },
+  "tts-voiceover": {
+    "accepts_assets": false,
+    "accepted_kinds": [],
+    "input_required": true,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "engine",
+        "label": "普通配音引擎",
+        "type": "select",
+        "default": "auto",
+        "options": [
+          {
+            "value": "auto",
+            "label": "按本项目配置"
+          },
+          {
+            "value": "edge",
+            "label": "Edge普通配音"
+          },
+          {
+            "value": "cloud",
+            "label": "本项目百炼云配音"
+          }
+        ]
+      },
+      {
+        "key": "voice",
+        "label": "音色",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "language",
+        "label": "语言",
+        "type": "text",
+        "default": "Auto"
+      },
+      {
+        "key": "gap",
+        "label": "句间停顿秒",
+        "type": "number",
+        "default": 0.2,
+        "min": 0,
+        "max": 5
+      }
+    ],
+    "assets_required": false,
+    "accepted_parameters": [
+      "pitch",
+      "engine",
+      "volume",
+      "rate",
+      "language",
+      "voice",
+      "gap"
+    ]
+  },
+  "multi-voice-dubbing": {
+    "accepts_assets": false,
+    "accepted_kinds": [],
+    "input_required": false,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "engine",
+        "label": "普通配音引擎",
+        "type": "select",
+        "default": "auto",
+        "options": [
+          {
+            "value": "auto",
+            "label": "按本项目配置"
+          },
+          {
+            "value": "edge",
+            "label": "Edge普通配音"
+          },
+          {
+            "value": "cloud",
+            "label": "本项目百炼云配音"
+          }
+        ]
+      },
+      {
+        "key": "lines",
+        "label": "对白与音色列表",
+        "type": "text",
+        "default": "[]",
+        "format": "json"
+      },
+      {
+        "key": "language",
+        "label": "语言",
+        "type": "text",
+        "default": "Auto"
+      },
+      {
+        "key": "gap",
+        "label": "句间停顿秒",
+        "type": "number",
+        "default": 0.2,
+        "min": 0,
+        "max": 5
+      }
+    ],
+    "assets_required": false,
+    "accepted_parameters": [
+      "pitch",
+      "engine",
+      "volume",
+      "rate",
+      "language",
+      "gap",
+      "lines"
+    ]
+  },
+  "voice-clone": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "audio"
+    ],
+    "input_required": true,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "op",
+        "label": "音色登记或语音克隆",
+        "type": "select",
+        "default": "clone",
+        "options": [
+          {
+            "value": "enroll",
+            "label": "登记已授权语音样本"
+          },
+          {
+            "value": "clone",
+            "label": "用已登记音色合成"
+          }
+        ]
+      },
+      {
+        "key": "voice_id",
+        "label": "本项目已登记音色",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "language",
+        "label": "语言",
+        "type": "text",
+        "default": "Auto"
+      },
+      {
+        "key": "name",
+        "label": "新音色代号",
+        "type": "text",
+        "default": "project"
+      }
+    ],
+    "assets_required": false,
+    "accepted_parameters": [
+      "op",
+      "voice_id",
+      "name",
+      "language"
+    ]
+  },
+  "auto-subtitle": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "audio",
+      "video"
+    ],
+    "input_required": false,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "segments",
+        "label": "已核对时间段（不填则实际ASR）",
+        "type": "text",
+        "default": "[]",
+        "format": "json"
+      },
+      {
+        "key": "format",
+        "label": "字幕格式",
+        "type": "select",
+        "default": "srt",
+        "options": [
+          {
+            "value": "srt",
+            "label": "srt"
+          },
+          {
+            "value": "ass",
+            "label": "ass"
+          },
+          {
+            "value": "txt",
+            "label": "txt"
+          },
+          {
+            "value": "json",
+            "label": "json"
+          }
+        ]
+      },
+      {
+        "key": "language",
+        "label": "识别语言",
+        "type": "text",
+        "default": "auto"
+      },
+      {
+        "key": "engine",
+        "label": "语音识别引擎",
+        "type": "select",
+        "default": "cloud",
+        "options": [
+          {
+            "value": "cloud",
+            "label": "本项目云ASR（可能计费）"
+          },
+          {
+            "value": "local",
+            "label": "本项目本地Whisper（不调用云ASR）"
+          }
+        ]
+      }
+    ],
+    "accepted_parameters": [
+      "segments",
+      "format",
+      "language",
+      "width",
+      "height",
+      "engine"
+    ],
+    "assets_required": false
+  },
+  "video-to-article": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "audio",
+      "video"
+    ],
+    "input_required": false,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "op",
+        "label": "实际转录或整理文章",
+        "type": "select",
+        "default": "article",
+        "options": [
+          {
+            "value": "article",
+            "label": "article"
+          },
+          {
+            "value": "transcribe",
+            "label": "transcribe"
+          }
+        ]
+      },
+      {
+        "key": "engine",
+        "label": "语音识别引擎",
+        "type": "select",
+        "default": "cloud",
+        "options": [
+          {
+            "value": "cloud",
+            "label": "本项目云ASR（可能计费）"
+          },
+          {
+            "value": "local",
+            "label": "本项目本地Whisper（不调用云ASR）"
+          }
+        ]
+      }
+    ],
+    "assets_required": true,
+    "accepted_parameters": [
+      "op",
+      "engine",
+      "language"
+    ]
+  },
+  "video-chapters": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "audio",
+      "video"
+    ],
+    "input_required": false,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "segments",
+        "label": "真实时间段",
+        "type": "text",
+        "default": "[]",
+        "format": "json"
+      },
+      {
+        "key": "chapter_seconds",
+        "label": "章节间距秒",
+        "type": "number",
+        "default": 60
+      },
+      {
+        "key": "language",
+        "label": "识别语言",
+        "type": "text",
+        "default": "auto"
+      }
+    ],
+    "assets_required": true
+  },
+  "short-drama": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "video",
+      "audio",
+      "document"
+    ],
+    "input_required": false,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "op",
+        "label": "制作阶段",
+        "type": "select",
+        "default": "generate",
+        "options": [
+          {
+            "value": "plan",
+            "label": "剧集与角色策划"
+          },
+          {
+            "value": "references",
+            "label": "角色参考图"
+          },
+          {
+            "value": "generate",
+            "label": "实际逐镜动态制作"
+          },
+          {
+            "value": "assemble",
+            "label": "合成已有动态片段"
+          }
+        ]
+      },
+      {
+        "key": "size",
+        "label": "已确认画幅",
+        "type": "text",
+        "default": "1080x1920"
+      },
+      {
+        "key": "plan",
+        "label": "已核对剧集计划",
+        "type": "text",
+        "format": "json",
+        "default": "{}"
+      },
+      {
+        "key": "references_reviewed",
+        "label": "已人工复核所选角色参考",
+        "type": "boolean",
+        "default": false
+      }
+    ],
+    "assets_required": false,
+    "accepted_parameters": [
+      "op",
+      "size",
+      "width",
+      "height",
+      "plan",
+      "references_reviewed",
+      "resolution",
+      "transition",
+      "trans_duration",
+      "crf",
+      "preset",
+      "cover"
+    ]
+  },
+  "batch-process": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "image",
+      "video",
+      "audio"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "op",
+        "label": "批量处理",
+        "type": "select",
+        "default": "resize",
+        "options": [
+          {
+            "value": "resize",
+            "label": "resize"
+          },
+          {
+            "value": "compress",
+            "label": "compress"
+          },
+          {
+            "value": "convert",
+            "label": "convert"
+          },
+          {
+            "value": "watermark",
+            "label": "watermark"
+          },
+          {
+            "value": "pad",
+            "label": "pad"
+          },
+          {
+            "value": "trim",
+            "label": "trim"
+          },
+          {
+            "value": "volume",
+            "label": "volume"
+          },
+          {
+            "value": "normalize",
+            "label": "normalize"
+          },
+          {
+            "value": "reframe",
+            "label": "reframe"
+          }
+        ]
+      },
+      {
+        "key": "width",
+        "label": "宽度",
+        "type": "number",
+        "default": 1080
+      },
+      {
+        "key": "format",
+        "label": "格式",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "ratio",
+        "label": "画幅",
+        "type": "text",
+        "default": "9:16"
+      }
+    ],
+    "accepted_parameters": [
+      "audio_bitrate",
+      "background",
+      "bitrate",
+      "blur_sigma",
+      "box",
+      "cell_height",
+      "cell_width",
+      "channels",
+      "color",
+      "crf",
+      "duration",
+      "end",
+      "factor",
+      "fade_in",
+      "fade_out",
+      "fit",
+      "focus_x",
+      "focus_y",
+      "format",
+      "fps",
+      "gap",
+      "grid",
+      "height",
+      "i",
+      "keep_ratio",
+      "lra",
+      "margin",
+      "max_frames",
+      "max_kb",
+      "mix",
+      "mode",
+      "op",
+      "opacity",
+      "operation",
+      "percent",
+      "position",
+      "preset",
+      "quality",
+      "radius",
+      "radius_percent",
+      "ratio",
+      "sample_rate",
+      "size",
+      "start",
+      "text",
+      "tier",
+      "tp",
+      "volume",
+      "watermark_asset_index",
+      "width"
+    ],
+    "assets_required": true
+  },
+  "video-editing": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "video",
+      "audio",
+      "image",
+      "document",
+      "font"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "op",
+        "label": "operation",
+        "type": "select",
+        "default": "convert",
+        "options": [
+          {
+            "value": "trim",
+            "label": "trim"
+          },
+          {
+            "value": "concat",
+            "label": "concat"
+          },
+          {
+            "value": "compress",
+            "label": "compress"
+          },
+          {
+            "value": "convert",
+            "label": "convert"
+          },
+          {
+            "value": "speed",
+            "label": "speed"
+          },
+          {
+            "value": "extract-audio",
+            "label": "extract-audio"
+          },
+          {
+            "value": "extract-frames",
+            "label": "extract-frames"
+          },
+          {
+            "value": "thumbnail",
+            "label": "thumbnail"
+          },
+          {
+            "value": "subtitles",
+            "label": "subtitles"
+          },
+          {
+            "value": "watermark",
+            "label": "watermark"
+          },
+          {
+            "value": "info",
+            "label": "info"
+          },
+          {
+            "value": "text",
+            "label": "text"
+          },
+          {
+            "value": "reframe",
+            "label": "reframe"
+          },
+          {
+            "value": "cut",
+            "label": "裁剪（源cut）"
+          },
+          {
+            "value": "silence-cut",
+            "label": "去除静音"
+          },
+          {
+            "value": "mute-cut",
+            "label": "去除静音（源别名）"
+          },
+          {
+            "value": "remove-silence",
+            "label": "去除静音（兼容）"
+          },
+          {
+            "value": "jumpcut",
+            "label": "跳切"
+          },
+          {
+            "value": "aspect",
+            "label": "转换画幅（源aspect）"
+          },
+          {
+            "value": "frame",
+            "label": "抽帧（源frame）"
+          },
+          {
+            "value": "gif",
+            "label": "生成GIF"
+          },
+          {
+            "value": "bgm",
+            "label": "添加背景音乐"
+          }
+        ]
+      },
+      {
+        "key": "start",
+        "label": "start",
+        "type": "number",
+        "default": 0
+      },
+      {
+        "key": "duration",
+        "label": "duration",
+        "type": "number"
+      },
+      {
+        "key": "format",
+        "label": "format",
+        "type": "text",
+        "default": "mp4"
+      },
+      {
+        "key": "size",
+        "label": "size",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "text",
+        "label": "text",
+        "type": "text",
+        "default": ""
+      }
+    ],
+    "accepted_parameters": [
+      "audio_bitrate",
+      "audio_index",
+      "bgm_volume",
+      "bitrate",
+      "blur_sigma",
+      "color",
+      "crf",
+      "duration",
+      "end",
+      "factor",
+      "focus_x",
+      "focus_y",
+      "font",
+      "font_index",
+      "fontsize",
+      "force_style",
+      "format",
+      "fps",
+      "height",
+      "lang",
+      "logo",
+      "logo_index",
+      "margin",
+      "max_frames",
+      "min_silence",
+      "mode",
+      "music",
+      "music_index",
+      "music_volume",
+      "noise",
+      "op",
+      "opacity",
+      "operation",
+      "pad",
+      "position",
+      "preset",
+      "quality",
+      "ratio",
+      "replace_audio",
+      "scale",
+      "size",
+      "soft",
+      "start",
+      "sub",
+      "sub_index",
+      "text",
+      "time",
+      "trans_duration",
+      "transition",
+      "voice_volume",
+      "width"
+    ],
+    "assets_required": true
+  },
+  "audio-editing": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "audio",
+      "video"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "op",
+        "label": "operation",
+        "type": "select",
+        "default": "convert",
+        "options": [
+          {
+            "value": "trim",
+            "label": "trim"
+          },
+          {
+            "value": "concat",
+            "label": "concat"
+          },
+          {
+            "value": "convert",
+            "label": "convert"
+          },
+          {
+            "value": "volume",
+            "label": "volume"
+          },
+          {
+            "value": "denoise",
+            "label": "denoise"
+          },
+          {
+            "value": "normalize",
+            "label": "normalize"
+          },
+          {
+            "value": "fade",
+            "label": "fade"
+          },
+          {
+            "value": "speed",
+            "label": "speed"
+          },
+          {
+            "value": "extract-audio",
+            "label": "extract-audio"
+          },
+          {
+            "value": "info",
+            "label": "info"
+          },
+          {
+            "value": "extract",
+            "label": "提取音轨（源extract）"
+          }
+        ]
+      },
+      {
+        "key": "start",
+        "label": "start",
+        "type": "number",
+        "default": 0
+      },
+      {
+        "key": "duration",
+        "label": "duration",
+        "type": "number"
+      },
+      {
+        "key": "format",
+        "label": "format",
+        "type": "text",
+        "default": "wav"
+      },
+      {
+        "key": "volume",
+        "label": "volume",
+        "type": "number",
+        "default": 1
+      },
+      {
+        "key": "factor",
+        "label": "factor",
+        "type": "number",
+        "default": 1
+      }
+    ],
+    "accepted_parameters": [
+      "bitrate",
+      "channels",
+      "duration",
+      "end",
+      "factor",
+      "fade_in",
+      "fade_out",
+      "format",
+      "i",
+      "lra",
+      "mix",
+      "model",
+      "model_index",
+      "op",
+      "operation",
+      "sample_rate",
+      "start",
+      "tier",
+      "tp",
+      "volume"
+    ],
+    "assets_required": true
+  },
+  "audio-denoise": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "audio",
+      "video"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "tier",
+        "label": "降噪级别（1轻量 / 2频域 / 3专用模型）",
+        "type": "number",
+        "default": 2,
+        "integer": true,
+        "min": 1,
+        "max": 3
+      },
+      {
+        "key": "mix",
+        "label": "mix",
+        "type": "number",
+        "default": 0.8
+      },
+      {
+        "key": "format",
+        "label": "format",
+        "type": "text",
+        "default": "wav"
+      }
+    ],
+    "accepted_parameters": [
+      "bitrate",
+      "channels",
+      "duration",
+      "end",
+      "format",
+      "mix",
+      "model",
+      "model_index",
+      "op",
+      "operation",
+      "sample_rate",
+      "start",
+      "tier"
+    ],
+    "assets_required": true
+  },
+  "audio-mix": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "audio"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "voice_index",
+        "label": "voice_index",
+        "type": "number",
+        "default": 0
+      },
+      {
+        "key": "bgm_index",
+        "label": "bgm_index",
+        "type": "number",
+        "default": 1
+      },
+      {
+        "key": "voice_volume",
+        "label": "voice_volume",
+        "type": "number",
+        "default": 1
+      },
+      {
+        "key": "bgm_volume",
+        "label": "bgm_volume",
+        "type": "number",
+        "default": 0.25
+      },
+      {
+        "key": "no_duck",
+        "label": "no_duck",
+        "type": "boolean",
+        "default": false
+      },
+      {
+        "key": "format",
+        "label": "format",
+        "type": "text",
+        "default": "wav"
+      }
+    ],
+    "accepted_parameters": [
+      "bgm",
+      "bgm_index",
+      "bgm_loop_off",
+      "bgm_volume",
+      "bitrate",
+      "channels",
+      "duration",
+      "format",
+      "no_duck",
+      "op",
+      "sample_rate",
+      "sfx_at",
+      "sfx_indices",
+      "sfx_volume",
+      "voice",
+      "voice_index",
+      "voice_volume"
+    ],
+    "assets_required": true
+  },
+  "video-reframe": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "video"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "ratio",
+        "label": "ratio",
+        "type": "text",
+        "default": "9:16"
+      },
+      {
+        "key": "mode",
+        "label": "mode",
+        "type": "select",
+        "default": "blur",
+        "options": [
+          {
+            "value": "blur",
+            "label": "blur"
+          },
+          {
+            "value": "crop",
+            "label": "crop"
+          },
+          {
+            "value": "pad",
+            "label": "pad"
+          },
+          {
+            "value": "smart",
+            "label": "smart"
+          }
+        ]
+      },
+      {
+        "key": "focus_x",
+        "label": "focus_x",
+        "type": "number",
+        "default": 0.5
+      },
+      {
+        "key": "focus_y",
+        "label": "focus_y",
+        "type": "number",
+        "default": 0.5
+      }
+    ],
+    "accepted_parameters": [
+      "audio_bitrate",
+      "blur_sigma",
+      "crf",
+      "focus_x",
+      "focus_y",
+      "height",
+      "mode",
+      "op",
+      "preset",
+      "ratio",
+      "size",
+      "width"
+    ],
+    "assets_required": true
+  },
+  "slideshow-video": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "image",
+      "audio",
+      "font"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "size",
+        "label": "size",
+        "type": "text",
+        "default": "1080x1920"
+      },
+      {
+        "key": "per",
+        "label": "per",
+        "type": "number",
+        "default": 3
+      },
+      {
+        "key": "transition",
+        "label": "transition",
+        "type": "select",
+        "default": "fade",
+        "options": [
+          {
+            "value": "none",
+            "label": "none"
+          },
+          {
+            "value": "fade",
+            "label": "fade"
+          },
+          {
+            "value": "dissolve",
+            "label": "dissolve"
+          }
+        ]
+      },
+      {
+        "key": "kenburns",
+        "label": "kenburns",
+        "type": "boolean",
+        "default": true
+      },
+      {
+        "key": "captions",
+        "label": "captions",
+        "type": "text",
+        "default": "[]",
+        "format": "json"
+      }
+    ],
+    "accepted_parameters": [
+      "audio_bitrate",
+      "bgm",
+      "bgm_index",
+      "bgm_volume",
+      "captions",
+      "crf",
+      "effect",
+      "fit",
+      "font",
+      "font_index",
+      "height",
+      "kenburns",
+      "no_kenburns",
+      "op",
+      "per",
+      "preset",
+      "size",
+      "trans_duration",
+      "transition",
+      "width"
+    ],
+    "assets_required": true
+  },
+  "auto-short-video": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "image",
+      "video",
+      "audio",
+      "font"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "size",
+        "label": "size",
+        "type": "text",
+        "default": "1080x1920"
+      },
+      {
+        "key": "per",
+        "label": "per",
+        "type": "number",
+        "default": 3
+      },
+      {
+        "key": "storyboard",
+        "label": "storyboard",
+        "type": "text",
+        "default": "[]",
+        "format": "json"
+      },
+      {
+        "key": "transition",
+        "label": "transition",
+        "type": "select",
+        "default": "none",
+        "options": [
+          {
+            "value": "none",
+            "label": "none"
+          },
+          {
+            "value": "fade",
+            "label": "fade"
+          },
+          {
+            "value": "dissolve",
+            "label": "dissolve"
+          }
+        ]
+      }
+    ],
+    "accepted_parameters": [
+      "audio_bitrate",
+      "bgm",
+      "bgm_index",
+      "bgm_volume",
+      "captions",
+      "crf",
+      "effect",
+      "fit",
+      "font",
+      "font_index",
+      "height",
+      "kenburns",
+      "no_kenburns",
+      "op",
+      "per",
+      "preset",
+      "size",
+      "storyboard",
+      "trans_duration",
+      "transition",
+      "width"
+    ],
+    "assets_required": true
+  },
+  "video-intro-outro": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "video",
+      "image",
+      "font"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "op",
+        "label": "operation",
+        "type": "select",
+        "default": "card",
+        "options": [
+          {
+            "value": "card",
+            "label": "card"
+          },
+          {
+            "value": "attach",
+            "label": "attach"
+          }
+        ]
+      },
+      {
+        "key": "title",
+        "label": "title",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "subtitle",
+        "label": "subtitle",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "cta",
+        "label": "cta",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "duration",
+        "label": "duration",
+        "type": "number",
+        "default": 2.5
+      },
+      {
+        "key": "size",
+        "label": "size",
+        "type": "text",
+        "default": "1080x1920"
+      }
+    ],
+    "accepted_parameters": [
+      "audio_bitrate",
+      "bg_image",
+      "bg_image_index",
+      "color",
+      "color2",
+      "crf",
+      "cta",
+      "cta_color",
+      "duration",
+      "font",
+      "font_index",
+      "gradient",
+      "height",
+      "intro",
+      "intro_index",
+      "logo",
+      "logo_index",
+      "logo_width",
+      "main",
+      "main_index",
+      "op",
+      "operation",
+      "outro",
+      "outro_index",
+      "preset",
+      "size",
+      "subtitle",
+      "subtitle_color",
+      "title",
+      "title_color",
+      "title_size",
+      "trans_duration",
+      "transition",
+      "width"
+    ],
+    "assets_required": false
+  },
+  "green-screen": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "video",
+      "image"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "color",
+        "label": "color",
+        "type": "text",
+        "default": "0x00ff00"
+      },
+      {
+        "key": "similarity",
+        "label": "similarity",
+        "type": "number",
+        "default": 0.3
+      },
+      {
+        "key": "blend",
+        "label": "blend",
+        "type": "number",
+        "default": 0.1
+      },
+      {
+        "key": "bg_color",
+        "label": "bg_color",
+        "type": "text",
+        "default": ""
+      }
+    ],
+    "accepted_parameters": [
+      "audio_bitrate",
+      "bg",
+      "bg_blur",
+      "bg_color",
+      "bg_index",
+      "blend",
+      "blur_sigma",
+      "color",
+      "crf",
+      "foreground",
+      "foreground_index",
+      "op",
+      "preset",
+      "similarity"
+    ],
+    "assets_required": true
+  },
+  "audio-visualizer": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "audio",
+      "image",
+      "font"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "mode",
+        "label": "mode",
+        "type": "select",
+        "default": "cqt",
+        "options": [
+          {
+            "value": "waves",
+            "label": "waves"
+          },
+          {
+            "value": "bars",
+            "label": "bars"
+          },
+          {
+            "value": "spectrum",
+            "label": "spectrum"
+          },
+          {
+            "value": "cqt",
+            "label": "cqt"
+          }
+        ]
+      },
+      {
+        "key": "size",
+        "label": "size",
+        "type": "text",
+        "default": "1080x1920"
+      },
+      {
+        "key": "title",
+        "label": "title",
+        "type": "text",
+        "default": ""
+      }
+    ],
+    "accepted_parameters": [
+      "audio_bitrate",
+      "bg_image",
+      "bg_image_index",
+      "color",
+      "cover",
+      "cover_index",
+      "crf",
+      "font",
+      "font_index",
+      "height",
+      "mode",
+      "op",
+      "preset",
+      "size",
+      "title",
+      "wave_color",
+      "width"
+    ],
+    "assets_required": true
+  },
+  "beat-sync-video": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "image",
+      "video",
+      "audio"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "beat_mode",
+        "label": "节奏依据",
+        "type": "select",
+        "default": "auto",
+        "options": [
+          {
+            "value": "auto",
+            "label": "自动检测音轨真实瞬态"
+          },
+          {
+            "value": "explicit",
+            "label": "已核对时间点（部分能力）"
+          },
+          {
+            "value": "equal-interval",
+            "label": "固定时间间隔（部分能力）"
+          }
+        ]
+      },
+      {
+        "key": "size",
+        "label": "size",
+        "type": "text",
+        "default": "1080x1920"
+      },
+      {
+        "key": "every",
+        "label": "每几个检测点换素材",
+        "type": "number",
+        "default": 2,
+        "integer": true,
+        "min": 1,
+        "max": 100
+      },
+      {
+        "key": "effect",
+        "label": "effect",
+        "type": "select",
+        "default": "zoom",
+        "options": [
+          {
+            "value": "none",
+            "label": "none"
+          },
+          {
+            "value": "zoom",
+            "label": "zoom"
+          },
+          {
+            "value": "flash",
+            "label": "flash"
+          }
+        ]
+      },
+      {
+        "key": "beats",
+        "label": "beats",
+        "type": "text",
+        "default": "[]",
+        "format": "json"
+      },
+      {
+        "key": "max_duration",
+        "label": "max_duration",
+        "type": "number"
+      },
+      {
+        "key": "fallback_interval",
+        "label": "固定时间间隔（秒，仅均分模式）",
+        "type": "number",
+        "default": 0.5,
+        "min": 0.15,
+        "max": 10
+      }
+    ],
+    "accepted_parameters": [
+      "audio_bitrate",
+      "beats",
+      "bgm_volume",
+      "crf",
+      "effect",
+      "every",
+      "fallback_interval",
+      "fit",
+      "height",
+      "kenburns",
+      "max_duration",
+      "music",
+      "music_index",
+      "no_kenburns",
+      "op",
+      "preset",
+      "size",
+      "width",
+      "beat_mode"
+    ],
+    "assets_required": true
+  },
+  "video-highlights": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "video"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "segments",
+        "label": "segments",
+        "type": "text",
+        "default": "[]",
+        "format": "json"
+      },
+      {
+        "key": "pad",
+        "label": "pad",
+        "type": "number",
+        "default": 0.3
+      },
+      {
+        "key": "reframe",
+        "label": "reframe",
+        "type": "text",
+        "default": ""
+      }
+    ],
+    "accepted_parameters": [
+      "audio_bitrate",
+      "blur_sigma",
+      "crf",
+      "focus_x",
+      "focus_y",
+      "height",
+      "op",
+      "pad",
+      "preset",
+      "reframe",
+      "reframe_mode",
+      "segments",
+      "size",
+      "width"
+    ],
+    "assets_required": true
+  },
+  "clipify": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "video"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "segments",
+        "label": "segments",
+        "type": "text",
+        "default": "[]",
+        "format": "json"
+      },
+      {
+        "key": "pad",
+        "label": "pad",
+        "type": "number",
+        "default": 0.3
+      },
+      {
+        "key": "reframe",
+        "label": "reframe",
+        "type": "text",
+        "default": "9:16"
+      },
+      {
+        "key": "reframe_mode",
+        "label": "reframe_mode",
+        "type": "select",
+        "default": "crop",
+        "options": [
+          {
+            "value": "crop",
+            "label": "crop"
+          },
+          {
+            "value": "blur",
+            "label": "blur"
+          },
+          {
+            "value": "pad",
+            "label": "pad"
+          }
+        ]
+      }
+    ],
+    "accepted_parameters": [
+      "audio_bitrate",
+      "blur_sigma",
+      "crf",
+      "focus_x",
+      "focus_y",
+      "height",
+      "op",
+      "pad",
+      "preset",
+      "reframe",
+      "reframe_mode",
+      "segments",
+      "size",
+      "width"
+    ],
+    "assets_required": true
+  },
+  "subtitle-translate": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "document"
+    ],
+    "input_required": false,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "op",
+        "label": "operation",
+        "type": "select",
+        "default": "translate",
+        "options": [
+          {
+            "value": "translate",
+            "label": "translate"
+          },
+          {
+            "value": "merge",
+            "label": "merge"
+          },
+          {
+            "value": "parse",
+            "label": "parse"
+          },
+          {
+            "value": "extract",
+            "label": "extract"
+          },
+          {
+            "value": "convert",
+            "label": "convert"
+          }
+        ]
+      },
+      {
+        "key": "target_language",
+        "label": "target_language",
+        "type": "text",
+        "default": "简体中文"
+      },
+      {
+        "key": "translations",
+        "label": "translations",
+        "type": "text",
+        "default": "[]",
+        "format": "json"
+      },
+      {
+        "key": "format",
+        "label": "format",
+        "type": "select",
+        "default": "srt",
+        "options": [
+          {
+            "value": "srt",
+            "label": "srt"
+          },
+          {
+            "value": "vtt",
+            "label": "vtt"
+          },
+          {
+            "value": "ass",
+            "label": "ass"
+          }
+        ]
+      },
+      {
+        "key": "trans_only",
+        "label": "trans_only",
+        "type": "boolean",
+        "default": false
+      }
+    ],
+    "accepted_parameters": [
+      "format",
+      "op",
+      "operation",
+      "order",
+      "subtitle_text",
+      "target_language",
+      "trans_only",
+      "translated_only",
+      "translations"
+    ],
+    "assets_required": false
+  },
+  "video-production": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "video",
+      "audio",
+      "document",
+      "font"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "size",
+        "label": "size",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "transition",
+        "label": "transition",
+        "type": "select",
+        "default": "none",
+        "options": [
+          {
+            "value": "none",
+            "label": "none"
+          },
+          {
+            "value": "fade",
+            "label": "fade"
+          },
+          {
+            "value": "dissolve",
+            "label": "dissolve"
+          }
+        ]
+      },
+      {
+        "key": "cover",
+        "label": "cover",
+        "type": "boolean",
+        "default": true
+      },
+      {
+        "key": "soft_subtitles",
+        "label": "soft_subtitles",
+        "type": "boolean",
+        "default": false
+      }
+    ],
+    "accepted_parameters": [
+      "audio",
+      "audio_bitrate",
+      "audio_index",
+      "bgm_volume",
+      "cover",
+      "cover_time",
+      "crf",
+      "font",
+      "font_index",
+      "fontsize",
+      "force_style",
+      "height",
+      "lang",
+      "op",
+      "preset",
+      "size",
+      "soft",
+      "soft_subtitles",
+      "sub",
+      "sub_index",
+      "trans_duration",
+      "transition",
+      "width"
+    ],
+    "assets_required": true
+  },
+  "card-design": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "document",
+      "image"
+    ],
+    "input_required": false,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "draft_content",
+        "label": "按此技能任务生成内容后渲染",
+        "type": "boolean",
+        "default": true
+      },
+      {
+        "key": "op",
+        "label": "op",
+        "type": "select",
+        "default": "render",
+        "options": [
+          {
+            "value": "render",
+            "label": "render"
+          },
+          {
+            "value": "audit",
+            "label": "audit"
+          }
+        ]
+      },
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "style",
+        "label": "设计风格",
+        "type": "select",
+        "default": "swiss",
+        "options": [
+          {
+            "value": "swiss",
+            "label": "swiss"
+          },
+          {
+            "value": "editorial",
+            "label": "editorial"
+          },
+          {
+            "value": "chinese-ink",
+            "label": "chinese-ink"
+          },
+          {
+            "value": "cream",
+            "label": "cream"
+          },
+          {
+            "value": "dopamine",
+            "label": "dopamine"
+          },
+          {
+            "value": "luxe-noir",
+            "label": "luxe-noir"
+          },
+          {
+            "value": "journal",
+            "label": "journal"
+          },
+          {
+            "value": "terminal",
+            "label": "terminal"
+          },
+          {
+            "value": "botanical",
+            "label": "botanical"
+          }
+        ]
+      }
+    ],
+    "accepted_parameters": [
+      "op",
+      "width",
+      "height",
+      "scale",
+      "title",
+      "style",
+      "subtitle",
+      "kicker",
+      "watermark",
+      "source",
+      "cta",
+      "cards",
+      "format",
+      "draft_content"
+    ],
+    "assets_required": false
+  },
+  "card-xiaohongshu": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "document",
+      "image"
+    ],
+    "input_required": false,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "draft_content",
+        "label": "按此技能任务生成内容后渲染",
+        "type": "boolean",
+        "default": true
+      },
+      {
+        "key": "op",
+        "label": "op",
+        "type": "text",
+        "default": "render"
+      },
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "style",
+        "label": "设计风格",
+        "type": "select",
+        "default": "swiss",
+        "options": [
+          {
+            "value": "swiss",
+            "label": "swiss"
+          },
+          {
+            "value": "editorial",
+            "label": "editorial"
+          },
+          {
+            "value": "chinese-ink",
+            "label": "chinese-ink"
+          },
+          {
+            "value": "cream",
+            "label": "cream"
+          },
+          {
+            "value": "dopamine",
+            "label": "dopamine"
+          },
+          {
+            "value": "luxe-noir",
+            "label": "luxe-noir"
+          },
+          {
+            "value": "journal",
+            "label": "journal"
+          },
+          {
+            "value": "terminal",
+            "label": "terminal"
+          },
+          {
+            "value": "botanical",
+            "label": "botanical"
+          }
+        ]
+      }
+    ],
+    "accepted_parameters": [
+      "op",
+      "width",
+      "height",
+      "scale",
+      "title",
+      "style",
+      "subtitle",
+      "kicker",
+      "watermark",
+      "source",
+      "cta",
+      "cards",
+      "format",
+      "draft_content"
+    ],
+    "assets_required": false
+  },
+  "card-quote": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "document",
+      "image"
+    ],
+    "input_required": false,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "draft_content",
+        "label": "按此技能任务生成内容后渲染",
+        "type": "boolean",
+        "default": true
+      },
+      {
+        "key": "op",
+        "label": "op",
+        "type": "text",
+        "default": "render"
+      },
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "style",
+        "label": "设计风格",
+        "type": "select",
+        "default": "swiss",
+        "options": [
+          {
+            "value": "swiss",
+            "label": "swiss"
+          },
+          {
+            "value": "editorial",
+            "label": "editorial"
+          },
+          {
+            "value": "chinese-ink",
+            "label": "chinese-ink"
+          },
+          {
+            "value": "cream",
+            "label": "cream"
+          },
+          {
+            "value": "dopamine",
+            "label": "dopamine"
+          },
+          {
+            "value": "luxe-noir",
+            "label": "luxe-noir"
+          },
+          {
+            "value": "journal",
+            "label": "journal"
+          },
+          {
+            "value": "terminal",
+            "label": "terminal"
+          },
+          {
+            "value": "botanical",
+            "label": "botanical"
+          }
+        ]
+      }
+    ],
+    "accepted_parameters": [
+      "op",
+      "width",
+      "height",
+      "scale",
+      "title",
+      "style",
+      "subtitle",
+      "kicker",
+      "watermark",
+      "source",
+      "cta",
+      "cards",
+      "format",
+      "draft_content"
+    ],
+    "assets_required": false
+  },
+  "poster-hero": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "document",
+      "image"
+    ],
+    "input_required": false,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "draft_content",
+        "label": "按此技能任务生成内容后渲染",
+        "type": "boolean",
+        "default": true
+      },
+      {
+        "key": "op",
+        "label": "op",
+        "type": "text",
+        "default": "render"
+      },
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "style",
+        "label": "设计风格",
+        "type": "select",
+        "default": "swiss",
+        "options": [
+          {
+            "value": "swiss",
+            "label": "swiss"
+          },
+          {
+            "value": "editorial",
+            "label": "editorial"
+          },
+          {
+            "value": "chinese-ink",
+            "label": "chinese-ink"
+          },
+          {
+            "value": "cream",
+            "label": "cream"
+          },
+          {
+            "value": "dopamine",
+            "label": "dopamine"
+          },
+          {
+            "value": "luxe-noir",
+            "label": "luxe-noir"
+          },
+          {
+            "value": "journal",
+            "label": "journal"
+          },
+          {
+            "value": "terminal",
+            "label": "terminal"
+          },
+          {
+            "value": "botanical",
+            "label": "botanical"
+          }
+        ]
+      }
+    ],
+    "accepted_parameters": [
+      "op",
+      "width",
+      "height",
+      "scale",
+      "title",
+      "style",
+      "subtitle",
+      "kicker",
+      "watermark",
+      "source",
+      "cta",
+      "cards",
+      "format",
+      "draft_content"
+    ],
+    "assets_required": false
+  },
+  "comparison-card": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "document",
+      "image"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "op",
+        "label": "op",
+        "type": "text",
+        "default": "render"
+      },
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "style",
+        "label": "设计风格",
+        "type": "select",
+        "default": "swiss",
+        "options": [
+          {
+            "value": "swiss",
+            "label": "swiss"
+          },
+          {
+            "value": "editorial",
+            "label": "editorial"
+          },
+          {
+            "value": "chinese-ink",
+            "label": "chinese-ink"
+          },
+          {
+            "value": "cream",
+            "label": "cream"
+          },
+          {
+            "value": "dopamine",
+            "label": "dopamine"
+          },
+          {
+            "value": "luxe-noir",
+            "label": "luxe-noir"
+          },
+          {
+            "value": "journal",
+            "label": "journal"
+          },
+          {
+            "value": "terminal",
+            "label": "terminal"
+          },
+          {
+            "value": "botanical",
+            "label": "botanical"
+          }
+        ]
+      },
+      {
+        "key": "data",
+        "label": "真实结构化数据",
+        "type": "text",
+        "default": "[]",
+        "format": "json"
+      }
+    ],
+    "accepted_parameters": [
+      "op",
+      "width",
+      "height",
+      "scale",
+      "title",
+      "style",
+      "data",
+      "columns",
+      "watermark",
+      "source",
+      "subtitle",
+      "format"
+    ],
+    "assets_required": false
+  },
+  "chart-visualization": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "document",
+      "image"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "op",
+        "label": "op",
+        "type": "text",
+        "default": "render"
+      },
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "data",
+        "label": "真实结构化数据",
+        "type": "text",
+        "default": "[]",
+        "format": "json"
+      },
+      {
+        "key": "chart_type",
+        "label": "图表类型",
+        "type": "select",
+        "default": "bar",
+        "options": [
+          {
+            "value": "bar",
+            "label": "bar"
+          },
+          {
+            "value": "column",
+            "label": "column"
+          },
+          {
+            "value": "line",
+            "label": "line"
+          },
+          {
+            "value": "area",
+            "label": "area"
+          },
+          {
+            "value": "scatter",
+            "label": "scatter"
+          },
+          {
+            "value": "pie",
+            "label": "pie"
+          },
+          {
+            "value": "radar",
+            "label": "radar"
+          },
+          {
+            "value": "funnel",
+            "label": "funnel"
+          },
+          {
+            "value": "histogram",
+            "label": "histogram"
+          },
+          {
+            "value": "spreadsheet",
+            "label": "spreadsheet"
+          },
+          {
+            "value": "boxplot",
+            "label": "boxplot"
+          },
+          {
+            "value": "violin",
+            "label": "violin"
+          },
+          {
+            "value": "waterfall",
+            "label": "waterfall"
+          },
+          {
+            "value": "dual-axes",
+            "label": "dual-axes"
+          },
+          {
+            "value": "liquid",
+            "label": "liquid"
+          },
+          {
+            "value": "word-cloud",
+            "label": "word-cloud"
+          },
+          {
+            "value": "treemap",
+            "label": "treemap"
+          },
+          {
+            "value": "sankey",
+            "label": "sankey"
+          },
+          {
+            "value": "venn",
+            "label": "venn"
+          },
+          {
+            "value": "network-graph",
+            "label": "network-graph"
+          },
+          {
+            "value": "flow-diagram",
+            "label": "flow-diagram"
+          },
+          {
+            "value": "fishbone-diagram",
+            "label": "fishbone-diagram"
+          },
+          {
+            "value": "org-chart",
+            "label": "org-chart"
+          },
+          {
+            "value": "mind-map",
+            "label": "mind-map"
+          }
+        ]
+      },
+      {
+        "key": "x",
+        "label": "横轴字段",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "y",
+        "label": "数值字段",
+        "type": "text",
+        "default": ""
+      }
+    ],
+    "accepted_parameters": [
+      "op",
+      "width",
+      "height",
+      "scale",
+      "title",
+      "data",
+      "chart_type",
+      "type",
+      "x",
+      "y",
+      "group",
+      "theme",
+      "axisXTitle",
+      "axisYTitle",
+      "innerRadius",
+      "binNumber",
+      "format",
+      "shape",
+      "orient"
+    ],
+    "assets_required": false
+  },
+  "infographic": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "document",
+      "image"
+    ],
+    "input_required": false,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "draft_content",
+        "label": "按此技能任务生成内容后渲染",
+        "type": "boolean",
+        "default": true
+      },
+      {
+        "key": "op",
+        "label": "op",
+        "type": "select",
+        "default": "list",
+        "options": [
+          {
+            "value": "list",
+            "label": "list"
+          },
+          {
+            "value": "flow",
+            "label": "flow"
+          },
+          {
+            "value": "comparison",
+            "label": "comparison"
+          },
+          {
+            "value": "hierarchy",
+            "label": "hierarchy"
+          },
+          {
+            "value": "bar-race",
+            "label": "bar-race"
+          },
+          {
+            "value": "count-up",
+            "label": "count-up"
+          },
+          {
+            "value": "progress",
+            "label": "progress"
+          },
+          {
+            "value": "line-grow",
+            "label": "line-grow"
+          }
+        ]
+      },
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "data",
+        "label": "真实结构化数据",
+        "type": "text",
+        "default": "[]",
+        "format": "json"
+      }
+    ],
+    "accepted_parameters": [
+      "op",
+      "width",
+      "height",
+      "scale",
+      "title",
+      "data",
+      "style",
+      "fps",
+      "duration",
+      "top_n",
+      "format",
+      "draft_content"
+    ],
+    "assets_required": false
+  },
+  "mindmap": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "document",
+      "image"
+    ],
+    "input_required": false,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "draft_content",
+        "label": "按此技能任务生成内容后渲染",
+        "type": "boolean",
+        "default": true
+      },
+      {
+        "key": "op",
+        "label": "op",
+        "type": "text",
+        "default": "make"
+      },
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "default": ""
+      }
+    ],
+    "accepted_parameters": [
+      "op",
+      "width",
+      "height",
+      "scale",
+      "title",
+      "bg",
+      "format",
+      "data",
+      "draft_content"
+    ],
+    "assets_required": false
+  },
+  "doc-convert": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "document",
+      "image"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "op",
+        "label": "op",
+        "type": "text",
+        "default": "convert"
+      },
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "format",
+        "label": "产物格式",
+        "type": "select",
+        "default": "html",
+        "options": [
+          {
+            "value": "html",
+            "label": "html"
+          },
+          {
+            "value": "pdf",
+            "label": "pdf"
+          },
+          {
+            "value": "docx",
+            "label": "docx"
+          },
+          {
+            "value": "png",
+            "label": "png"
+          }
+        ]
+      }
+    ],
+    "accepted_parameters": [
+      "op",
+      "width",
+      "height",
+      "scale",
+      "title",
+      "format",
+      "page_width"
+    ],
+    "assets_required": false
+  },
+  "data-report": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "document",
+      "image"
+    ],
+    "input_required": false,
+    "requires_model_processing": false,
+    "requires_model_authorization": false,
+    "parameters": [
+      {
+        "key": "op",
+        "label": "op",
+        "type": "select",
+        "default": "report",
+        "options": [
+          {
+            "value": "report",
+            "label": "report"
+          },
+          {
+            "value": "analyze",
+            "label": "analyze"
+          }
+        ]
+      },
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "data",
+        "label": "真实结构化数据",
+        "type": "text",
+        "default": "[]",
+        "format": "json"
+      }
+    ],
+    "accepted_parameters": [
+      "op",
+      "width",
+      "height",
+      "scale",
+      "title",
+      "data",
+      "kpi",
+      "format"
+    ],
+    "assets_required": false
+  },
+  "gzh-design": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "document",
+      "image"
+    ],
+    "input_required": false,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "draft_content",
+        "label": "按此技能任务生成内容后渲染",
+        "type": "boolean",
+        "default": true
+      },
+      {
+        "key": "op",
+        "label": "op",
+        "type": "text",
+        "default": "format"
+      },
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "key": "format",
+        "label": "产物格式",
+        "type": "select",
+        "default": "html",
+        "options": [
+          {
+            "value": "html",
+            "label": "html"
+          },
+          {
+            "value": "pdf",
+            "label": "pdf"
+          },
+          {
+            "value": "docx",
+            "label": "docx"
+          },
+          {
+            "value": "png",
+            "label": "png"
+          }
+        ]
+      },
+      {
+        "key": "theme",
+        "label": "文章主题",
+        "type": "select",
+        "default": "graphite-minimal",
+        "options": [
+          {
+            "value": "moyu-green",
+            "label": "moyu-green"
+          },
+          {
+            "value": "red-white",
+            "label": "red-white"
+          },
+          {
+            "value": "graphite-minimal",
+            "label": "graphite-minimal"
+          },
+          {
+            "value": "zen-whitespace",
+            "label": "zen-whitespace"
+          },
+          {
+            "value": "moyu-ticket",
+            "label": "moyu-ticket"
+          },
+          {
+            "value": "olive-journal",
+            "label": "olive-journal"
+          }
+        ]
+      }
+    ],
+    "accepted_parameters": [
+      "op",
+      "width",
+      "height",
+      "scale",
+      "title",
+      "theme",
+      "format",
+      "page_width",
+      "draft_content"
+    ],
+    "assets_required": false
+  },
+  "xhs-note-creator": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "document",
+      "image",
+      "video",
+      "audio"
+    ],
+    "input_required": false,
+    "assets_required": false,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "format",
+        "label": "笔记形态",
+        "type": "select",
+        "default": "cards",
+        "options": [
+          {
+            "value": "cards",
+            "label": "cards"
+          },
+          {
+            "value": "video",
+            "label": "video"
+          }
+        ]
+      },
+      {
+        "key": "card_count",
+        "label": "卡片数量",
+        "type": "number",
+        "default": 5
+      },
+      {
+        "key": "style",
+        "label": "视觉风格",
+        "type": "select",
+        "default": "swiss",
+        "options": [
+          {
+            "value": "swiss",
+            "label": "swiss"
+          },
+          {
+            "value": "editorial",
+            "label": "editorial"
+          },
+          {
+            "value": "chinese-ink",
+            "label": "chinese-ink"
+          },
+          {
+            "value": "cream",
+            "label": "cream"
+          },
+          {
+            "value": "dopamine",
+            "label": "dopamine"
+          },
+          {
+            "value": "luxe-noir",
+            "label": "luxe-noir"
+          },
+          {
+            "value": "journal",
+            "label": "journal"
+          },
+          {
+            "value": "terminal",
+            "label": "terminal"
+          },
+          {
+            "value": "botanical",
+            "label": "botanical"
+          }
+        ]
+      },
+      {
+        "key": "note",
+        "label": "已完成的完整笔记",
+        "type": "text",
+        "format": "json"
+      },
+      {
+        "key": "audience",
+        "label": "目标读者",
+        "type": "text",
+        "default": "项目目标读者"
+      }
+    ],
+    "accepted_parameters": [
+      "format",
+      "note",
+      "card_count",
+      "style",
+      "width",
+      "height",
+      "scale",
+      "audience",
+      "voice",
+      "duration"
+    ]
+  },
+  "paper-explainer": {
+    "accepts_assets": true,
+    "accepted_kinds": [
+      "document"
+    ],
+    "input_required": false,
+    "assets_required": true,
+    "requires_model_processing": true,
+    "requires_model_authorization": true,
+    "parameters": [
+      {
+        "key": "op",
+        "label": "执行阶段",
+        "type": "select",
+        "default": "explain",
+        "options": [
+          {
+            "value": "fetch",
+            "label": "fetch"
+          },
+          {
+            "value": "extract",
+            "label": "extract"
+          },
+          {
+            "value": "explain",
+            "label": "explain"
+          }
+        ]
+      },
+      {
+        "key": "paper",
+        "label": "arXiv ID或公开链接",
+        "type": "text"
+      },
+      {
+        "key": "format",
+        "label": "产物形态",
+        "type": "select",
+        "default": "article",
+        "options": [
+          {
+            "value": "article",
+            "label": "article"
+          },
+          {
+            "value": "video",
+            "label": "video"
+          },
+          {
+            "value": "both",
+            "label": "both"
+          }
+        ]
+      },
+      {
+        "key": "audience",
+        "label": "解读受众",
+        "type": "text",
+        "default": "大众科普"
+      },
+      {
+        "key": "style",
+        "label": "视觉风格",
+        "type": "select",
+        "default": "editorial",
+        "options": [
+          {
+            "value": "swiss",
+            "label": "swiss"
+          },
+          {
+            "value": "editorial",
+            "label": "editorial"
+          },
+          {
+            "value": "chinese-ink",
+            "label": "chinese-ink"
+          },
+          {
+            "value": "cream",
+            "label": "cream"
+          },
+          {
+            "value": "dopamine",
+            "label": "dopamine"
+          },
+          {
+            "value": "luxe-noir",
+            "label": "luxe-noir"
+          },
+          {
+            "value": "journal",
+            "label": "journal"
+          },
+          {
+            "value": "terminal",
+            "label": "terminal"
+          },
+          {
+            "value": "botanical",
+            "label": "botanical"
+          }
+        ]
+      },
+      {
+        "key": "size",
+        "label": "视频已确认画幅",
+        "type": "text"
+      },
+      {
+        "key": "slide_count",
+        "label": "幻灯页数",
+        "type": "number",
+        "default": 6
+      }
+    ],
+    "accepted_parameters": [
+      "op",
+      "paper",
+      "format",
+      "width",
+      "height",
+      "size",
+      "scale",
+      "style",
+      "audience",
+      "voice",
+      "slide_count"
+    ]
+  }
+}

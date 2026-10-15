@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-11",
+  "scope": "本地HTTP交互Demo",
+  "checks": [
+    "选题生成可编辑文案",
+    "缺预览阻止审批",
+    "生成预览并人工批准",
+    "导出示例JSON清单",
+    "编辑使旧审批失效",
+    "人工回执核对+live才计公开",
+    "资格确认四项门禁与unknown来源保留",
+    "保存跟进与预约不等于带看",
+    "D30无数据保持待观察",
+    "搜索切换看板后继续过滤",
+    "画幅和字幕影响预览",
+    "缺值报价不能核验",
+    "本地图片预览与用途确认",
+    "390px手机无页面横向溢出与导航可用",
+    "独立HTML所有图片已内嵌且浏览器图像加载成功"
+  ],
+  "console_errors": [],
+  "model_tests_passed": 22,
+  "offline_file_protocol": "内置浏览器策略禁止file协议，因此未实测file://离线打开；交互通过原有本地HTTP预览验证",
+  "screenshots": [
+    "screenshots/01_工作台.jpg",
+    "screenshots/02_内容工作室.jpg",
+    "screenshots/03_客户详情.jpg",
+    "screenshots/04_手机布局.jpg"
+  ]
+}

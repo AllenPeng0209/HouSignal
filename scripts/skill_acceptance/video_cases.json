@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "group": "video",
+  "policy": "Existing resident PPU only; do not create cloud compute or call a billed video API. Submit this generation once through the project API.",
+  "cases": [
+    {
+      "case_id": "native-ppu-text-to-audio-video",
+      "skill_id": "ai-video",
+      "skill_name": "ai-video-gen",
+      "billing": "existing_ppu",
+      "expected_outcome": "success",
+      "commercial_scope": "base",
+      "asset_fixture_names": [],
+      "quality": {"min_text_chars": 20, "required_artifact_suffixes": [".mp4", ".json"]},
+      "input": "Vertical commercial product video, a plain ceramic cup on a light oak table near a sunny window. The camera slowly moves right and the cup rotates slightly; natural reflections and physically coherent movement. Warm neutral colors, clean composition, no logos, no words, no people, no dialogue. Preserve soft room ambience and authentic environmental sound.",
+      "asset_ids": [],
+      "parameters": {"size": "576x1024", "duration": 5, "seed": 42},
+      "expected_artifacts": ["generated.mp4", "video-submission.json", "video-receipt.json"],
+      "expected_media": {"width": 576, "height": 1024, "fps": 24, "frames": 124, "duration_seconds": 5.166666666666667, "native_audio": true, "full_decode_required": true},
+      "acceptance_limit": "A successful real model/codec pipeline is not human approval of every prompt or a product-wide commercial-release decision."
+    }
+  ]
+}

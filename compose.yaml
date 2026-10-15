@@ -1,0 +1,70 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: housignal_owner
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: housignal
+    volumes:
+      - database:/var/lib/postgresql/data
+      - ./infra/postgres-init.sh:/docker-entrypoint-initdb.d/roles.sh:ro
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U housignal_owner -d housignal]
+      interval: 3s
+      retries: 20
+  migrate:
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.api
+    env_file: .env
+    environment: &backend
+      APP_ENV: production
+      ALLOWED_ORIGINS: ${DEPLOY_ORIGIN:-http://127.0.0.1:8087}
+      DATABASE_URL: postgresql+psycopg://housignal_app:${POSTGRES_PASSWORD}@db:5432/housignal
+      MIGRATION_DATABASE_URL: postgresql+psycopg://housignal_owner:${POSTGRES_PASSWORD}@db:5432/housignal
+      WORKER_DATABASE_URL: postgresql+psycopg://housignal_worker:${POSTGRES_PASSWORD}@db:5432/housignal
+      STORAGE_ROOT: /data/storage
+      FFMPEG_BINARY: /usr/bin/ffmpeg
+      FFPROBE_BINARY: /usr/bin/ffprobe
+    command: [sh, -c, "alembic upgrade head && python scripts/install_rls.py"]
+    depends_on:
+      db:
+        condition: service_healthy
+  api:
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.api
+    env_file: .env
+    environment: *backend
+    volumes: [storage:/data/storage, platform_accounts:/app/runtime/platform-accounts]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+  worker:
+    # Agent login runners and API status/logout share process ownership checks.
+    pid: service:api
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.api
+    env_file: .env
+    environment: *backend
+    command: [python, -m, app.worker]
+    volumes: [storage:/data/storage, platform_accounts:/app/runtime/platform-accounts]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      api:
+        condition: service_started
+    restart: unless-stopped
+  web:
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.web
+    ports: ["127.0.0.1:8087:80"]
+    depends_on: [api]
+    restart: unless-stopped
+volumes:
+  database:
+  storage:
+  platform_accounts:

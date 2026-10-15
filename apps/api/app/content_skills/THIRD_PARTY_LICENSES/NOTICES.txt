@@ -1,0 +1,4 @@
+Content task algorithms were adapted from ZJU-REAL/Easel into HouSignal project-owned Python services.
+Original source: https://github.com/ZJU-REAL/Easel
+Adaptations: native function interfaces, project asset authorization, isolated private outputs, structured job inputs, and project model configuration.
+Upstream license texts are retained here.
