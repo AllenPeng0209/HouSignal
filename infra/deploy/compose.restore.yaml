@@ -1,0 +1,34 @@
+# Standalone restore drill. Never merge this with the production Compose files.
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: housignal_owner
+      POSTGRES_DB: housignal
+      POSTGRES_PASSWORD: ${RESTORE_DB_PASSWORD:?Generated only for an isolated restore drill}
+    volumes:
+      - database:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U housignal_owner -d housignal]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  files:
+    image: alpine:3.22
+    volumes:
+      - type: bind
+        source: ${RESTORE_BACKUP_DIR:?Choose a verified backup directory}
+        target: /backup
+        read_only: true
+      - storage:/restore/storage
+      - platform_accounts:/restore/platform_accounts
+    command:
+      - sh
+      - -ceu
+      - >-
+        tar -xzf /backup/storage.tar.gz -C /restore/storage;
+        tar -xzf /backup/platform_accounts.tar.gz -C /restore/platform_accounts
+volumes:
+  database:
+  storage:
+  platform_accounts:

@@ -9,7 +9,14 @@ import zipfile
 ROOT=Path(__file__).resolve().parents[1]
 target=ROOT/'exports/楼响_HouSignal_正式应用源码.zip'
 target.parent.mkdir(parents=True, exist_ok=True)
-allowed=['apps/api','apps/web','apps/agent-runtime','scripts','infra','specs','tests','docs','vendor']
+allowed=['apps/api','apps/web','apps/agent-runtime','scripts','infra','specs','tests','docs','vendor',
+    'integrations/louxiang-agent/src','integrations/louxiang-agent/plugin/skills']
+# Only these hidden plugin descriptors are public source; adjacent local state stays private.
+public_descriptors={'.agents/plugins/marketplace.json',
+    'integrations/louxiang-agent/plugin/.mcp.json',
+    'integrations/louxiang-agent/plugin/.codex-plugin/plugin.json'}
+integration_files={'integrations/louxiang-agent/build.py','integrations/louxiang-agent/README.md',
+    'integrations/louxiang-agent/plugin/plugin.json','integrations/louxiang-agent/plugin/mcp.json'}
 excluded_parts={'node_modules','dist','build','__pycache__','.pytest_cache','.runtime','runtime',
     '.venv','venv','.git','data','databases','uploads','storage','models','modelweights',
     'model_weights','weights','checkpoints'}
@@ -25,8 +32,10 @@ def exportable(path):
             or not path.resolve().is_relative_to(ROOT.resolve())): return False
     if any((ROOT/Path(*relative.parts[:index])).is_symlink()
             for index in range(1,len(relative.parts))): return False
-    if any(part in excluded_parts or part.startswith('.') for part in relative.parts[:-1]): return False
-    if path.name.startswith('.') and path.name not in {'.env.example','.gitignore','.dockerignore'}: return False
+    if any(part in excluded_parts for part in relative.parts[:-1]): return False
+    if any(part.startswith('.') for part in relative.parts[:-1]) and relative.as_posix() not in public_descriptors: return False
+    if (path.name.startswith('.') and path.name not in {'.env.example','.gitignore','.dockerignore'}
+            and relative.as_posix() not in public_descriptors): return False
     return path.suffix.lower() not in excluded_suffixes
 
 
@@ -34,6 +43,7 @@ files=[]
 for directory in allowed:
     for path in (ROOT/directory).rglob('*'):
         if exportable(path): files.append(path)
+files.extend(ROOT/name for name in sorted(public_descriptors|integration_files) if (ROOT/name).is_file())
 files.extend(ROOT/name for name in ['.env.example','.gitignore','.dockerignore','README_IMPLEMENTATION.md','compose.yaml','alembic.ini','pytest.ini'] if (ROOT/name).is_file())
 files.extend(ROOT/'reports'/name for name in ['delivery-verification.json','acceptance-flow.json','live-media-check.json','permission-and-identity-check.json','restore-verification.json','final-live-chat.json','openapi.json','production-agent-desktop.jpg','production-agent-mobile.jpg','production-studio-desktop.jpg','production-dashboard.jpg'] if (ROOT/'reports'/name).is_file())
 performance_reports=['residential-discovery-verification-20261013.json','residential-discovery-current.png','content-operations-verification-20261013.json','content-operations-skills-desktop.png','content-operations-skills-mobile.png','content-operations-discovery-desktop.png','content-operations-planning-desktop.png','ai-performance-verification.json','queue-baseline.json','ai-model-call-metadata.json','chat-model-evaluation.json','chat-model-evaluation-final.json','content-model-evaluation.json','frontend-perf-fixture.json','frontend-perf-fixture-preview.png','performance-live-agent.jpg','performance-live-stream.jpg']

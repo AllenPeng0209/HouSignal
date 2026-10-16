@@ -12,3 +12,7 @@ demo
 exports
 reports
 .git
+
+# Local media and generated clients are not image build inputs
+productions
+integrations/louxiang-agent/dist

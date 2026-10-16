@@ -5,6 +5,7 @@ import importlib.util
 import json
 from pathlib import Path
 import subprocess
+import sys
 import wave
 
 import numpy as np
@@ -12,9 +13,18 @@ from PIL import Image
 import pytest
 
 ROOT = Path(__file__).resolve().parents[3]
-FIXTURES = ROOT / "reports" / "skill-acceptance" / "fixtures"
 ONSET_ORACLE = np.array([0.25,0.83,1.52,2.07,2.89,3.46,4.14])
 TIER2_FILTER = "highpass=f=70,afftdn=nr=24:nf=-30:tn=1,anlmdn=s=0.0005"
+
+
+@pytest.fixture(scope="module")
+def audio_fixtures(tmp_path_factory):
+    output = tmp_path_factory.mktemp("generated-audio-fixtures")
+    generator = ROOT / "scripts" / "skill_acceptance" / "make_audio_fixtures.py"
+    # Generate both files together to retain the deterministic shared RNG sequence.
+    subprocess.run([sys.executable, str(generator), "--output-dir", str(output)],
+                   check=True, capture_output=True, text=True)
+    return output
 
 
 def module():
@@ -49,17 +59,17 @@ def dispatch(tmp_path,skill,assets,parameters):
 
 
 @pytest.fixture(scope="module")
-def independent_wet(tmp_path_factory):
+def independent_wet(tmp_path_factory,audio_fixtures):
     output=tmp_path_factory.mktemp("physical-reference")/"wet.wav"
     # Independent FFmpeg reference: 1102 FFT + 353 nonlocal lookahead samples.
     aligned=f"apad=pad_len=1455,{TIER2_FILTER},atrim=start_sample=1455:end_sample=177855,asetpts=PTS-1455/SR/TB"
-    ffmpeg("-y","-i",FIXTURES/"noisy_audio.wav","-af",aligned,"-c:a","pcm_s16le",output)
+    ffmpeg("-y","-i",audio_fixtures/"noisy_audio.wav","-af",aligned,"-c:a","pcm_s16le",output)
     return pcm(output)
 
 
 @pytest.mark.parametrize("mix",[0,0.5,1])
-def test_tier2_mix_is_real_dry_wet_linear_blend(tmp_path,independent_wet,mix):
-    source=FIXTURES/"noisy_audio.wav"
+def test_tier2_mix_is_real_dry_wet_linear_blend(tmp_path,independent_wet,mix,audio_fixtures):
+    source=audio_fixtures/"noisy_audio.wav"
     dry,rate,channels=pcm(source)
     wet,wet_rate,wet_channels=independent_wet
     output=dispatch(tmp_path,"audio-denoise",[source],{"tier":2,"mix":mix,"format":"wav"})[0]
@@ -72,8 +82,8 @@ def test_tier2_mix_is_real_dry_wet_linear_blend(tmp_path,independent_wet,mix):
         assert np.array_equal(actual,dry)
 
 
-def test_tier2_reduces_known_noise_against_independent_clean_signal(tmp_path):
-    source=FIXTURES/"noisy_audio.wav"
+def test_tier2_reduces_known_noise_against_independent_clean_signal(tmp_path,audio_fixtures):
+    source=audio_fixtures/"noisy_audio.wav"
     dry,rate,channels=pcm(source)
     output=dispatch(tmp_path,"audio-denoise",[source],{"tier":2,"mix":1,"format":"wav"})[0]
     wet,_,_=pcm(output)
@@ -97,8 +107,8 @@ def test_tier2_reduces_known_noise_against_independent_clean_signal(tmp_path):
     assert min(improvements)>3
 
 
-def test_mix_point8_does_not_cancel_clean_signal_or_worsen_raw_error(tmp_path):
-    source=FIXTURES/"noisy_audio.wav"
+def test_mix_point8_does_not_cancel_clean_signal_or_worsen_raw_error(tmp_path,audio_fixtures):
+    source=audio_fixtures/"noisy_audio.wav"
     dry,rate,channels=pcm(source)
     t=np.arange(len(dry))/rate
     clean=np.stack((.18*np.sin(2*np.pi*440*t)+.05*np.sin(2*np.pi*880*t),.15*np.sin(2*np.pi*660*t)+.04*np.sin(2*np.pi*1320*t)),axis=1)*32767
@@ -122,9 +132,9 @@ def test_mix_point8_does_not_cancel_clean_signal_or_worsen_raw_error(tmp_path):
     assert min(improvement)>3
 
 
-def test_video_denoise_blend_retains_picture_duration_and_stereo(tmp_path):
+def test_video_denoise_blend_retains_picture_duration_and_stereo(tmp_path,audio_fixtures):
     video=tmp_path/"input.mp4"
-    ffmpeg("-y","-f","lavfi","-i","color=c=red:s=96x64:r=30:d=4","-i",FIXTURES/"noisy_audio.wav","-c:v","libx264","-pix_fmt","yuv420p","-c:a","aac","-shortest",video)
+    ffmpeg("-y","-f","lavfi","-i","color=c=red:s=96x64:r=30:d=4","-i",audio_fixtures/"noisy_audio.wav","-c:v","libx264","-pix_fmt","yuv420p","-c:a","aac","-shortest",video)
     output=dispatch(tmp_path/"result","audio-denoise",[video],{"tier":2,"mix":0.5})[0]
     data=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_streams","-show_format","-of","json",str(output)]))
     v=next(stream for stream in data["streams"] if stream["codec_type"]=="video")
@@ -137,9 +147,9 @@ def test_video_denoise_blend_retains_picture_duration_and_stereo(tmp_path):
     ffmpeg("-xerror","-i",output,"-map","0:v","-map","0:a","-f","null","-")
 
 
-def test_video_alignment_preserves_real_audio_start_gap(tmp_path):
+def test_video_alignment_preserves_real_audio_start_gap(tmp_path,audio_fixtures):
     source=tmp_path/"offset-input.mp4"
-    ffmpeg("-y","-f","lavfi","-i","color=c=red:s=96x64:r=30:d=6","-itsoffset","1","-i",FIXTURES/"noisy_audio.wav","-map","0:v","-map","1:a","-c:v","libx264","-pix_fmt","yuv420p","-c:a","aac",source)
+    ffmpeg("-y","-f","lavfi","-i","color=c=red:s=96x64:r=30:d=6","-itsoffset","1","-i",audio_fixtures/"noisy_audio.wav","-map","0:v","-map","1:a","-c:v","libx264","-pix_fmt","yuv420p","-c:a","aac",source)
     output=dispatch(tmp_path/"aligned","audio-denoise",[source],{"tier":2,"mix":0.8})[0]
     def probe(path):
         return json.loads(subprocess.check_output(["ffprobe","-v","error","-show_streams","-show_format","-of","json",str(path)]))
@@ -199,10 +209,10 @@ def test_automatic_beats_rejects_music_without_actual_onsets(tmp_path,images):
     assert not list((tmp_path/"result").glob("*.mp4"))
 
 
-def test_auto_beat_dependency_gap_returns_setup_without_fake_video(tmp_path,images,monkeypatch):
+def test_auto_beat_dependency_gap_returns_setup_without_fake_video(tmp_path,images,monkeypatch,audio_fixtures):
     import sys
     monkeypatch.setitem(sys.modules,"numpy",None)
-    result=module().dispatch("beat-sync-video",input_text="",assets=[{"path":p} for p in [*images,FIXTURES/"rhythm.wav"]],parameters={"size":"96x64","beat_mode":"auto"},output_dir=tmp_path/"result",context={})
+    result=module().dispatch("beat-sync-video",input_text="",assets=[{"path":p} for p in [*images,audio_fixtures/"rhythm.wav"]],parameters={"size":"96x64","beat_mode":"auto"},output_dir=tmp_path/"result",context={})
     assert result["status"]=="setup" and "NumPy" in result["response"]
     assert result["artifact_paths"]==[]
 
@@ -217,9 +227,9 @@ def test_explicit_equal_interval_is_declared_base_and_not_automatic(tmp_path,ima
     assert [segment["start"] for segment in manifest["segments"]]==[0,0.5,1,1.5]
 
 
-def test_auto_beats_detects_real_nonuniform_onsets_and_video_cut_times(tmp_path,images):
+def test_auto_beats_detects_real_nonuniform_onsets_and_video_cut_times(tmp_path,images,audio_fixtures):
     # Oracle is used only for assertions; execution never receives beat times.
-    paths=dispatch(tmp_path/"result","beat-sync-video",[*images,FIXTURES/"rhythm.wav"],{"size":"96x64","beat_mode":"auto","every":1,"effect":"none","kenburns":False})
+    paths=dispatch(tmp_path/"result","beat-sync-video",[*images,audio_fixtures/"rhythm.wav"],{"size":"96x64","beat_mode":"auto","every":1,"effect":"none","kenburns":False})
     manifest=json.loads(paths[1].read_text())
     measured=np.asarray(manifest["detected_onsets"])
     assert manifest["source_onsets"]==measured.tolist()

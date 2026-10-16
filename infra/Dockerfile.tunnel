@@ -1,0 +1,9 @@
+FROM debian:bookworm-slim
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends openssh-client ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --gid 10001 housignal \
+    && useradd --uid 10001 --gid 10001 --create-home --shell /usr/sbin/nologin housignal
+COPY --chmod=0555 scripts/deploy/ppu-entrypoint.sh /usr/local/bin/ppu-entrypoint
+USER 10001:10001
+ENTRYPOINT ["/usr/local/bin/ppu-entrypoint"]
