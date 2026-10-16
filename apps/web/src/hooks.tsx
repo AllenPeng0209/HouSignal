@@ -3,13 +3,14 @@ import {api,ApiError} from './api.js';
 import {watchJob} from './job-watch.js';
 import {jobProgressPercent,jobStatusText} from './job-status.js';
 import type {Job,Page,Project,Session,Citation} from './types';
-interface AppContextType {session:Session;project:Project;projects:Project[];refresh:number;reload:()=>Promise<void>;navigate:(page:Page)=>void;notify:(text:string)=>void;citation:(ref:Citation)=>void;canEdit:boolean;canReview:boolean;canSales:boolean;canManage:boolean;openProject:()=>void;openReadiness:()=>void;logout:()=>Promise<void>}
+import type {NavigationTarget} from './workspace-navigation';
+interface AppContextType {session:Session;project:Project;projects:Project[];refresh:number;reload:()=>Promise<void>;navigate:(page:Page,target?:NavigationTarget)=>void;navigationTarget:NavigationTarget;rememberNavigation:(target:NavigationTarget)=>void;notify:(text:string)=>void;citation:(ref:Citation)=>void;canEdit:boolean;canReview:boolean;canSales:boolean;canManage:boolean;openProject:()=>void;openReadiness:()=>void;logout:()=>Promise<void>}
 export const AppContext=createContext<AppContextType>(null!);
 export const useApp=()=>useContext(AppContext);
 export function useResource<T>(path:string|null) {
- const {refresh}=useApp();const [data,setData]=useState<T|null>(null),[error,setError]=useState(''),[loading,setLoading]=useState(true),[retry,setRetry]=useState(0);
- useEffect(()=>{let current=true;const controller=new AbortController();setData(null);setError('');setLoading(true);if(!path){setLoading(false);return;}api(path,{signal:controller.signal}).then((value:T)=>{if(current)setData(value);}).catch((e:Error)=>{if(current&&e.name!=='AbortError')setError(e.message);}).finally(()=>{if(current)setLoading(false);});return()=>{current=false;controller.abort();};},[path,refresh,retry]);
- return {data,error,loading,retry:()=>setRetry(v=>v+1),setData};
+ const {refresh}=useApp();const [data,setData]=useState<T|null>(null),[error,setError]=useState(''),[backgroundError,setBackgroundError]=useState(''),[loading,setLoading]=useState(true),[retry,setRetry]=useState(0);const loadedPath=useRef<string|null>(null);
+ useEffect(()=>{let current=true;const controller=new AbortController();const background=path!==null&&loadedPath.current===path&&data!==null;if(!background)setData(null);setError('');setBackgroundError('');setLoading(!background);if(!path){setLoading(false);loadedPath.current=null;return()=>{current=false;controller.abort();};}api(path,{signal:controller.signal}).then((value:T)=>{if(current){loadedPath.current=path;setData(value);}}).catch((e:Error)=>{if(current&&e.name!=='AbortError'){if(e instanceof ApiError&&[401,403,404,410].includes(e.status)){loadedPath.current=null;setData(null);setError(e.message);}else if(background)setBackgroundError(e.message);else setError(e.message);}}).finally(()=>{if(current)setLoading(false);});return()=>{current=false;controller.abort();};},[path,refresh,retry]);
+ return {data,error,backgroundError,loading,retry:()=>setRetry(v=>v+1),setData};
 }
 export function useMutation(){const [busy,setBusy]=useState(false),[error,setError]=useState('');const {notify,reload}=useApp();async function run<T>(fn:()=>Promise<T>,message?:string,refresh=true):Promise<T|undefined>{setBusy(true);setError('');try{const result=await fn();if(refresh)await reload();if(message)notify(message);return result;}catch(e){setError((e as Error).message);return undefined;}finally{setBusy(false);}}return{busy,error,run,setError};}
 export function useJob(){

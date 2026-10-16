@@ -15,6 +15,7 @@ import re
 import secrets
 import shutil
 import signal
+import stat
 import subprocess
 import sys
 import tempfile
@@ -172,6 +173,22 @@ class PlatformRuntime:
         allowed = {'PATH', 'HOME', 'TMPDIR', 'LANG', 'LC_ALL', 'SSL_CERT_FILE', 'SSL_CERT_DIR',
                    'REQUESTS_CA_BUNDLE', 'PLAYWRIGHT_BROWSERS_PATH'}
         env = {key: value for key, value in os.environ.items() if key in allowed}
+        # Headed platform sessions may use the container's private Xvfb display.
+        # Never let a child connect to a remote X server through inherited env.
+        display = os.environ.get('DISPLAY', '')
+        if re.fullmatch(r':[0-9]+(?:\.[0-9]+)?', display):
+            env['DISPLAY'] = display
+            # xvfb-run creates a private, user-owned authority file. Inspect
+            # metadata only; the browser reads its cookie without exposing it.
+            authority = Path(os.environ.get('XAUTHORITY', ''))
+            try:
+                if authority.is_absolute() and authority.resolve(strict=True) == authority:
+                    info = authority.lstat()
+                    if (stat.S_ISREG(info.st_mode) and info.st_uid == os.geteuid()
+                            and stat.S_IMODE(info.st_mode) == 0o600 and info.st_nlink == 1):
+                        env['XAUTHORITY'] = str(authority)
+            except (OSError, ValueError, RuntimeError):
+                pass
         env.update(EASEL_ROOT=str(scope), EASEL_CALENDAR_AUTORECORD='0',
                    PYTHONUNBUFFERED='1', PYTHONDONTWRITEBYTECODE='1', NO_PROXY='*', no_proxy='*',
                    PYTHONPATH=str(self.browser_policy))

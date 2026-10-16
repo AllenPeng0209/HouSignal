@@ -54,6 +54,8 @@ class Publication(ProjectEntity, Base):
     platform_state: Mapped[str] = mapped_column(String(30),default='pending')
     receipt_status: Mapped[str] = mapped_column(String(30),default='unverified')
     metrics: Mapped[dict] = mapped_column(JSON,default=lambda:{'D7':None,'D30':None})
+    # Recording a receipt is not evidence of when the work actually went live.
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True),nullable=True)
 
 
 class Inquiry(ProjectEntity, Base):
@@ -64,6 +66,7 @@ class Inquiry(ProjectEntity, Base):
     channel: Mapped[str] = mapped_column(String(40),default='人工录入')
     source_confidence: Mapped[str] = mapped_column(String(30),default='unknown')
     source_text: Mapped[str] = mapped_column(Text,default='')
+    publication_id: Mapped[str | None] = mapped_column(String(36),ForeignKey('publications.id',name='fk_inquiry_publication'),nullable=True,index=True)
     contact_cipher: Mapped[str | None] = mapped_column(Text,nullable=True)
     contact_fingerprint: Mapped[str | None] = mapped_column(String(64),nullable=True,index=True)
     request_key: Mapped[str | None] = mapped_column(String(120),nullable=True)
@@ -86,6 +89,7 @@ class Lead(ProjectEntity, Base):
     stage: Mapped[str] = mapped_column(String(30),default='qualified')
     owner_id: Mapped[str] = mapped_column(String(36),ForeignKey('users.id'))
     next_action: Mapped[str] = mapped_column(Text,default='确认沟通时间')
+    next_action_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True),nullable=True)
     source_confidence: Mapped[str] = mapped_column(String(30),default='unknown')
     stage_history: Mapped[list] = mapped_column(JSON,default=list)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True),default=now,onupdate=now)
@@ -96,6 +100,7 @@ class FollowUp(ProjectEntity, Base):
     lead_id: Mapped[str] = mapped_column(String(36),ForeignKey('leads.id'),index=True)
     note: Mapped[str] = mapped_column(Text)
     next_action: Mapped[str] = mapped_column(Text,default='')
+    next_action_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True),nullable=True)
     created_by: Mapped[str] = mapped_column(String(36),ForeignKey('users.id'))
 
 
@@ -105,6 +110,18 @@ class Proposal(ProjectEntity, Base):
     reason: Mapped[str] = mapped_column(Text,default='')
     status: Mapped[str] = mapped_column(String(30),default='pending')
     source_refs: Mapped[list] = mapped_column(JSON,default=list)
+
+
+class ContentReviewFeedback(ProjectEntity, Base):
+    __tablename__='content_review_feedback'
+    content_version_id: Mapped[str] = mapped_column(String(36),ForeignKey('content_versions.id'),index=True)
+    version: Mapped[int] = mapped_column(Integer)
+    render_asset_id: Mapped[str | None] = mapped_column(String(36),nullable=True)
+    reviewer_id: Mapped[str] = mapped_column(String(36),ForeignKey('users.id'))
+    reviewer_name: Mapped[str] = mapped_column(String(100))
+    note: Mapped[str] = mapped_column(Text)
+    shot_id: Mapped[str | None] = mapped_column(String(100),nullable=True)
+    sentence: Mapped[str | None] = mapped_column(Text,nullable=True)
 
 
 # Register native CRM detail models with every shared model bootstrap.

@@ -82,6 +82,11 @@ ARCHIVE_TOOLS = [{
 ARCHIVE_NAMES = frozenset(item['function']['name'] for item in ARCHIVE_TOOLS)
 _TEXT_DOCUMENTS = {'.md':'text/markdown', '.json':'application/json', '.srt':'application/x-subrip',
                    '.vtt':'text/vtt'}
+# Platform MIME databases label these supported suffixes differently. Content
+# parsing and canonical storage MIME remain authoritative; do not accept a
+# generic text/plain or application/octet-stream label for other suffixes.
+_LEGACY_MIMES_BY_SUFFIX = {'.srt': {'text/plain'}, '.md': {'text/x-markdown'},
+                          '.wav': {'audio/x-wav'}}
 _SUPPORTED = frozenset({'.jpg', '.jpeg', '.png', '.webp', '.gif', '.pdf', '.txt', '.docx',
                         '.mp4', '.mov', '.webm', '.m4a', '.wav', '.mp3', *_TEXT_DOCUMENTS})
 _MODEL_SKILLS = frozenset({'ai-image-gen', 'ai-video-gen', 'ai-music', 'tts-voiceover',
@@ -243,10 +248,7 @@ def execute_archive_tool(db, ctx, pid, name, args, *, raw_text=''):
             created_files.append(path)
             kind, mime, media_metadata = _media_type(artifact_name, raw, path, db)
             if receipt.get('mime_type') != mime:
-                # Python versions disagree only on these conventional aliases.
-                aliases = {'application/json': {'application/json'}, 'application/x-subrip': {'application/x-subrip'},
-                           'text/markdown': {'text/markdown', 'text/x-markdown'}, 'audio/wav': {'audio/wav', 'audio/x-wav'}}
-                if receipt.get('mime_type') not in aliases.get(mime, set()):
+                if receipt.get('mime_type') not in _LEGACY_MIMES_BY_SUFFIX.get(Path(artifact_name).suffix.lower(), set()):
                     raise HTTPException(409, '任务产物类型与真实内容不一致')
             metadata = {**media_metadata, 'source_job_id':job.id, 'source_artifact_name':artifact_name,
                 'source_sha256':digest, 'source_asset_ids':[item.id for item in sources],

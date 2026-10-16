@@ -1,0 +1,4 @@
+{$DEPLOY_ORIGIN} {
+	encode zstd gzip
+	reverse_proxy web:80
+}

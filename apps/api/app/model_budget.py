@@ -33,9 +33,11 @@ def used_daily_tokens(db, tenant_id, *, local_generation=False):
     # PostgreSQL adds INTEGER columns before SUM widens them. Long cumulative
     # receipts need BIGINT operands so a valid pair cannot overflow mid-query.
     tokens = cast(ModelUsage.input_tokens, BigInteger) + cast(ModelUsage.output_tokens, BigInteger)
-    return db.scalar(select(func.coalesce(func.sum(tokens), 0))
+    # SUM(BIGINT) is NUMERIC on PostgreSQL. Normalize its driver Decimal to an
+    # exact Python int before arithmetic/JSON, without a lossy float conversion.
+    return int(db.scalar(select(func.coalesce(func.sum(tokens), 0))
         .where(ModelUsage.tenant_id == tenant_id, ModelUsage.created_at >= today,
-               local_scope if _local_lane(local_generation) else ~local_scope)) or 0
+               local_scope if _local_lane(local_generation) else ~local_scope)) or 0)
 
 
 def remaining_daily_tokens(db, tenant_id, *, local_generation=False):

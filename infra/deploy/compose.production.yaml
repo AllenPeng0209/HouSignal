@@ -1,0 +1,61 @@
+# Use only together with the repository-root compose.yaml.
+services:
+  migrate:
+    image: ${LOUXIANG_API_IMAGE:-louxiang-api:local}
+  db:
+    restart: unless-stopped
+    logging: &bounded_logs
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+  api:
+    image: ${LOUXIANG_API_IMAGE:-louxiang-api:local}
+    init: true
+    environment:
+      TINI_KILL_PROCESS_GROUP: "1"
+    # API is reachable only on the private Compose network, through web/Caddy.
+    command: [xvfb-run, "--auto-servernum", "--server-num=99", "--server-args=-screen 0 1440x1000x24 -nolisten tcp -nolisten local", uvicorn, app.main:app, --host, 0.0.0.0, --port, "8017", --proxy-headers, "--forwarded-allow-ips=*"]
+    shm_size: 512mb
+    security_opt:
+      - seccomp=./infra/deploy/seccomp-profile.json
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8017/api/health', timeout=5).read()"]
+      interval: 10s
+      timeout: 6s
+      retries: 12
+      start_period: 20s
+    logging: *bounded_logs
+  worker:
+    image: ${LOUXIANG_API_IMAGE:-louxiang-api:local}
+    init: true
+    environment:
+      TINI_KILL_PROCESS_GROUP: "1"
+    command: [xvfb-run, "--auto-servernum", "--server-num=100", "--server-args=-screen 0 1440x1000x24 -nolisten tcp -nolisten local", python, -m, app.worker]
+    shm_size: 512mb
+    security_opt:
+      - seccomp=./infra/deploy/seccomp-profile.json
+    logging: *bounded_logs
+  web:
+    image: ${LOUXIANG_WEB_IMAGE:-louxiang-web:local}
+    logging: *bounded_logs
+  caddy:
+    image: caddy:2-alpine
+    environment:
+      DEPLOY_ORIGIN: ${DEPLOY_ORIGIN:?Set the public HTTPS origin in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./infra/deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      web:
+        condition: service_started
+    restart: unless-stopped
+    logging: *bounded_logs
+volumes:
+  caddy_data:
+  caddy_config:

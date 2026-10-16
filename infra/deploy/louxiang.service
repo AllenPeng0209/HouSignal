@@ -1,0 +1,17 @@
+[Unit]
+Description=Louxiang Web application stack
+Requires=docker.service network-online.target
+After=docker.service network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+User=root
+WorkingDirectory=/srv/louxiang
+Environment=DOCKER_CONFIG=/srv/louxiang/.runtime/docker-client-config
+ExecStart=/usr/bin/python3 /srv/louxiang/scripts/deploy/manage.py start
+UMask=0077
+TimeoutStartSec=180
+
+[Install]
+WantedBy=multi-user.target

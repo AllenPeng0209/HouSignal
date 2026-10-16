@@ -1,0 +1,2 @@
+# Preserve the upstream license bytes, including its original CRLF line endings.
+infra/deploy/seccomp-profile.LICENSE -text whitespace=cr-at-eol

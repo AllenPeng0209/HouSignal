@@ -197,6 +197,117 @@ def test_progress_immediately_rejects_cancelled_lease(queue_factory):
         assert not db.get(Job, jid).result.get("preview_text")
 
 
+def test_chat_cancel_is_committed_before_waiting_for_assistant_row(queue_factory, monkeypatch):
+    from app import agent
+    from app.agent_models import Conversation, ChatMessage
+    from app.jobs import cancel_job
+    from app.worker import claim_job, publish_progress, LostLease
+    jid = add_job(queue_factory)
+    with queue_factory() as db:
+        db.add(Conversation(id='cancel-chat', tenant_id='t', property_id='p', user_id='u', title='合成取消测试'))
+        db.add(ChatMessage(id='cancel-answer', tenant_id='t', property_id='p',
+            conversation_id='cancel-chat', role='assistant', content='', status='queued', job_id=jid))
+        db.commit()
+        job = claim_job(db)
+        token, attempt = job.lease_token, job.attempt
+    original = agent.finalize_chat_messages
+
+    def finalize_after_worker_observes_cancel(db, job_id, status, error):
+        # The real worker owns/locks its answer until it can observe cancellation.
+        # Probe through independent DB sessions at that blocking boundary.
+        with queue_factory() as observer:
+            current = observer.get(Job, jid)
+            assert current.status == 'cancelled'
+            assert current.lease_token is None
+        with pytest.raises(LostLease):
+            publish_progress(jid, token, attempt, session_factory=queue_factory,
+                progress=.6, stage='晚到进度')
+        return original(db, job_id, status, error)
+
+    monkeypatch.setattr(agent, 'finalize_chat_messages', finalize_after_worker_observes_cancel)
+    with queue_factory() as db:
+        result = cancel_job(jid, context_for_user(db, 'u', 't'), db)
+        assert result['status'] == 'cancelled'
+        assert db.get(ChatMessage, 'cancel-answer').status == 'cancelled'
+
+
+def test_chat_cancel_retry_finishes_cleanup_after_finalize_failure(queue_factory, monkeypatch):
+    # A committed cancellation must still finish cleanup after the request's
+    # assistant/private-input transaction rolls back and the caller retries.
+    from app import agent
+    from app.agent_models import AgentControl, ChatMessage, Conversation
+    from app.jobs import cancel_job
+    from app.worker import claim_job
+    jid = add_job(queue_factory, payload={'private_input_cipher': 'synthetic-private-input'})
+    with queue_factory() as db:
+        db.add(Conversation(id='retry-chat', tenant_id='t', property_id='p', user_id='u', title='合成取消重试'))
+        db.add(ChatMessage(id='retry-answer', tenant_id='t', property_id='p',
+            conversation_id='retry-chat', role='assistant', content='', status='queued', job_id=jid))
+        db.add(AgentControl(id='retry-control', tenant_id='t', property_id='p',
+            conversation_id='retry-chat', job_id=jid, user_id='u', kind='steer',
+            content='合成输入', private_input_cipher='synthetic-control-input'))
+        db.commit()
+        claim_job(db)
+    original = agent.finalize_chat_messages
+    fail_first = True
+
+    def interrupted_finalize(db, job_id, status, error):
+        nonlocal fail_first
+        original(db, job_id, status, error)
+        if fail_first:
+            fail_first = False
+            raise RuntimeError('synthetic finalize failure')
+
+    monkeypatch.setattr(agent, 'finalize_chat_messages', interrupted_finalize)
+    with queue_factory() as request:
+        with pytest.raises(RuntimeError, match='synthetic finalize failure'):
+            cancel_job(jid, context_for_user(request, 'u', 't'), request)
+        request.rollback()
+    with queue_factory() as observer:
+        cancelled = observer.get(Job, jid)
+        assert cancelled.status == 'cancelled'
+        assert cancelled.lease_token is None
+        assert cancelled.payload['private_input_cipher'] == 'synthetic-private-input'
+        assert observer.get(ChatMessage, 'retry-answer').status == 'queued'
+        assert observer.get(AgentControl, 'retry-control').private_input_cipher == 'synthetic-control-input'
+    with queue_factory() as retry:
+        result = cancel_job(jid, context_for_user(retry, 'u', 't'), retry)
+        assert result['status'] == 'cancelled'
+    with queue_factory() as observer:
+        assert observer.get(ChatMessage, 'retry-answer').status == 'cancelled'
+        assert 'private_input_cipher' not in observer.get(Job, jid).payload
+        assert observer.get(AgentControl, 'retry-control').private_input_cipher is None
+
+
+def test_chat_cancel_does_not_overwrite_concurrent_success(queue_factory):
+    from app.agent_models import ChatMessage, Conversation
+    from app.jobs import cancel_job
+    from app.worker import claim_job, complete_job
+    jid = add_job(queue_factory)
+    with queue_factory() as db:
+        db.add(Conversation(id='success-chat', tenant_id='t', property_id='p', user_id='u', title='合成终态竞态'))
+        db.add(ChatMessage(id='success-answer', tenant_id='t', property_id='p',
+            conversation_id='success-chat', role='assistant', content='', status='queued', job_id=jid))
+        db.commit()
+        ticket = claim_job(db)
+        token, attempt = ticket.lease_token, ticket.attempt
+    with queue_factory() as cancellation:
+        stale_job = cancellation.get(Job, jid)
+        assert stale_job.status == 'running'
+        with queue_factory() as worker:
+            assert complete_job(worker, jid, token, attempt, {'answer': '已完成'})
+            message = worker.get(ChatMessage, 'success-answer')
+            message.status = 'completed'
+            message.content = '已完成'
+            worker.commit()
+        result = cancel_job(jid, context_for_user(cancellation, 'u', 't'), cancellation)
+        assert result['status'] == 'succeeded'
+        assert result['result'] == {'answer': '已完成'}
+    with queue_factory() as observer:
+        assert observer.get(ChatMessage, 'success-answer').status == 'completed'
+        assert observer.get(ChatMessage, 'success-answer').content == '已完成'
+
+
 @pytest.mark.parametrize("revoke", ["membership", "fact_revision"])
 def test_progress_rechecks_current_permission_and_fact_revision(queue_factory, revoke):
     from app.worker import claim_job, execute_job

@@ -72,3 +72,56 @@ def test_source_export_uses_one_snapshot_for_manifest_and_member(tmp_path, monke
         manifest = json.loads(archive.read('source-manifest.json'))
         row = next(item for item in manifest['files'] if item['path'] == 'docs/guide.md')
         assert row['sha256'] == hashlib.sha256(archive.read('docs/guide.md')).hexdigest()
+
+
+def test_source_export_rebuilds_external_agent_packages_without_local_dist_or_private_state(tmp_path):
+    """Dropping hidden plugin descriptors or integration sources breaks a fresh ZIP installation."""
+    root = export_project(tmp_path)
+    repository = SOURCE.parents[1]
+    shutil.copytree(repository / 'integrations/louxiang-agent', root / 'integrations/louxiang-agent',
+                    ignore=shutil.ignore_patterns('dist', '__pycache__'))
+    marketplace = root / '.agents/plugins/marketplace.json'
+    marketplace.parent.mkdir(parents=True)
+    shutil.copyfile(repository / '.agents/plugins/marketplace.json', marketplace)
+    private_paths = [
+        'integrations/louxiang-agent/dist/local-build.pyz',
+        'integrations/louxiang-agent/.runtime/credentials.json',
+        'integrations/louxiang-agent/plugin/.codex-plugin/private-credentials.json',
+        'integrations/louxiang-agent/plugin/.private/state.json',
+        '.agents/private-credentials.json', '.runtime/browser-cookies.json',
+        '.env', 'productions/private-project/recording.mp4',
+    ]
+    for name in private_paths:
+        path = root / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text('private-fixture-only')
+    names = archive_names(root)
+    required = {
+        'integrations/louxiang-agent/build.py',
+        'integrations/louxiang-agent/src/louxiang_agent/cli.py',
+        'integrations/louxiang-agent/README.md',
+        'integrations/louxiang-agent/plugin/plugin.json',
+        'integrations/louxiang-agent/plugin/mcp.json',
+        'integrations/louxiang-agent/plugin/.mcp.json',
+        'integrations/louxiang-agent/plugin/.codex-plugin/plugin.json',
+        'integrations/louxiang-agent/plugin/skills/louxiang-content/SKILL.md',
+        '.agents/plugins/marketplace.json',
+    }
+    assert required <= names
+    assert not set(private_paths) & names
+    assert not any(name.startswith(('productions/', '.runtime/')) or '/dist/' in name for name in names)
+    checkout = tmp_path / 'unzipped'
+    with zipfile.ZipFile(root / 'exports/楼响_HouSignal_正式应用源码.zip') as archive:
+        archive.extractall(checkout)
+    subprocess.run([sys.executable, str(checkout / 'integrations/louxiang-agent/build.py')],
+                   cwd=checkout, check=True, capture_output=True, text=True)
+    distribution = checkout / 'integrations/louxiang-agent/dist'
+    manifest = json.loads((distribution / 'manifest.json').read_text())
+    for name, record in manifest.items():
+        assert record['sha256'] == hashlib.sha256((distribution / name).read_bytes()).hexdigest()
+    portable = subprocess.run([sys.executable, str(distribution / 'louxiang.pyz'), '--help'],
+                              check=True, capture_output=True, text=True)
+    assert 'login' in portable.stdout and 'call' in portable.stdout
+    with zipfile.ZipFile(distribution / 'louxiang-plugin.zip') as plugin:
+        assert 'louxiang-tools/plugin/.codex-plugin/plugin.json' in plugin.namelist()
+        assert 'louxiang-tools/.agents/plugins/marketplace.json' in plugin.namelist()

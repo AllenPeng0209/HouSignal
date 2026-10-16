@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "louxiang": {
+      "type": "http",
+      "url": "https://louxiang-preview.lovelingo.love/mcp"
+    }
+  }
+}

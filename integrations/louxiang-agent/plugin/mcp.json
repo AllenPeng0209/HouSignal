@@ -1,0 +1,19 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "louxiang": {
+      "type": "streamable-http",
+      "url": "https://louxiang-preview.lovelingo.love/mcp",
+      "extensions": {
+        "com.openai": {
+          "auth": {
+            "type": "oauth",
+            "client": { "mode": "dcr" },
+            "resource": "https://louxiang-preview.lovelingo.love/mcp",
+            "baseScopes": ["louxiang:read", "louxiang:write", "louxiang:production", "offline_access"]
+          }
+        }
+      }
+    }
+  }
+}

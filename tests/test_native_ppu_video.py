@@ -1,4 +1,5 @@
 """Native PPU protocol uses real codecs and substitutes only remote HTTP."""
+import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -70,6 +71,68 @@ def test_ppu_video_native_generation_saves_fully_decoded_artifact_without_cloud_
     assert receipt["billing_kind"] == "existing_compute_no_per_request_cloud_api"
     assert receipts[0]["model"] == "minimax-h3-dense8" and receipts[0]["units"]["video_frames"] == 56
     assert all(request.url.port == 18879 for request in calls)
+
+
+@pytest.mark.parametrize("negative", ["warped walls, invented logos, unwanted dialogue", ""])
+def test_ppu_preserves_negative_constraints_using_only_h3_supported_request_fields(ppu, tmp_path, negative):
+    # The live H3 runner rejects negative_prompt after accepting its HTTP schema.
+    # Keep its real request-field whitelist while exercising the complete local
+    # submission, polling, codec validation and receipt path without GPU calls.
+    video = _video(tmp_path)
+    original = "A slow architectural camera move through a quiet living room."
+    submitted = []
+    rejected = []
+    allowed = {"return_result_tensor", "save_result_path", "seed", "task", "size", "num_frames", "prompt"}
+
+    def transport(request):
+        if request.url.path == "/v1/service/metadata":
+            return httpx.Response(200, json={"model_cls": "minimax_h3", "nproc_per_node": 4})
+        if request.url.path == "/v1/tasks/queue/status":
+            return httpx.Response(200, json={"is_processing": False, "active_count": 0, "pending_count": 0})
+        if request.url.path == "/v1/tasks/video/":
+            payload = json.loads(request.content)
+            submitted.append(payload)
+            rejected.extend(sorted(set(payload) - allowed))
+            return httpx.Response(200, json={"task_id": "native-constraints-01", "task_status": "pending",
+                                             "save_result_path": payload["save_result_path"]})
+        if request.url.path.endswith("/status"):
+            return httpx.Response(200, json={"status": "failed" if rejected else "completed",
+                                             "error": "unsupported request fields" if rejected else None})
+        if request.url.path.endswith("/result"):
+            return httpx.Response(200, content=video)
+        pytest.fail("Unexpected native runtime request")
+
+    result = media.execute("ai-video-gen", input_text=original, assets=[],
+                           parameters={"size": "576x1024", "duration": 2, "negative_prompt": negative},
+                           output_dir=tmp_path / "output",
+                           context={"media_http_client": httpx.Client(transport=httpx.MockTransport(transport))})
+    assert len(submitted) == 1
+    actual = submitted[0]["prompt"]
+    assert actual.startswith(original)
+    if negative:
+        assert negative in actual and actual != original
+    else:
+        assert actual == original
+    assert next(path for path in result["artifact_paths"] if path.suffix == ".mp4").read_bytes() == video
+    for filename in ("video-submission.json", "video-receipt.json"):
+        record = json.loads((tmp_path / "output" / filename).read_text())
+        assert record["original_prompt_sha256"] == hashlib.sha256(original.encode()).hexdigest()
+        assert record["actual_prompt_sha256"] == hashlib.sha256(actual.encode()).hexdigest()
+        assert record["prompt_sha256"] == record["actual_prompt_sha256"]
+        assert bool(record["prompt_adaptation"]) is bool(negative)
+
+
+def test_ppu_rejects_overlong_combined_prompt_without_dropping_constraints_or_submitting(ppu, tmp_path):
+    # A full-length prompt plus exclusions must fail locally, rather than lose
+    # user constraints or send an oversized adapted prompt to the resident model.
+    requests = []
+    with pytest.raises(ValueError, match="12000|缩短"):
+        media.execute("ai-video-gen", input_text="A" * 12000, assets=[],
+                      parameters={"size": "576x1024", "duration": 2, "negative_prompt": "warped walls"},
+                      output_dir=tmp_path / "output",
+                      context={"media_http_client": httpx.Client(transport=httpx.MockTransport(
+                          lambda request: requests.append(request) or httpx.Response(500)))})
+    assert requests == []
 
 
 @pytest.mark.parametrize("url", ["http://169.254.169.254", "https://example.com", "http://localhost:18879?token=x", "http://127.0.0.1:8878/v1"])

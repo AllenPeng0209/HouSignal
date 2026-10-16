@@ -49,3 +49,7 @@ apps/mobile/android/
 # Keep the hand-written demo/dist source; exclude only generated demo packages
 demo/*.zip
 demo/dist/楼响_HouSignal_交互Demo.html
+
+# Local production media/receipts and rebuilt external-agent packages
+/productions/
+/integrations/louxiang-agent/dist/

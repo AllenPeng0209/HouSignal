@@ -71,7 +71,7 @@ test('read-only users can inspect shot rows but cannot change order, add or remo
 // Catches legal test/template assets being presented as real footage in a demo project.
 test('a test storyboard describes synthetic materials as illustrations rather than actual project footage',()=>{
  const demoAssets=[asset('living','客厅示意',{origin_type:'template'}),asset('kitchen','厨房示意',{origin_type:'test'})];
- const value=html({assets:demoAssets,isTest:true});assert.match(value,/测试示意/);assert.doesNotMatch(value,/按镜头选择实拍素材|项目实拍素材/);
+ const value=html({assets:demoAssets,isTest:true});assert.match(value,/示意素材/);assert.match(value,/图文与示意素材不代表项目实景/);assert.doesNotMatch(value,/按镜头选择实拍素材|项目实拍素材/);
 });
 // Catches long-form chapter storyboards still being rejected by the former 20-shot / 60-second caps.
 test('a five-minute chapter storyboard accepts thirty mapped ten-second shots',()=>{

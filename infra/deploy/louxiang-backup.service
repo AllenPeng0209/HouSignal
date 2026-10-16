@@ -1,0 +1,19 @@
+[Unit]
+Description=Louxiang consistent database and media backup
+Requires=docker.service
+After=docker.service louxiang.service
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/srv/louxiang
+Environment=DOCKER_CONFIG=/srv/louxiang/.runtime/docker-client-config
+ExecStart=/usr/bin/python3 /srv/louxiang/scripts/deploy/manage.py backup
+UMask=0077
+Nice=10
+IOSchedulingClass=idle
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/srv/louxiang/.runtime

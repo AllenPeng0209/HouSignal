@@ -29,6 +29,22 @@ PLATFORM_STATES=('pending','live','removed','rejected')
 def now(): return datetime.now(timezone.utc)
 def iso(value): return value.isoformat() if value is not None else None
 
+
+def aware_iso(value):
+    if value is None: return None
+    return (value.replace(tzinfo=timezone.utc) if value.tzinfo is None else value).isoformat()
+
+
+def optional_datetime(body,key,default=None):
+    value=body.get(key,default)
+    if value is None or value=='': return None
+    try:
+        value=datetime.fromisoformat(value.replace('Z','+00:00')) if isinstance(value,str) else value
+        if not isinstance(value,datetime) or value.tzinfo is None or value.utcoffset() is None: raise ValueError()
+        return value.astimezone(timezone.utc)
+    except (ValueError,TypeError,OverflowError):
+        raise HTTPException(422,f'{key}须为带时区的日期时间') from None
+
 def _text(body,key,default='',max_length=12000):
     value=body.get(key,default)
     if not isinstance(value,str) or len(value)>max_length:
@@ -48,6 +64,17 @@ def _confirmed(body):
 
 def _scope(db,model,ctx,pid):
     return select(model).where(model.tenant_id==ctx.tenant_id,model.property_id==pid)
+
+
+def publication_for_url_locked(db,tenant_id,pid,url,release_id):
+    """Serialize both human and platform receipts within their authorized project."""
+    project=db.scalar(select(Property.id).where(Property.id==pid,Property.tenant_id==tenant_id).with_for_update())
+    if project is None: raise HTTPException(404,'项目不存在或无权访问')
+    records=db.scalars(select(Publication).where(Publication.tenant_id==tenant_id,
+        Publication.property_id==pid,Publication.url==url).order_by(Publication.created_at,Publication.id)).all()
+    if any(record.release_id!=release_id for record in records):
+        raise HTTPException(409,'该平台链接已关联其他审核版本，请核对当前作品的真实链接')
+    return records[0] if records else None
 
 
 def _record(db,model,ctx,pid,rid):
@@ -113,7 +140,7 @@ def normalize_metrics(metrics):
 
 
 def publication_dict(p):
-    return {key:getattr(p,key) for key in ('id','property_id','release_id','title','channel','url','platform_state','receipt_status')} | {'metrics':normalize_metrics(p.metrics),'created_at':iso(p.created_at)}
+    return {key:getattr(p,key) for key in ('id','property_id','release_id','title','channel','url','platform_state','receipt_status')} | {'metrics':normalize_metrics(p.metrics),'created_at':iso(p.created_at),'published_at':aware_iso(p.published_at)}
 
 
 def _fingerprint(db,ctx,pid,contact):
@@ -126,13 +153,19 @@ def normalize_source_confidence(value):
     return value
 
 
-def inquiry_dict(i):
+def _publication_link(db,record,publication_id):
+    p=db.scalar(select(Publication).where(Publication.id==publication_id,Publication.tenant_id==record.tenant_id,Publication.property_id==record.property_id)) if db is not None and publication_id else None
+    return {'publication_id':publication_id,'publication_title':p.title if p else None}
+
+
+def inquiry_dict(i,db=None):
     # Phone is deliberately not decrypted for ordinary listings or agent tools.
-    return {key:getattr(i,key) for key in ('id','property_id','name','need','channel','source_confidence','source_text','contactable','consent','qualified','owner_id','qualification_checks','withdrawn','linked_lead_id','request_key')} | {'contact':'已加密保存' if i.contact_cipher else '未提供','source_confidence':normalize_source_confidence(i.source_confidence),'created_at':iso(i.created_at)}
+    return {key:getattr(i,key) for key in ('id','property_id','name','need','channel','source_confidence','source_text','contactable','consent','qualified','owner_id','qualification_checks','withdrawn','linked_lead_id','request_key')} | {'contact':'已加密保存' if i.contact_cipher else '未提供','source_confidence':normalize_source_confidence(i.source_confidence),'created_at':iso(i.created_at)} | _publication_link(db,i,i.publication_id)
 
 
-def lead_dict(l):
-    return {key:getattr(l,key) for key in ('id','property_id','inquiry_id','name','need','stage','owner_id','next_action','source_confidence','stage_history')} | {'created_at':iso(l.created_at),'updated_at':iso(l.updated_at),'source_confidence':normalize_source_confidence(l.source_confidence)}
+def lead_dict(l,db=None):
+    i=db.scalar(select(Inquiry).where(Inquiry.id==l.inquiry_id,Inquiry.tenant_id==l.tenant_id,Inquiry.property_id==l.property_id)) if db is not None else None
+    return {key:getattr(l,key) for key in ('id','property_id','inquiry_id','name','need','stage','owner_id','next_action','source_confidence','stage_history')} | {'created_at':iso(l.created_at),'updated_at':iso(l.updated_at),'next_action_at':aware_iso(l.next_action_at),'source_confidence':normalize_source_confidence(l.source_confidence)} | _publication_link(db,l,i.publication_id if i else None)
 
 
 def proposal_dict(p):
@@ -740,7 +773,7 @@ def _request_retry(db,ctx,pid,request_key,request_hash):
     if existing is None: return None
     if ctx.role=='sales' and existing.owner_id!=ctx.user_id: raise HTTPException(404,'咨询不存在或无权访问')
     if existing.request_hash!=request_hash: raise HTTPException(409,'该请求编号已用于不同咨询资料，请重新开始录入')
-    return inquiry_dict(existing)
+    return inquiry_dict(existing,db)
 
 
 def create_inquiry(db,ctx,pid,body):
@@ -757,6 +790,10 @@ def create_inquiry(db,ctx,pid,body):
     source=_text(body,'source_text',max_length=4000)
     if confidence=='confirmed' and not source: raise HTTPException(422,'已核验来源必须填写来源证据')
     values={'name':_text(body,'name','新咨询',120) or '新咨询','need':_text(body,'need',max_length=4000),'channel':_text(body,'channel',p.channel,40),'source_confidence':confidence,'source_text':source,'contactable':contactable,'consent':consent,'owner_id':owner}
+    publication_id=_text(body,'publication_id',max_length=36) if body.get('publication_id') is not None else ''
+    if publication_id: _record(db,Publication,ctx,pid,publication_id)
+    # Preserve old idempotency hashes for requests which did not associate a work.
+    if publication_id: values['publication_id']=publication_id
     request_key=_text(body,'request_key',max_length=120) or None
     # This HMAC describes a request retry, never an identity match.
     request_hash=pii_fingerprint(json.dumps(values|{'contact':contact},sort_keys=True,ensure_ascii=False,separators=(',',':')),ctx.tenant_id) if request_key else None
@@ -770,11 +807,12 @@ def create_inquiry(db,ctx,pid,body):
         retried=_request_retry(db,ctx,pid,request_key,request_hash)
         if retried is None: raise HTTPException(409,'咨询记录同时发生变更，请刷新重试') from None
         return retried
-    return inquiry_dict(i)
+    return inquiry_dict(i,db)
 
 
 def qualify_inquiry(db,ctx,pid,iid,body):
     i=_inquiry(db,ctx,pid,iid,SALES_ROLES)
+    next_action_at=optional_datetime(body,'next_action_at')
     db.refresh(i,with_for_update=True)
     checks={k:body.get(k) is True for k in ('contactable','consent','demand_confirmed','fit_confirmed')}
     if not all(checks.values()) or i.withdrawn or not i.contact_cipher or not i.consent: raise HTTPException(422,'合格线索须人工确认可联系、联系授权、真实需求及项目匹配四项')
@@ -788,29 +826,30 @@ def qualify_inquiry(db,ctx,pid,iid,body):
             i.contactable=True; i.consent=True; i.qualified=True
             i.qualification_checks=checks|{'confirmed_by':ctx.user_id,'confirmed_at':iso(now())}
             resolved.stage='qualified'; resolved.updated_at=now()
+            if 'next_action_at' in body: resolved.next_action_at=next_action_at
             resolved.stage_history=(resolved.stage_history or [])+[{'stage':'qualified','by':ctx.user_id,'at':iso(now())}]
             db.flush()
-        return lead_dict(resolved)
+        return lead_dict(resolved,db)
     confirmed=checks|{'confirmed_by':ctx.user_id,'confirmed_at':iso(now())}
     if requested:
         if body.get('same_contact_confirmed') is not True: raise HTTPException(422,'关联已有客户须人工确认是同一位客户')
         target=_lead(db,ctx,pid,requested,SALES_ROLES,True)
         i.contactable=True; i.consent=True; i.qualified=True; i.owner_id=target.owner_id; i.linked_lead_id=target.id
         i.qualification_checks=confirmed|{'same_contact_confirmed':True,'existing_lead_id':target.id}
-        db.flush(); return lead_dict(target)
+        db.flush(); return lead_dict(target,db)
     owner=body.get('owner_id') or i.owner_id or ctx.user_id
     if ctx.role=='sales' and owner!=ctx.user_id: raise HTTPException(403,'销售不能给其他人分配线索')
     _valid_owner(db,ctx,pid,owner)
     i.contactable=True; i.consent=True; i.qualified=True; i.qualification_checks=confirmed; i.owner_id=owner
-    l=Lead(tenant_id=ctx.tenant_id,property_id=pid,inquiry_id=iid,name=i.name,need=_text(body,'need',i.need,4000),stage='qualified',owner_id=owner,next_action=_text(body,'next_action','确认沟通时间',4000),source_confidence=i.source_confidence,stage_history=[{'stage':'qualified','by':ctx.user_id,'at':iso(now())}])
+    l=Lead(tenant_id=ctx.tenant_id,property_id=pid,inquiry_id=iid,name=i.name,need=_text(body,'need',i.need,4000),stage='qualified',owner_id=owner,next_action=_text(body,'next_action','确认沟通时间',4000),next_action_at=next_action_at,source_confidence=i.source_confidence,stage_history=[{'stage':'qualified','by':ctx.user_id,'at':iso(now())}])
     try:
         with db.begin_nested():
             db.add(l); db.flush()
     except IntegrityError:
         existing=db.scalar(_scope(db,Lead,ctx,pid).where(Lead.inquiry_id==iid))
         if existing is None: raise HTTPException(409,'线索同时发生变更，请刷新重试') from None
-        return lead_dict(existing)
-    return lead_dict(l)
+        return lead_dict(existing,db)
+    return lead_dict(l,db)
 
 
 def withdraw_inquiry(db,ctx,pid,iid):
@@ -823,7 +862,7 @@ def withdraw_inquiry(db,ctx,pid,iid):
         l.stage='withdrawn'; l.next_action='联系授权已撤回'; l.stage_history=(l.stage_history or [])+[{'stage':'withdrawn','by':ctx.user_id,'at':iso(now())}]
     for inquiry in affected:
         inquiry.withdrawn=True; inquiry.contact_cipher=None; inquiry.contact_fingerprint=None; inquiry.contactable=False; inquiry.consent=False
-    db.flush(); return inquiry_dict(i)
+    db.flush(); return inquiry_dict(i,db)
 
 
 def list_leads_data(db,ctx,pid):
@@ -832,7 +871,7 @@ def list_leads_data(db,ctx,pid):
     result=[]
     for l in records:
         i=_record(db,Inquiry,ctx,pid,l.inquiry_id)
-        if not i.withdrawn and (l.stage=='captured' or (i.consent and i.contactable)): result.append(lead_dict(l))
+        if not i.withdrawn and (l.stage=='captured' or (i.consent and i.contactable)): result.append(lead_dict(l,db))
     return result
 
 
@@ -841,15 +880,16 @@ def lead_detail_data(db,ctx,pid,lid):
     i=_record(db,Inquiry,ctx,pid,l.inquiry_id)
     followups=db.scalars(_scope(db,FollowUp,ctx,pid).where(FollowUp.lead_id==lid).order_by(FollowUp.created_at.desc())).all()
     from .secretary import profile_data, list_viewings_data
-    return {'lead':lead_dict(l),'inquiry':inquiry_dict(i),'profile':profile_data(db,ctx,pid,lid),'viewings':list_viewings_data(db,ctx,pid,lid),'followups':[{'id':f.id,'lead_id':f.lead_id,'note':f.note,'next_action':f.next_action,'created_by':f.created_by,'created_at':iso(f.created_at)} for f in followups]}
+    return {'lead':lead_dict(l,db),'inquiry':inquiry_dict(i,db),'profile':profile_data(db,ctx,pid,lid),'viewings':list_viewings_data(db,ctx,pid,lid),'followups':[{'id':f.id,'lead_id':f.lead_id,'note':f.note,'next_action':f.next_action,'next_action_at':aware_iso(f.next_action_at),'created_by':f.created_by,'created_at':iso(f.created_at)} for f in followups]}
 
 
 def add_followup(db,ctx,pid,lid,body):
     l=_lead(db,ctx,pid,lid,SALES_ROLES,True)
     note=_required_text(body,'note',4000); next_action=_text(body,'next_action',max_length=4000)
-    f=FollowUp(tenant_id=ctx.tenant_id,property_id=pid,lead_id=lid,note=note,next_action=next_action,created_by=ctx.user_id)
-    db.add(f); l.next_action=next_action; l.updated_at=now(); db.flush()
-    return {'id':f.id,'lead_id':lid,'note':f.note,'next_action':f.next_action,'created_by':f.created_by,'created_at':iso(f.created_at)}
+    next_action_at=optional_datetime(body,'next_action_at')
+    f=FollowUp(tenant_id=ctx.tenant_id,property_id=pid,lead_id=lid,note=note,next_action=next_action,next_action_at=next_action_at,created_by=ctx.user_id)
+    db.add(f); l.next_action=next_action; l.next_action_at=next_action_at; l.updated_at=now(); db.flush()
+    return {'id':f.id,'lead_id':lid,'note':f.note,'next_action':f.next_action,'next_action_at':aware_iso(f.next_action_at),'created_by':f.created_by,'created_at':iso(f.created_at)}
 
 
 def change_stage(db,ctx,pid,lid,body):
@@ -861,7 +901,7 @@ def change_stage(db,ctx,pid,lid,body):
     if l.stage in ('lost','won'): raise HTTPException(409,'已结案客户不能自动回到销售阶段')
     if stage!=l.stage and stage!='lost' and STAGES.index(stage)!=STAGES.index(l.stage)+1: raise HTTPException(409,'请按资格确认、预约、到访、洽谈、成交顺序记录')
     if stage!=l.stage: l.stage_history=(l.stage_history or [])+[{'stage':stage,'by':ctx.user_id,'at':iso(now())}]
-    l.stage=stage; l.updated_at=now(); db.flush(); return lead_dict(l)
+    l.stage=stage; l.updated_at=now(); db.flush(); return lead_dict(l,db)
 
 
 def _visible_publications(db,ctx,pid):
@@ -880,7 +920,7 @@ def overview_data(db,ctx,pid):
     metrics={'published':len(pubs),'inquiries':len(inquiries),'qualified':qualified_count,'appointments':sum(any(h.get('stage')=='appointment' for h in (l.stage_history or [])) for l in leads),'visits':sum(any(h.get('stage')=='visit_completed' for h in (l.stage_history or [])) for l in leads),'views':sum(views) if views and all(v is not None for v in views) else None,'unknown_rate':round(unknown/len(inquiries)*100,1) if inquiries else None}
     contents=db.scalars(_scope(db,ContentVersion,ctx,pid).order_by(ContentVersion.created_at.desc()).limit(12)).all()
     proposals=db.scalars(_scope(db,Proposal,ctx,pid).order_by(Proposal.created_at.desc())).all()
-    return {'project':project_dict(db,ctx,p),'metrics':metrics,'pending_inquiries':[inquiry_dict(i) for i in inquiries if not i.qualified and not i.withdrawn],'content_versions':[content_dict(c,db,ctx) for c in contents],'publications':[publication_dict(x) for x in pubs],'proposals':[proposal_dict(x) for x in proposals]}
+    return {'project':project_dict(db,ctx,p),'metrics':metrics,'pending_inquiries':[inquiry_dict(i,db) for i in inquiries if not i.qualified and not i.withdrawn],'content_versions':[content_dict(c,db,ctx) for c in contents],'publications':[publication_dict(x) for x in pubs],'proposals':[proposal_dict(x) for x in proposals]}
 
 
 def reports_data(db,ctx,pid,window='D7'):
@@ -896,11 +936,41 @@ def reports_data(db,ctx,pid,window='D7'):
     metrics['observed_publications']=sum(normalize_metrics(p.metrics).get(window) is not None for p in pubs)
     metrics['total_publications']=len(pubs)
     proposals=db.scalars(_scope(db,Proposal,ctx,pid).order_by(Proposal.created_at.desc())).all()
-    return {'metrics':metrics,'publications':[publication_dict(p) for p in pubs],'proposals':[proposal_dict(p) for p in proposals],'window':window}
+    all_pubs=db.scalars(_scope(db,Publication,ctx,pid).order_by(Publication.created_at.desc())).all()
+    # Project members may compare aggregate conversion evidence without seeing CRM identities.
+    # A salesperson's totals still cover only records assigned to that salesperson.
+    linked=db.scalars(_inquiry_query(db,ctx,pid).where(Inquiry.publication_id.is_not(None),Inquiry.withdrawn.is_(False))).all()
+    crm=[]
+    for publication in all_pubs:
+        records=[i for i in linked if i.publication_id==publication.id]
+        customers=set()
+        for i in records:
+            if not i.qualified: continue
+            lead=db.scalar(_lead_query(db,ctx,pid).where(Lead.id==i.linked_lead_id)) if i.linked_lead_id else db.scalar(_lead_query(db,ctx,pid).where(Lead.inquiry_id==i.id))
+            if lead and lead.stage not in ('captured','withdrawn'): customers.add(lead.id)
+        confidence={key:0 for key in ('confirmed','self_reported','inferred','unknown')}
+        for i in records: confidence[normalize_source_confidence(i.source_confidence)]+=1
+        crm.append({'publication_id':publication.id,'publication_title':publication.title,'linked_inquiries':len(records),'qualified_customers':len(customers),'source_confidence_counts':confidence})
+    return {'metrics':metrics,'publications':[publication_dict(p) for p in pubs],'proposals':[proposal_dict(p) for p in proposals],'window':window,'crm_attribution':crm,'crm_attribution_scope':'cumulative_explicit_links'}
 
 
 @router.get('/api/projects/{pid}/overview')
 def overview(pid:str,db:Session=Depends(get_db),ctx:Context=Depends(get_context)): return overview_data(db,ctx,pid)
+
+@router.get('/api/projects/{pid}/tasks')
+def project_tasks(pid:str,db:Session=Depends(get_db),ctx:Context=Depends(get_context)):
+    from .ux_tasks import project_tasks_data
+    return project_tasks_data(db,ctx,pid)
+
+@router.get('/api/projects/{pid}/contents/{cid}/review')
+def content_review(pid:str,cid:str,db:Session=Depends(get_db),ctx:Context=Depends(get_context)):
+    from .ux_review import review_content_data
+    return review_content_data(db,ctx,pid,cid)
+
+@router.post('/api/projects/{pid}/contents/{cid}/review-feedback')
+def content_review_feedback(pid:str,cid:str,body:dict=Body(...),db:Session=Depends(get_db),ctx:Context=Depends(get_context)):
+    from .ux_review import add_review_feedback
+    result=add_review_feedback(db,ctx,pid,cid,body); db.commit(); return result
 
 @router.get('/api/projects/{pid}/topics')
 def topics(pid:str,db:Session=Depends(get_db),ctx:Context=Depends(get_context)): return topics_data(db,ctx,pid)
@@ -987,9 +1057,10 @@ def create_publication(pid:str,body:dict=Body(...),db:Session=Depends(get_db),ct
     if parsed.scheme not in ('http','https') or not parsed.netloc or parsed.username or parsed.password: raise HTTPException(422,'请输入有效平台链接')
     state=_text(body,'platform_state','pending',30)
     if state not in PLATFORM_STATES: raise HTTPException(422,'平台状态不支持')
-    existing=db.scalar(_scope(db,Publication,ctx,pid).where(Publication.url==url))
-    if existing: return publication_dict(existing)
-    p=Publication(tenant_id=ctx.tenant_id,property_id=pid,release_id=r.id,title=c.cover_title or c.topic,channel=c.channel,url=url,platform_state=state,receipt_status='unverified',metrics={'D7':None,'D30':None})
+    existing=publication_for_url_locked(db,ctx.tenant_id,pid,url,r.id)
+    if existing:
+        return publication_dict(existing)
+    p=Publication(tenant_id=ctx.tenant_id,property_id=pid,release_id=r.id,title=c.cover_title or c.topic,channel=c.channel,url=url,platform_state=state,receipt_status='unverified',metrics={'D7':None,'D30':None},published_at=optional_datetime(body,'published_at'))
     db.add(p); db.commit(); return publication_dict(p)
 
 @router.post('/api/projects/{pid}/publications/{pubid}/verify')
@@ -999,13 +1070,14 @@ def verify_publication(pid:str,pubid:str,body:dict=Body(...),db:Session=Depends(
     state=_required_text(body,'platform_state',30)
     if state not in PLATFORM_STATES: raise HTTPException(422,'平台状态不支持')
     p.platform_state=state; p.receipt_status='verified'
+    if 'published_at' in body: p.published_at=optional_datetime(body,'published_at')
     if 'metrics' in body: p.metrics=normalize_metrics(body['metrics'])
     db.commit(); return publication_dict(p)
 
 @router.get('/api/projects/{pid}/inquiries')
 def inquiries(pid:str,db:Session=Depends(get_db),ctx:Context=Depends(get_context)):
     require_project(db,ctx,pid)
-    return [inquiry_dict(i) for i in db.scalars(_inquiry_query(db,ctx,pid).order_by(Inquiry.created_at.desc())).all()]
+    return [inquiry_dict(i,db) for i in db.scalars(_inquiry_query(db,ctx,pid).order_by(Inquiry.created_at.desc())).all()]
 
 @router.post('/api/projects/{pid}/inquiries')
 def new_inquiry(pid:str,body:dict=Body(...),db:Session=Depends(get_db),ctx:Context=Depends(get_context)):

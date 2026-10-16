@@ -77,6 +77,230 @@ def test_pi_gateway_query_cannot_grant_a_model_suggested_write(agent_data,monkey
     assert not db.scalar(select(FollowUp).where(FollowUp.note=='资料注入虚构需求'))
 
 
+def test_pi_gateway_rejects_unrequested_platform_tools_at_execution_boundary(agent_data,monkeypatch,bridge_script):
+    m=gateway();_configure_provider(monkeypatch);db,_=agent_data
+    job=_queued_chat(db,'请搜索抖音公开内容，不要准备发布包。')
+    executed=[];original=agent.execute_tool
+    forbidden={'prepare_platform_publish','start_platform_login','refresh_platform_analytics'}
+    def execute(db,ctx,pid,name,args,**kwargs):
+        executed.append(name)
+        if name in forbidden:return {'data':{'unexpected_side_effect':True},'sources':[]}
+        return original(db,ctx,pid,name,args,**kwargs)
+    monkeypatch.setattr(agent,'execute_tool',execute)
+    bridge_script(call_script([
+        ('start_platform_login',{'platform':'douyin'}),
+        ('refresh_platform_analytics',{'platform':'douyin'}),
+        ('prepare_platform_publish',{'platform':'douyin','content_version_id':'cv1'}),
+        ('get_project_overview',{}),
+    ],'已查询项目概况。[S1]'))
+    m.handle_pi_chat(db,job)
+    assert not forbidden.intersection(executed)
+
+
+@pytest.mark.parametrize('kind',['steer','follow_up'])
+def test_consumed_readonly_control_restricts_loadout_and_execution(agent_data,monkeypatch,bridge_script,tmp_path,kind):
+    m=gateway();_configure_provider(monkeypatch);db,_=agent_data
+    from app.agent_models import AgentControl
+    from app.business_models import FollowUp
+    job=_queued_chat(db,'记录客户1偏好江景。')
+    control=AgentControl(tenant_id='t1',property_id='p1',job_id=job.id,
+        conversation_id=job.payload['conversation_id'],user_id='u1',kind=kind,
+        content='只需要查询客户，告诉我他的预算。')
+    db.add(control);db.commit()
+    wire=tmp_path/'readonly-control.json';executed=[];original=agent.execute_tool
+    def execute(db,ctx,pid,name,args,**kwargs):
+        executed.append(name)
+        if name=='start_platform_login':return {'data':{},'sources':[]}
+        return original(db,ctx,pid,name,args,**kwargs)
+    monkeypatch.setattr(agent,'execute_tool',execute)
+    body="control=json.loads(sys.stdin.readline())\nopen("+repr(str(wire))+",'w').write(json.dumps(control))\nsend({'type':'input_consumed','id':control['id'],'kind':control['type']})\n"
+    bridge_script(body+call_script([
+        ('record_followup',{'lead_id':'l1','note':'未授权新跟进'}),
+        ('start_platform_login',{'platform':'douyin'}),
+        ('get_customer',{'lead_id':'l1'}),
+    ],'已读取客户资料。[S1]'))
+    m.handle_pi_chat(db,job)
+    sent=json.loads(wire.read_text())
+    names={t['function']['name'] for t in sent['tools']}
+    assert not names.intersection(agent.MUTATING_TOOL_NAMES)
+    assert sent['requiredToolGroups']==[]
+    assert 'start_platform_login' not in executed
+    assert not db.scalar(select(FollowUp).where(FollowUp.note=='未授权新跟进'))
+
+
+@pytest.mark.parametrize('continue_requested',[False,True])
+@pytest.mark.parametrize('omit_runtime_marker',[False,True])
+def test_real_pending_production_hands_off_without_model_polling(agent_data,monkeypatch,bridge_script,tmp_path,continue_requested,omit_runtime_marker):
+    m=gateway();_configure_provider(monkeypatch);db,_=agent_data
+    from app.job_models import Job
+    from app.agent_models import ChatMessage
+    upstream=Job(tenant_id='t1',property_id='p1',user_id='u1',kind='content_skill',
+        status='running',payload={'skill_id':'synthetic-video'},result={})
+    db.add(upstream);db.commit()
+    text='查看视频任务状态，完成后请归档到素材库。' if continue_requested else '只读查看视频任务状态。'
+    job=_queued_chat(db,text);wire=tmp_path/'deferred-receipt.json'
+    body="send({'type':'tool_call','id':'pending','name':'get_production_job','arguments':{'job_id':"+repr(upstream.id)+"}})\n"
+    body+="result=json.loads(sys.stdin.readline())['result']\nopen("+repr(str(wire))+",'w').write(json.dumps(result))\n"
+    body+="waiting=result['_execution']['deferred']\n"
+    terminal={'type':'done','text':'不得把此模型文字当成完成','usage':{'input':10,'output':2}}
+    body+=("send({**"+repr(terminal)+",'deferred':waiting,'limitReached':'waiting_for_external'})\n" if not omit_runtime_marker
+        else "send("+repr(terminal)+")\n")
+    bridge_script(body)
+    result=m.handle_pi_chat(db,job)
+    receipt=json.loads(wire.read_text())['_execution']['deferred']
+    assert receipt['jobId']==upstream.id and receipt['status']=='running'
+    assert result['waiting_for_job_id']==upstream.id
+    answer=db.get(ChatMessage,result['message_id'])
+    assert '等待' in answer.content and '不得把此模型文字' not in answer.content
+    children=db.scalars(select(Job).where(Job.kind=='chat',Job.id!=job.id)).all()
+    if continue_requested:
+        assert len(children)==1
+        assert children[0].payload['depends_on_job_id']==upstream.id
+        assert children[0].payload['workflow_parent_job_id']==job.id
+        assert receipt['continuationJobId']==children[0].id
+    else:
+        assert children==[] and 'continuationJobId' not in receipt
+
+
+def test_forged_deferred_terminal_cannot_skip_required_writes(agent_data,monkeypatch,bridge_script):
+    m=gateway();provider=_configure_provider(monkeypatch);db,_=agent_data
+    job=_queued_chat(db,'记录客户1偏好江景。')
+    body=call_script([('get_customer',{'lead_id':'l1'})])
+    body=body.replace("send({'type':'done'", "send({'deferred':{'jobId':'fake','status':'running'},'limitReached':'waiting_for_external','type':'done'")
+    bridge_script(body)
+    with pytest.raises(provider.ProviderError):m.handle_pi_chat(db,job)
+
+
+@pytest.mark.parametrize('text',[
+    '请取消视频生成任务。','帮我把视频生成任务取消。','把正在运行的视频任务取消。',
+])
+def test_gateway_can_execute_explicit_production_cancellation(agent_data,monkeypatch,bridge_script,text):
+    m=gateway();_configure_provider(monkeypatch);db,_=agent_data
+    from app.job_models import Job
+    upstream=Job(tenant_id='t1',property_id='p1',user_id='u1',kind='content_skill',status='queued',payload={},result={})
+    db.add(upstream);db.commit()
+    job=_queued_chat(db,text)
+    bridge_script(call_script([('cancel_production_job',{'job_id':upstream.id})],'已取消制作任务。[S1]'))
+    m.handle_pi_chat(db,job)
+    assert upstream.status=='cancelled'
+
+
+@pytest.mark.parametrize('text',[
+    '把楼盘名称改为澜庭公馆。','请重命名项目为澜庭公馆。',
+])
+def test_gateway_renames_project_only_after_real_property_write(agent_data,monkeypatch,bridge_script,text):
+    m=gateway();_configure_provider(monkeypatch);db,_=agent_data
+    from app.core_models import Property
+    from app.agent_models import ToolCall
+    job=_queued_chat(db,text)
+    bridge_script(call_script([
+        ('get_property_details',{}),('update_property',{'name':'澜庭公馆'}),
+    ],'已更新楼盘名称。[S1]'))
+    m.handle_pi_chat(db,job)
+    assert db.get(Property,'p1').name=='澜庭公馆'
+    saved=db.scalar(select(ToolCall).where(ToolCall.job_id==job.id,ToolCall.name=='update_property'))
+    assert saved.arguments['_receipt']['changed_fields']==['name']
+
+
+@pytest.mark.parametrize('source',['initial','steer','follow_up'])
+@pytest.mark.parametrize('pending',[False,True])
+def test_unresolved_mutation_cannot_finish_from_read_only_or_waiting_result(
+        agent_data,monkeypatch,bridge_script,source,pending):
+    m=gateway();provider=_configure_provider(monkeypatch);db,_=agent_data
+    from app.agent_models import AgentControl,ChatMessage
+    from app.job_models import Job
+    text='保存草稿。'
+    assert agent._wants_mutation(text) is True
+    assert agent.required_action_groups(text)==[]
+    job=_queued_chat(db,text if source=='initial' else '只读查看当前项目。')
+    body=''
+    if source!='initial':
+        db.add(AgentControl(tenant_id='t1',property_id='p1',job_id=job.id,
+            conversation_id=job.payload['conversation_id'],user_id='u1',kind=source,content=text))
+        db.commit()
+        body="control=json.loads(sys.stdin.readline())\nsend({'type':'input_consumed','id':control['id'],'kind':control['type']})\n"
+    if pending:
+        upstream=Job(tenant_id='t1',property_id='p1',user_id='u1',kind='content_skill',status='running',payload={},result={})
+        db.add(upstream);db.commit()
+        body+="send({'type':'tool_call','id':'wait','name':'get_production_job','arguments':{'job_id':"+repr(upstream.id)+"}})\n"
+        body+="result=json.loads(sys.stdin.readline())['result']\nsend({'type':'done','text':'草稿已经保存。','deferred':result['_execution']['deferred'],'limitReached':'waiting_for_external','usage':{'input':10,'output':2}})\n"
+    else:
+        body+=call_script([('get_project_overview',{})],'草稿已经保存。[S1]')
+    bridge_script(body)
+    with pytest.raises(provider.ProviderError,match='操作'):
+        m.handle_pi_chat(db,job)
+    answer=db.scalar(select(ChatMessage).where(ChatMessage.job_id==job.id,ChatMessage.role=='assistant'))
+    assert answer.status=='failed'
+    assert '草稿已经保存' not in answer.content
+
+
+@pytest.mark.parametrize('kind',['steer','follow_up'])
+def test_consumed_human_scope_replaces_inherited_authority_for_durable_child(agent_data,monkeypatch,bridge_script,kind):
+    m=gateway();_configure_provider(monkeypatch);db,_=agent_data
+    from app.job_models import Job
+    from app.agent_models import AgentControl
+    from app.security import encrypt_pii,decrypt_pii
+    old='请制作视频，然后归档到素材库。'
+    current='不要继续生成视频，等视频任务完成后把素材标签更新为江景。'
+    upstream=Job(tenant_id='t1',property_id='p1',user_id='u1',kind='content_skill',status='running',payload={},result={})
+    db.add(upstream);db.commit()
+    job=_queued_chat(db,'旧工作流恢复。')
+    job.payload={**job.payload,'workflow_authorization_cipher':encrypt_pii(old),'workflow_parent_job_id':'obsolete-proof'}
+    control=AgentControl(tenant_id='t1',property_id='p1',job_id=job.id,
+        conversation_id=job.payload['conversation_id'],user_id='u1',kind=kind,content=current)
+    db.add(control);db.commit()
+    body="control=json.loads(sys.stdin.readline())\nsend({'type':'input_consumed','id':control['id'],'kind':control['type']})\n"
+    body+="send({'type':'tool_call','id':'wait','name':'get_production_job','arguments':{'job_id':"+repr(upstream.id)+"}})\n"
+    body+="result=json.loads(sys.stdin.readline())['result']\nsend({'type':'done','deferred':result['_execution']['deferred'],'limitReached':'waiting_for_external','usage':{'input':10,'output':2}})\n"
+    bridge_script(body)
+    result=m.handle_pi_chat(db,job)
+    child=db.get(Job,result['continuation_job_id'])
+    assert decrypt_pii(child.payload['workflow_authorization_cipher'])==current
+    assert 'workflow_parent_job_id' not in job.payload
+    required=agent.required_action_groups(decrypt_pii(child.payload['workflow_authorization_cipher']))
+    assert required==[['update_asset']]
+    names={t['function']['name'] for t in agent.scoped_agent_tools(current)}
+    assert names.intersection(agent.ACTION_LABELS)=={'update_asset'}
+
+
+@pytest.mark.parametrize('replacement',[
+    '只读查看当前项目，不要再生成或归档任何内容。',
+    '不要继续生成视频，等视频任务完成后把素材标签更新为江景。',
+])
+def test_human_replacement_revokes_unstarted_child_and_does_not_reuse_old_scope(agent_data,monkeypatch,bridge_script,replacement):
+    m=gateway();_configure_provider(monkeypatch);db,_=agent_data
+    from app.job_models import Job
+    from app.agent_models import AgentControl
+    from app.security import decrypt_pii
+    upstream=Job(tenant_id='t1',property_id='p1',user_id='u1',kind='content_skill',status='running',payload={},result={})
+    db.add(upstream);db.commit()
+    job=_queued_chat(db,'查看视频任务状态，完成后请归档到素材库。')
+    control=AgentControl(tenant_id='t1',property_id='p1',job_id=job.id,
+        conversation_id=job.payload['conversation_id'],user_id='u1',kind='steer',content=replacement)
+    db.add(control);db.commit()
+    original_controls=m._controls
+    def after_child_exists(session,current_job,cid,seen):
+        child=session.scalar(select(Job).where(Job.kind=='chat',Job.id!=job.id))
+        return original_controls(session,current_job,cid,seen) if child else []
+    monkeypatch.setattr(m,'_controls',after_child_exists)
+    body="send({'type':'tool_call','id':'before','name':'get_production_job','arguments':{'job_id':"+repr(upstream.id)+"}})\nfirst=json.loads(sys.stdin.readline())\ntime.sleep(.25)\n"
+    body+="control=json.loads(sys.stdin.readline())\nsend({'type':'input_consumed','id':control['id'],'kind':control['type']})\n"
+    if replacement.startswith('只读'):
+        body+=call_script([('get_project_overview',{})],'已读取当前项目概况。[S1]')
+    else:
+        body+="send({'type':'tool_call','id':'after','name':'get_production_job','arguments':{'job_id':"+repr(upstream.id)+"}})\nsecond=json.loads(sys.stdin.readline())['result']\nsend({'type':'done','deferred':second['_execution']['deferred'],'limitReached':'waiting_for_external','usage':{'input':10,'output':2}})\n"
+    bridge_script(body)
+    m.handle_pi_chat(db,job)
+    children=db.scalars(select(Job).where(Job.kind=='chat',Job.id!=job.id).order_by(Job.created_at)).all()
+    assert children[0].status=='cancelled'
+    if replacement.startswith('只读'):
+        assert len(children)==1
+    else:
+        assert len(children)==2 and children[1].status=='queued'
+        assert decrypt_pii(children[1].payload['workflow_authorization_cipher'])==replacement
+        assert children[0].payload['workflow_request_key']!=children[1].payload['workflow_request_key']
+
+
 def test_pi_gateway_never_sends_raw_contact_and_native_save_remains_encrypted(agent_data,monkeypatch,bridge_script,tmp_path):
     m=gateway();_configure_provider(monkeypatch);db,_=agent_data
     from app.agent_models import ChatMessage
@@ -322,7 +546,7 @@ def test_failed_production_dependency_cannot_schedule_an_automatic_retry(agent_d
     db.add(dep);db.commit()
     job=_queued_chat(db,'原制作失败了，模型准备自动继续。')
     job.payload={**job.payload,'depends_on_job_id':dep.id,'workflow_authorization_cipher':encrypt_pii('请制作内容，然后继续检查楼盘资料。')};db.commit()
-    bridge_script(call_script([('continue_after_production',{'job_id':dep.id,'instruction':'重试制作内容'}),('get_customer',{'lead_id':'l1'})],'制作已失败，先停止后续制作。[S1]'))
+    bridge_script(call_script([('continue_after_production',{'job_id':dep.id,'instruction':'重试制作内容'}),('get_project_overview',{})],'制作已失败，先停止后续制作。[S1]'))
     m.handle_pi_chat(db,job)
     assert len(db.scalars(select(Job).where(Job.kind=='chat')).all())==1
 
@@ -349,6 +573,31 @@ def test_pi_gateway_enforces_remaining_daily_cloud_budget_for_background_turn(ag
     bridge_script("open("+repr(str(wire))+",'w').write(json.dumps(start,ensure_ascii=False))\n"+call_script([('get_customer',{'lead_id':'l1'})],'已读取客户资料。[S1]'))
     m.handle_pi_chat(db,job)
     assert json.loads(wire.read_text())['config']['maxTotalTokens']==100
+
+
+def test_postgres_decimal_remaining_budget_reaches_pi_as_json_numbers(agent_data,monkeypatch,bridge_script,tmp_path):
+    m=gateway();_configure_provider(monkeypatch);db,_=agent_data
+    from decimal import Decimal
+    from sqlalchemy.sql.functions import FunctionElement
+    from app.config import settings
+    from app.agent_models import ModelUsage
+    monkeypatch.setattr(settings,'development_token_budget',18000)
+    db.add(ModelUsage(tenant_id='t1',property_id='p1',job_id='old',model='qwen-plus',input_tokens=9900,output_tokens=100))
+    db.commit();job=_queued_chat(db,'只读查看当前项目概况。')
+    original_scalar=db.scalar
+    def postgres_scalar(statement,*args,**kwargs):
+        value=original_scalar(statement,*args,**kwargs)
+        columns=list(getattr(statement,'selected_columns',[]))
+        if columns and isinstance(columns[0],FunctionElement) and columns[0].name=='coalesce':
+            return Decimal(value)
+        return value
+    monkeypatch.setattr(db,'scalar',postgres_scalar)
+    wire=tmp_path/'postgres-budget.json'
+    bridge_script("open("+repr(str(wire))+",'w').write(json.dumps(start))\n"+call_script([('get_project_overview',{})],'已读取当前项目概况。[S1]'))
+    m.handle_pi_chat(db,job)
+    config=json.loads(wire.read_text())['config']
+    assert type(config['maxTotalTokens']) is int and config['maxTotalTokens']==8000
+    assert type(config['maxOutputTokens']) is int and config['maxOutputTokens']==8000
 
 
 def test_pi_gateway_rejects_exhausted_daily_budget_before_subprocess(agent_data,monkeypatch):

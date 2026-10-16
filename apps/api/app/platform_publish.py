@@ -431,9 +431,14 @@ def _final_result(db, job, package, record):
     result['message']=messages.get(result.get('status'),messages['reconciliation_required'])
     url=_public_receipt_url(record['platform'],raw.get('url'))
     if url and not result.get('draft_only') and result.get('status')=='submitted':
-        existing=db.scalar(select(Publication).where(Publication.tenant_id==job.tenant_id,
-            Publication.property_id==job.property_id, Publication.release_id==package['release']['id'],
-            Publication.url==url))
+        from .business import publication_for_url_locked
+        try:
+            existing=publication_for_url_locked(db,job.tenant_id,job.property_id,url,package['release']['id'])
+        except HTTPException as error:
+            if error.status_code!=409: raise
+            result.update(status='reconciliation_required',url=url,
+                message='平台链接已关联其他审核版本，请人工核对平台作品与当前版本，勿重复提交')
+            return result
         if existing is None:
             existing=Publication(tenant_id=job.tenant_id,property_id=job.property_id,
                 release_id=package['release']['id'],title=package['content']['cover_title'],

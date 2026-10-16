@@ -46,19 +46,86 @@ ACTION_LABELS = {
     "archive_production_artifacts": "将制作视频归档到素材库",
 }
 QUEUED_ACTIONS = {"plan_content", "generate_content", "run_production_skill", "render_content", "continue_after_production"}
+MUTATING_TOOL_NAMES = frozenset(ACTION_LABELS) | {
+    'refresh_platform_analytics', 'search_platform_content', 'check_platform_account',
+    'start_platform_login', 'prepare_platform_publish',
+}
+
+
+_DIRECT_ACTION = (r'记下|记住|记录|保存|更新|修改|改为|改成|改到|补充|新增|添加|写入|存入|'
+    r'安排|预约|取消|创建|新建|整理|重命名|归档|生成|制作|渲染|合成|剪辑|策划|配音|导出|'
+    r'运行|执行|登录|同步|刷新|搜索|准备发布包|检查账号|检查当前账号|校验登录态')
+_COMMAND_PREFIX = r'^\s*(?:(?:另外|然后|接着|再|并|先|自动)\s*)?(?:请|帮我|替我|给我)?\s*'
+_PROHIBITION = r'不要|不必|不需要|无需|不用|禁止|不得|请勿|勿|先别|暂不|不再|别(?:再|直接|帮我)?(?:修改|更新|记录|保存|写入|安排|生成|制作|发布)'
+
+
+def _human_instruction_text(text):
+    """Remove quoted/source data before either authorization or schema routing."""
+    text = re.sub(r'(?ms)^\s*(```|~~~)[^\n]*\n.*?(?:^\s*\1[^\n]*$|\Z)', '', text)
+    text = re.sub(r'(?m)^\s*>.*$', '', text)
+    text = re.sub(r'(?s)“.*?”|「.*?」|『.*?』|"[^"\n]*"|\'[^\'\n]*\'|`[^`]*`', '', text)
+    return re.sub(r'(?m)(?:原文如下|引用如下|文档内容如下)\s*[:：][^\n]*(?:\n(?!\s*\n)[^\n]*)*', '', text)
+
+
+def _affirmative_intent_text(text):
+    """Extract authority clauses, keeping quoted/reporting material as data.
+
+    A read-only scope disables factual-dictation heuristics for the whole turn.
+    Only an independent positive command can add a particular write back.
+    """
+    structural = _human_instruction_text(text)
+    readonly = bool(re.search(r'只读|(?:仅|只)(?:需要|需)?(?:查询|查阅|查看|检查|读取|列出|汇总)', structural))
+    clauses = []
+    for clause in re.split(r'[，,；;。\n]|但是|不过|而是', structural):
+        negative = re.search(_PROHIBITION, clause)
+        if negative:
+            clause = clause[:negative.start()]
+        clause = clause.strip()
+        if not clause or re.search(r'只读|(?:仅|只)(?:需要|需)?(?:查询|查阅|查看|检查|读取|列出|汇总)', clause):
+            continue
+        # These clauses request a report or introduce source material, rather
+        # than granting a write described later in the same clause.
+        if re.match(_COMMAND_PREFIX + r'(?:告诉我|汇报|说明|介绍|查询|查阅|查看|看看|读取|列出|汇总|检查(?!.*(?:账号|登录态))|原文|文档(?:说|显示|提到)|资料(?:说|显示|记载))', clause):
+            continue
+        direct = re.match(_COMMAND_PREFIX + rf'(?:{_DIRECT_ACTION}|(?:把|将|为|给).{{0,80}}(?:{_DIRECT_ACTION}))', clause)
+        # A global read-only instruction is not undone by a later bare verb:
+        # "生成视频任务还在运行" is a description. An independent explicit
+        # request such as "另外请把…更新为…" is needed to override that scope.
+        explicit_override = re.match(r'^\s*(?:(?:另外|然后|接着|再|并|先)\s*)?(?:请|帮我|替我|给我|把|将)',clause)
+        if readonly and (not direct or not explicit_override or re.search(r'[?？]|什么|哪些|多少|哪里|哪儿|是谁|是否|如何|怎么|有没有|吗',clause)):
+            continue
+        clauses.append(clause)
+    return '，'.join(clauses)
+
+
+def _requested_platform_tools(text):
+    """Each platform side effect requires its own positive user command."""
+    names = set()
+    for clause in _affirmative_intent_text(text).split('，'):
+        command = re.sub(_COMMAND_PREFIX, '', clause)
+        if re.match(r'(?:搜索|搜一下|查找)', command):
+            names.add('search_platform_content')
+        if re.match(r'(?:同步|刷新)', command):
+            names.add('refresh_platform_analytics')
+        if re.match(r'(?:开始|启动|打开)?(?:扫码)?登录', command):
+            names.add('start_platform_login')
+        if re.match(r'(?:检查|校验|确认).*(?:账号|登录态|登录状态)', command):
+            names.add('check_platform_account')
+        if re.match(r'(?:准备|生成).*(?:发布包|发布计划)', command):
+            names.add('prepare_platform_publish')
+    return names
 
 
 def _wants_mutation(text):
     """Only the user's own turn grants a write; retrieved material never does."""
-    if re.search(r"(?:不要|不必|禁止|先别|别)(?:再|直接|帮我)?(?:修改|更新|记录|保存|写入|安排)", text):
-        return False
+    text = _affirmative_intent_text(text)
     if (re.match(r'^(?:制作|生成|渲染)(?:结束|完成|成功)后(?:请)?(?:核对|查看|查询|检查|汇报)', text)
             and not re.search(r'[,，。；](?:然后|再|并|请|帮我).*(?:保存|更新|修改|生成|制作|配音|渲染|安排)', text)):
         return False
     imperative = re.search(r"(?:请(?!问)|帮我|替我|给我|把|将).{0,60}(?:记下|记录|保存|更新|修改|改为|改成|补充|安排|预约|取消|创建|新建|添加|整理|写入|存入)", text)
     if not imperative and re.search(r"上次.{0,30}(?:什么|哪些)|(?:是否|需不需要|要不要|能否|可否|可以).{0,15}(?:补充|更新|修改|保存|记录)|(?:查询|查看|查阅|看看|汇总).{0,100}(?:已|已经|现有|最近|之前)|约.{0,10}(?:哪里|哪儿)", text):
         return False
-    if re.search(r"记下|记住|记到|(?:^|[，。；：\n])\s*(?:请|帮我|替我|给我)?记录|(?:请|帮我|替我|给我)记录|(?:把|将).{0,80}记录(?:到|在)|写(?:入|到)|存(?:入|到)|保存|补充|更新|修改|改成|改为|改到|调整|创建|新建|添加|约.{0,40}(?:看楼|看房|见面)|取消|重命名|打.*标签|整理.*素材|(?:请|把|将|自动|帮我).{0,45}归档|^归档", text):
+    if re.search(r"记下|记住|记到|(?:^|[，。；：\n])\s*(?:请|帮我|替我|给我)?记录|(?:请|帮我|替我|给我)记录|(?:把|将).{0,80}记录(?:到|在|下来)|写(?:入|到)|存(?:入|到)|保存|补充|更新|修改|改成|改为|改到|调整|创建|新建|添加|约.{0,40}(?:看楼|看房|见面)|取消|重命名|打.*标签|整理.*素材|(?:请|把|将|自动|帮我).{0,45}归档|^归档", text):
         return True
     if re.search(r"(?:请|帮我|替我|给|为|计划|已经|已|约定).{0,30}(?:安排|预约)|^(?:安排|预约)", text) and not re.search(r"什么|是否|如何", text):
         return True
@@ -159,27 +226,53 @@ def required_action_groups(text):
     """
     if not _wants_mutation(text):
         return []
+    text = _affirmative_intent_text(text)
     groups = []
     structural = re.sub(r'[“「『"][^”」』"]*[”」』"]', '', text)
     clauses = re.split(r'[，,；;。\n]', structural)
-    production_text = re.sub(r'(?:已经|已)?(?:生成|制作|渲染)(?:好|完成)?的|(?:制作|生成|渲染)任务', '', text)
+    cancellation_clauses=[clause for clause in clauses if re.match(
+        _COMMAND_PREFIX+r'(?:(?:取消|停止)|(?:把|将).{0,80}(?:取消|停止)(?:掉)?\s*$)',clause)
+        and re.search(r'制作|生成|渲染|技能|视频|内容任务',clause)]
+    if cancellation_clauses:groups.append(['cancel_production_job'])
+    production_text = re.sub(r'(?:已经|已)?(?:生成|制作|渲染)(?:好|完成)?的|(?:制作|生成|渲染)任务', '',
+        '，'.join(clause for clause in clauses if clause not in cancellation_clauses))
     new_production = bool(re.search(r'生成|制作|渲染|配音|策划|剪辑|合成|导出|(?:运行|执行).{0,15}(?:技能|分析)', production_text)
         and re.search(r'视频|内容|脚本|文案|图|音频|配音|技能|分析|报告', production_text))
     archive_requested = bool(re.search(r'归档|入库|保存到素材库|存入素材库', text) and re.search(r'素材|库', text))
+    property_name_clauses=[clause for clause in clauses if (
+        re.search(r'(?:楼盘|房源|项目)(?:的)?(?:名称|名字)',clause)
+        and re.search(r'修改|更新|改为|改成|设置',clause)
+        or re.match(_COMMAND_PREFIX+r'重命名(?:当前)?(?:楼盘|房源|项目)',clause))]
+    if property_name_clauses:
+        groups.append(['update_property'])
     if any(re.search(r'楼盘|房源|项目|建筑|客厅|(?:把|将|更新|修改).{0,6}(?:面积|面宽|报价|单价|总价)', clause)
            and re.search(r'面积|面宽|报价|单价|总价|楼盘(?:资料|信息)|项目(?:资料|信息|设置|名称|城市|负责人)', clause)
-           and re.search(r'修改|更新|改为|改成|补充|新增|添加|写入|设置', clause) for clause in clauses):
+           and re.search(r'修改|更新|改为|改成|补充|新增|添加|写入|设置', clause)
+           for clause in clauses if clause not in property_name_clauses or re.search(r'面积|面宽|报价|单价|总价',clause)):
         groups.append(['update_property_fact', 'create_property_fact', 'update_property'])
     if any(re.search(r'素材|照片|图片|图像', clause)
-           and re.search(r'改名|重命名|描述|标签|标注|整理', clause)
+           and re.search(r'改名|重命名|名称|描述|标签|标注|整理', clause)
            and not re.search(r'归档|入库', clause)
            and (not (new_production and archive_requested) or re.search(r'原素材|已有|这张|照片|图像|改名|重命名|描述|说明', clause))
            for clause in clauses):
         groups.append(['update_asset'])
     customer = bool(re.search(r'客户|先生|女士|太太|他|她', text))
-    if customer and re.search(r'建档|档案|背景|财力|预算|偏好|喜好|喜欢|联系方式|电话|微信|需求', text):
+    create_customer=any(re.search(r'(?:新建|新增|添加|创建).{0,12}(?:客户|先生|女士|太太)|(?:客户|先生|女士|太太).{0,12}建档',clause) for clause in clauses)
+    update_customer=any(re.search(r'客户|先生|女士|太太|他|她',clause)
+        and re.search(r'更新|修改|改为|改成',clause)
+        and re.search(r'资料|档案|姓名|名字|称呼|背景|财力|预算|偏好|喜好|联系方式|电话|微信|需求',clause)
+        for clause in clauses)
+    if customer and create_customer:
+        groups.append(['create_customer'])
+    if customer and update_customer:
+        groups.append(['update_customer'])
+    if customer and not create_customer and not update_customer and re.search(r'建档|档案|背景|财力|预算|偏好|喜好|喜欢|联系方式|电话|微信|需求', text):
         groups.append(['create_customer', 'update_customer', 'record_followup'])
     if customer and re.search(r'跟进', text) and re.search(r'记录|写入|保存|补充', text):
+        groups.append(['record_followup'])
+    if (any(re.search(r'客户|先生|女士|太太|他|她', clause) and re.search(r'记下|记录|保存', clause)
+            and not re.search(r'素材库|视频|图片|归档', clause) for clause in clauses)
+            and not any('record_followup' in group for group in groups)):
         groups.append(['record_followup'])
     if customer and '匹配' in text and re.search(r'楼盘|房源|素材', text):
         groups.append(['match_customer_resources'])
@@ -197,7 +290,7 @@ def required_action_groups(text):
             groups.append(['continue_after_production'])
     if archive_requested and not new_production:
         groups.append(['archive_production_artifacts'])
-    return groups or [list(ACTION_LABELS)]
+    return groups
 
 
 def scoped_agent_tools(text):
@@ -206,6 +299,20 @@ def scoped_agent_tools(text):
     New human controls can replace this loadout with the full registry through
     Pi state.tools. Fewer irrelevant schemas improve both routing and latency.
     """
+    required = required_action_groups(text)
+    allowed_writes = set().union(*(set(group) for group in required)) if required else set()
+    platform_tools = _requested_platform_tools(text)
+    authority = _affirmative_intent_text(text)
+    if re.search(r'归档|入库|保存到素材库|存入素材库', authority) and re.search(r'素材|库', authority):
+        allowed_writes.add('archive_production_artifacts')
+    # Queries still need their relevant read schemas even though they grant no
+    # write authority. Exclude prohibitions so they do not load extra domains.
+    text=re.sub(r'(?:'+_PROHIBITION+r')[^，,；;。\n]*','',_human_instruction_text(text))
+    def allowed(tool):
+        name = tool['function']['name']
+        if name in ACTION_LABELS:
+            return name in allowed_writes
+        return name not in MUTATING_TOOL_NAMES or name in platform_tools
     if ('匹配' in text and re.search(r'客户|先生|女士|需求', text)
             and re.search(r'生成|制作|剪辑', text) and re.search(r'视频|短片', text)
             and re.search(r'归档|保存到.*素材库|存入.*素材库', text)):
@@ -216,9 +323,9 @@ def scoped_agent_tools(text):
         for group in required_action_groups(text):
             if not names.intersection(group):
                 names.update(group)
-        return [tool for tool in TOOLS if tool['function']['name'] in names]
+        return [tool for tool in TOOLS if tool['function']['name'] in names and allowed(tool)]
     names = {'get_project_overview', 'get_missing_requirements', 'search_evidence'}
-    matched = False
+    matched = bool(re.search(r'项目概况|当前项目|项目总览|资料缺口',text))
     if re.search(r'客户|先生|女士|太太|跟进|预约|会面|看楼|看房|他|她', text):
         names.update(SECRETARY_NAMES)
         names.update(MATCHING_NAMES)
@@ -239,7 +346,7 @@ def scoped_agent_tools(text):
     if re.search(r'平台|账号|登录|运营|抖音|小红书|视频号|发布', text):
         names.update(t['function']['name'] for t in TOOLS if t['function']['name'] not in SECRETARY_NAMES | ESTATE_NAMES | PRODUCTION_NAMES | MATCHING_NAMES | ARCHIVE_NAMES)
         matched = True
-    return [tool for tool in TOOLS if not matched or tool['function']['name'] in names]
+    return [tool for tool in TOOLS if (not matched or tool['function']['name'] in names) and allowed(tool)]
 
 
 def _source(kind, id, label, **extra):

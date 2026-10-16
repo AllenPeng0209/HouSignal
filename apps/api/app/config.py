@@ -10,6 +10,8 @@ ROOT = Path(__file__).resolve().parents[3]
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=ROOT / '.env', env_file_encoding='utf-8', extra='ignore')
     app_env: str = 'development'
+    external_agent_origin: str = ''
+    external_agent_cimd_enabled: bool = True
     database_url: str = Field(default='sqlite:///./runtime/local.db', repr=False)
     migration_database_url: str = Field(default='', repr=False)
     worker_database_url: str = Field(default='', repr=False)

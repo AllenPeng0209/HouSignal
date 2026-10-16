@@ -222,15 +222,19 @@ def analyze_post(pid: str, rid: str, body: AnalyzeRequest, db: Session = Depends
     asset = _authorized_asset(db, ctx, pid, reference)
     payload = _bound_payload(reference, asset)
     path = _checked_path(asset)
-    jobs = db.scalars(select(Job).where(Job.tenant_id == ctx.tenant_id, Job.property_id == pid,
+    scoped_jobs = select(Job).where(Job.tenant_id == ctx.tenant_id, Job.property_id == pid,
         Job.kind == 'reference_analyze', Job.payload['reference_id'].as_string() == rid)
-        .order_by(Job.created_at.desc()).limit(200)).all()
+    # Request identity outlives the bounded cache. Legacy duplicate keys keep
+    # their earliest binding, even when a newer task has reusable evidence.
+    original = db.scalar(scoped_jobs.where(Job.payload['idempotency_key'].as_string() == body.idempotency_key)
+        .order_by(Job.created_at.asc(), Job.id.asc()).limit(1))
+    if original is not None:
+        if any((original.payload or {}).get(key) != value for key, value in payload.items()):
+            raise HTTPException(409, '该任务编号已用于其他原片版本，请重新发起')
+        return {'job_id': original.id, 'cached': original.status == 'succeeded'}
+    jobs = db.scalars(scoped_jobs.order_by(Job.created_at.desc()).limit(200)).all()
     for job in jobs:
         same = all((job.payload or {}).get(key) == value for key, value in payload.items())
-        if (job.payload or {}).get('idempotency_key') == body.idempotency_key:
-            if not same:
-                raise HTTPException(409, '该任务编号已用于其他原片版本，请重新发起')
-            return {'job_id': job.id, 'cached': job.status == 'succeeded'}
         if same and job.status in ('queued', 'running'):
             return {'job_id': job.id, 'cached': False}
         if not body.force and job.status == 'succeeded' and _same_evidence(job.payload or {}, payload):

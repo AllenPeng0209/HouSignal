@@ -5,18 +5,29 @@ RUN npm ci --omit=dev
 COPY apps/agent-runtime/engine.mjs apps/agent-runtime/bridge.mjs ./
 
 FROM python:3.12-slim
-RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg fonts-noto-cjk fonts-wqy-microhei procps && command -v ps && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg fonts-noto-cjk fonts-wqy-microhei procps xvfb xauth && command -v ps && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY apps/api/requirements.lock /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
 COPY vendor/easel_accounts/requirements.txt /app/platform-requirements.txt
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 RUN pip install --no-cache-dir -r /app/platform-requirements.txt && python -m playwright install --with-deps chromium
 COPY apps/api /app/apps/api
+COPY integrations/louxiang-agent/build.py integrations/louxiang-agent/README.md /app/integrations/louxiang-agent/
+COPY integrations/louxiang-agent/src /app/integrations/louxiang-agent/src
+COPY integrations/louxiang-agent/plugin /app/integrations/louxiang-agent/plugin
+RUN python /app/integrations/louxiang-agent/build.py
 COPY --from=pi_runtime /usr/local/bin/node /usr/local/bin/node
 COPY --from=pi_runtime /agent-runtime /app/apps/agent-runtime
 COPY scripts /app/scripts
 COPY vendor/easel_accounts /app/vendor/easel_accounts
 COPY alembic.ini /app/alembic.ini
-ENV PYTHONPATH=/app/apps/api FFMPEG_BINARY=/usr/bin/ffmpeg FFPROBE_BINARY=/usr/bin/ffprobe
+RUN groupadd --gid 10001 housignal \
+    && useradd --uid 10001 --gid 10001 --create-home --shell /usr/sbin/nologin housignal \
+    && mkdir -p /data/storage /app/runtime/platform-accounts /app/.runtime \
+    && chown -R 10001:10001 /data/storage /app/runtime /app/.runtime \
+    && chmod 0700 /data/storage /app/runtime /app/runtime/platform-accounts /app/.runtime
+ENV PYTHONPATH=/app/apps/api FFMPEG_BINARY=/usr/bin/ffmpeg FFPROBE_BINARY=/usr/bin/ffprobe HOME=/home/housignal
+USER 10001:10001
 EXPOSE 8017
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8017"]

@@ -1,0 +1,58 @@
+# Optional final overlay after compose.yaml and compose.production.yaml.
+# Host private directories must already exist with UID/GID 10001 and mode 0700.
+# Keep the configured model backends in .env; this overlay only supplies transport.
+services:
+  api:
+    user: "10001:10001"
+    environment:
+      NATIVE_RESIDENT_TEXT_TOKEN_PATH: /app/.runtime/native-qwen.auth
+    volumes:
+      - type: bind
+        source: ${PPU_RUNTIME_DIR:?Set PPU_RUNTIME_DIR to the private runtime directory}
+        target: /app/.runtime
+        bind:
+          create_host_path: false
+  worker:
+    user: "10001:10001"
+    network_mode: service:api
+    environment:
+      NATIVE_RESIDENT_TEXT_TOKEN_PATH: /app/.runtime/native-qwen.auth
+    volumes:
+      - type: bind
+        source: ${PPU_RUNTIME_DIR:?Set PPU_RUNTIME_DIR to the private runtime directory}
+        target: /app/.runtime
+        bind:
+          create_host_path: false
+    depends_on:
+      ppu-tunnel:
+        condition: service_started
+  ppu-tunnel:
+    image: ${LOUXIANG_TUNNEL_IMAGE:-louxiang-tunnel:local}
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.tunnel
+    user: "10001:10001"
+    network_mode: service:api
+    init: true
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    environment:
+      PPU_SSH_DIR: /run/ppu-ssh
+      PPU_SSH_TARGET: ${PPU_SSH_TARGET:-ppu-runtime}
+    volumes:
+      - type: bind
+        source: ${PPU_SSH_DIR:?Set PPU_SSH_DIR to the private SSH directory}
+        target: /run/ppu-ssh
+        read_only: true
+        bind:
+          create_host_path: false
+    depends_on:
+      api:
+        condition: service_started
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"

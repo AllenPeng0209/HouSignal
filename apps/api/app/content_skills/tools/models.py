@@ -75,14 +75,20 @@ def _ppu_generate(*, input_text, assets, parameters, output_dir, context):
     width, height = map(int, size.split("*"))
     frames = math.ceil(duration * 24) + 1
     frames += (5 - frames) % 17
-    payload = {"task": "i2av" if assets else "t2av", "prompt": input_text, "seed": seed,
+    negative = parameters.get("negative_prompt", "")
+    if not isinstance(negative, str) or len(negative) > 2000:
+        raise ValueError("negative_prompt需为不超过2000字符的文字")
+    actual_prompt = input_text
+    if negative:
+        # Native H3 rejects a negative_prompt request field. Preserve the user's
+        # exclusions explicitly in its supported text prompt instead of silently
+        # dropping them or claiming separate negative conditioning.
+        actual_prompt += "\n\nConstraints: avoid the following unwanted content or artifacts:\n" + negative
+    if len(actual_prompt) > 12000:
+        raise ValueError("视频提示词与排除要求合计超过12000字符，请缩短后重试；不会截断要求")
+    payload = {"task": "i2av" if assets else "t2av", "prompt": actual_prompt, "seed": seed,
                "num_frames": frames, "size": [height, width],
                "save_result_path": "./housignal-" + uuid.uuid4().hex + ".mp4"}
-    negative = parameters.get("negative_prompt", "")
-    if negative:
-        if not isinstance(negative, str) or len(negative) > 2000:
-            raise ValueError("negative_prompt需为不超过2000字符的文字")
-        payload["negative_prompt"] = negative
     if assets:
         data = _image_input(assets, max_count=1)[0]["image"]
         if not data.startswith(("data:image/png;", "data:image/jpeg;")):
@@ -91,7 +97,11 @@ def _ppu_generate(*, input_text, assets, parameters, output_dir, context):
     client = context.get("media_http_client") or httpx.Client(timeout=90, follow_redirects=False, trust_env=False)
     owned = "media_http_client" not in context
     record_path = output_dir / "video-submission.json"
-    record = {"backend": "lightx2v", "model": model, "prompt_sha256": hashlib.sha256(input_text.encode()).hexdigest(),
+    actual_prompt_sha = hashlib.sha256(actual_prompt.encode()).hexdigest()
+    record = {"backend": "lightx2v", "model": model, "prompt_sha256": actual_prompt_sha,
+              "original_prompt_sha256": hashlib.sha256(input_text.encode()).hexdigest(),
+              "actual_prompt_sha256": actual_prompt_sha,
+              "prompt_adaptation": "negative_constraints_in_text" if negative else None,
               "requested_duration_seconds": duration, "expected_frames": frames, "width": width, "height": height,
               "seed": seed, "state": "preflight"}
     started = time.monotonic()
