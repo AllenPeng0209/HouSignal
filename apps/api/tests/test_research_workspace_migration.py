@@ -31,6 +31,8 @@ def upgraded_research_store():
         # These tables are introduced after PREVIOUS_REVISION and must be
         # created by the upgrade, even when other tests imported their models.
         'customer_profiles', 'viewing_appointments', 'agent_controls',
+        'external_agent_clients', 'external_agent_authorizations', 'external_agent_grants',
+        'external_agent_codes', 'external_agent_credentials', 'external_agent_invocations',
     }]
     Base.metadata.create_all(engine, tables=existing_tables)
     with engine.begin() as connection:

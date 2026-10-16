@@ -40,7 +40,7 @@ export function planningDraftState(draft?:PlanningDraft|null,channel='抖音'):P
  const direction=contentDirections.find(d=>d.id===category)!;
  const duration=draft?.target_seconds;
  return {content_type:category,subject:draft?.subject||direction.subjects[0].query,topic_id:draft?.topic_id||'tour',channel,
-  account_id:null,reference_id:draft?.reference_id||null,skill_ids:[...defaultPlanningMethods],intent:draft?draft.angle||draft.title:'',target_seconds:typeof duration==='number'&&supportedPlanningDuration(duration)?duration:300};
+  account_id:null,reference_id:draft?.reference_id||null,skill_ids:[...defaultPlanningMethods],intent:draft?draft.angle||draft.title:'',target_seconds:typeof duration==='number'&&supportedPlanningDuration(duration)?duration:30};
 }
 export function candidatePlan(context:PlanningRequest,candidate:PlanningCandidate,jobId:string) {
  return {title:candidate.title,angle:candidate.angle,channel:context.channel,account_id:context.account_id,

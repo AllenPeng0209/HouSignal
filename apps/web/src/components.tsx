@@ -1,4 +1,4 @@
-import {useEffect,useRef,type ReactNode} from 'react';
+import {Children,cloneElement,isValidElement,useEffect,useRef,type ReactNode} from 'react';
 export function Icon({name,size=18}:{name:string;size?:number}) {
  const shared={fill:'none',stroke:'currentColor',strokeWidth:1.7,strokeLinecap:'round' as const,strokeLinejoin:'round' as const};
  const paths:Record<string,ReactNode>={
@@ -18,7 +18,7 @@ export function Heading({eyebrow,title,subtitle,actions}:{eyebrow:string;title:s
 export function Empty({icon='folder',title,children,action}:{icon?:string;title:string;children?:ReactNode;action?:ReactNode}) {return <div className="empty"><span className="empty-icon"><Icon name={icon} size={26}/></span><h3>{title}</h3><p>{children}</p>{action}</div>;}
 export function Loading({text='正在读取项目记录…'}:{text?:string}) {return <div className="loading" role="status"><span className="spinner"/>{text}</div>;}
 export function ErrorNotice({message,retry}:{message:string;retry?:()=>void}) {return <div className="error-notice" role="alert"><span>{message}</span>{retry&&<Button onClick={retry} icon="refresh">重试</Button>}</div>;}
-export function Field({label,children,hint}:{label:string;children:ReactNode;hint?:string}) {return <label className="field"><span>{label}</span>{children}{hint&&<small>{hint}</small>}</label>;}
+export function Field({label,children,hint}:{label:string;children:ReactNode;hint?:string}) {const controls=Children.map(children,child=>isValidElement<{'aria-label'?:string;'aria-labelledby'?:string}>(child)&&['input','select','textarea'].includes(String(child.type))&&!child.props['aria-label']&&!child.props['aria-labelledby']?cloneElement(child,{'aria-label':label}):child);return <label className="field"><span>{label}</span>{controls}{hint&&<small>{hint}</small>}</label>;}
 export function Modal({title,children,onClose,footer,wide=false}:{title:string;children:ReactNode;onClose:()=>void;footer?:ReactNode;wide?:boolean}) {
  const ref=useRef<HTMLDivElement>(null);
  useEffect(()=>{const previous=document.activeElement as HTMLElement;const dialog=ref.current; const initial=dialog?.querySelector<HTMLElement>('input,textarea,select,button');initial?.focus();const handler=(e:KeyboardEvent)=>{if(e.key==='Escape')onClose();if(e.key==='Tab'){const items=Array.from(dialog?.querySelectorAll<HTMLElement>('button,input,select,textarea,a[href]')||[]).filter(n=>!n.hasAttribute('disabled')&&n.offsetParent!==null);const first=items[0],last=items[items.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}}}; document.addEventListener('keydown',handler);const old=document.body.style.overflow;document.body.style.overflow='hidden';return()=>{document.removeEventListener('keydown',handler);document.body.style.overflow=old;previous?.focus();};},[onClose]);

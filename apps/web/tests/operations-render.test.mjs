@@ -22,7 +22,7 @@ before(async()=>{
  const target=join(directory,'panels.mjs');await writeFile(target,bundled);panels=await import(pathToFileURL(target).href);
 });
 after(async()=>{delete globalThis.operationApp;delete globalThis.operationData;if(directory)await rm(directory,{recursive:true,force:true});});
-function setup(role='content',records={}){globalThis.operationApp={project:{id:'p-1',name:'测试项目',channel:'抖音'},session:{role},refresh:0};globalThis.operationData=records;}
+function setup(role='content',records={}){globalThis.operationApp={project:{id:'p-1',name:'测试项目',channel:'抖音'},session:{role,user:{id:'test-user',name:'测试运营',email:'test@example.invalid'},organization:{id:'test-org',name:'隔离组织'}},navigationTarget:{},rememberNavigation(){},notify(){},navigate(){},refresh:0};globalThis.operationData=records;}
 function buttonMarkup(html,label){return Array.from(html.matchAll(/<button\b[^>]*>[\s\S]*?<\/button>/g),m=>m[0]).find(button=>button.includes(`<span>${label}</span>`))||'';}
 const base='/api/projects/p-1/operations';
 const account={id:'a-1',platform:'小红书',name:'江边选房',homepage:'https://www.xiaohongshu.com/user/profile/example',positioning:'真实楼盘科普',audience:'改善型买家',voice:'克制专业',red_lines:'不承诺收益',status:'managed'};

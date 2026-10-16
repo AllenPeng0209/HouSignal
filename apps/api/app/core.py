@@ -5,6 +5,7 @@ import math
 from pathlib import Path
 import re
 import secrets
+from typing import Literal
 from uuid import uuid4
 import zipfile
 
@@ -245,14 +246,18 @@ class FactInput(BaseModel):
     unit: str = Field(default='',max_length=50)
     source: str = Field(max_length=5000)
     valid_until: datetime | None = None
+    expected_revision: int | None = None
 
 
 @router.patch('/projects/{pid}/facts/{fid}')
 def update_fact(pid: str,fid: str,data: FactInput,ctx: Context = Depends(get_context),db: Session = Depends(get_db)):
     require_project(db,ctx,pid,EDIT_ROLES)
     fact = _fact(db,ctx,pid,fid)
+    db.refresh(fact,with_for_update=True)
+    if data.expected_revision is not None and data.expected_revision!=fact.revision:
+        raise HTTPException(409,'资料已更新，请重新核对当前版本')
     _record_revision(db,fact)
-    for key,value in data.model_dump().items():
+    for key,value in data.model_dump(exclude={'expected_revision'}).items():
         setattr(fact,key,value.strip() if isinstance(value,str) else value)
     fact.status = 'unverified'
     fact.revision += 1
@@ -264,6 +269,7 @@ def update_fact(pid: str,fid: str,data: FactInput,ctx: Context = Depends(get_con
 
 class Confirmation(BaseModel):
     confirmed: bool
+    expected_revision: int | None = None
 
 
 @router.post('/projects/{pid}/facts/{fid}/verify')
@@ -271,7 +277,10 @@ def verify_fact(pid: str,fid: str,data: Confirmation,ctx: Context = Depends(get_
     require_project(db,ctx,pid,REVIEW_ROLES)
     if not data.confirmed:
         raise HTTPException(422,'请人工确认资料与来源一致')
-    fact = _fact(db,ctx,pid,fid)
+    fact = db.scalar(select(Fact).where(Fact.id==fid,Fact.property_id==pid,Fact.tenant_id==ctx.tenant_id).with_for_update().execution_options(populate_existing=True))
+    if fact is None: raise HTTPException(404,'资料不存在或无权访问')
+    if data.expected_revision is not None and data.expected_revision!=fact.revision:
+        raise HTTPException(409,'资料已更新，请重新核对当前版本')
     original = fact.status
     fact.status = 'verified'
     if not valid_fact(fact):
@@ -367,8 +376,13 @@ def storage_path(key: str) -> Path:
 
 
 @router.post('/projects/{pid}/assets')
-async def upload_asset(pid: str,file: UploadFile = File(...),ctx: Context = Depends(get_context),db: Session = Depends(get_db)):
+async def upload_asset(pid: str,request: Request,file: UploadFile = File(...),
+                       origin_type: Literal['actual','ai_generated'] = Form('actual'),
+                       ctx: Context = Depends(get_context),db: Session = Depends(get_db)):
     require_project(db,ctx,pid,EDIT_ROLES)
+    supplied_origin = (await request.form()).getlist('origin_type')
+    if supplied_origin and (len(supplied_origin) != 1 or supplied_origin[0] not in ('actual','ai_generated')):
+        raise HTTPException(422,'素材来源仅支持 actual 或 ai_generated，且只能提供一次')
     content = bytearray()
     while chunk := await file.read(1024*1024):
         content.extend(chunk)
@@ -386,7 +400,7 @@ async def upload_asset(pid: str,file: UploadFile = File(...),ctx: Context = Depe
     path.chmod(0o600)
     metadata['model_processing_authorized'] = False
     asset = Asset(tenant_id=ctx.tenant_id,property_id=pid,name=name,kind=kind,storage_key=key,mime_type=mime,
-                  sha256=hashlib.sha256(content).hexdigest(),byte_size=len(content),rights='pending',rights_evidence='',origin_type='actual',metadata_json=metadata)
+                  sha256=hashlib.sha256(content).hexdigest(),byte_size=len(content),rights='pending',rights_evidence='',origin_type=origin_type,metadata_json=metadata)
     try:
         db.add(asset)
         db.flush()
@@ -405,12 +419,16 @@ class RightsInput(BaseModel):
     evidence: str = Field(default='',max_length=5000)
     model_processing_authorized: bool | None = None
     enqueue_extraction: bool = Field(default=True, strict=True)
+    expected_rights_revision: int | None = None
 
 
 @router.post('/projects/{pid}/assets/{aid}/rights')
 def asset_rights(pid: str,aid: str,data: RightsInput,ctx: Context = Depends(get_context),db: Session = Depends(get_db)):
     require_project(db,ctx,pid,REVIEW_ROLES)
-    asset = _asset(db,ctx,pid,aid)
+    asset = db.scalar(select(Asset).where(Asset.id==aid,Asset.property_id==pid,Asset.tenant_id==ctx.tenant_id).with_for_update().execution_options(populate_existing=True))
+    if asset is None: raise HTTPException(404,'素材不存在')
+    if data.expected_rights_revision is not None and data.expected_rights_revision!=asset.rights_revision:
+        raise HTTPException(409,'素材授权已更新，请重新核对当前授权版本')
     if data.rights not in ('pending','authorized','revoked'):
         raise HTTPException(422,'素材授权状态不支持')
     if data.rights == 'authorized' and not _has_value(data.evidence):

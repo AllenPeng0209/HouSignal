@@ -12,7 +12,7 @@ import {renderToStaticMarkup} from 'react-dom/server';
 let panels,directory;
 before(async()=>{
  directory=await mkdtemp(join(tmpdir(),'housignal-workbench-'));
- const result=await build({stdin:{contents:`export {Dashboard,Stats} from './ProjectPages';export {Reports} from './Reports';export {Workbench} from './Workbench';`,resolveDir:resolve('src'),loader:'tsx'},write:false,bundle:true,format:'esm',platform:'node',jsx:'automatic',external:['react','react-dom','react/jsx-runtime'],loader:{'.css':'empty'},plugins:[{name:'loaded-http-resources',setup(builder){
+ const result=await build({stdin:{contents:`export {Dashboard,Stats} from './ProjectPages';export {Reports} from './Reports';export {Workbench} from './Workbench';export {saveWorkspaceLocation} from './workspace-navigation';`,resolveDir:resolve('src'),loader:'tsx'},write:false,bundle:true,format:'esm',platform:'node',jsx:'automatic',external:['react','react-dom','react/jsx-runtime'],loader:{'.css':'empty'},plugins:[{name:'loaded-http-resources',setup(builder){
   if(!existsSync(resolve('src/Workbench.tsx')))builder.onResolve({filter:/^\.\/Workbench$/},()=>({path:'missing-workbench',namespace:'fixture'}));
   builder.onResolve({filter:/^\.\/hooks$/},()=>({path:'loaded-hooks',namespace:'fixture'}));
   builder.onLoad({filter:/.*/,namespace:'fixture'},({path})=>({loader:'js',contents:path==='missing-workbench'?'export const Workbench=()=>null;':`export const useApp=()=>globalThis.workbenchApp;export const useResource=(path)=>({data:globalThis.workbenchData[path]??null,loading:false,error:'',retry:()=>{},...globalThis.workbenchStates[path]});export const useMutation=()=>({busy:false,error:'',setError(){},run:async()=>{}});export const useJob=()=>({job:null,busy:false,error:'',percent:0,statusText:'',wait:async()=>undefined,cancel(){},setJob(){},setError(){}});`}));
@@ -26,7 +26,7 @@ const metrics={published:4,inquiries:12,qualified:7,appointments:5,visits:2,view
 const overview={project,metrics,pending_inquiries:[],content_versions:[],publications:[],proposals:[]};
 const report={metrics:{views:1200,likes:0,comments:null,saves:null,inquiries:null,qualified:3,window_complete:true,observed_publications:4,total_publications:4},publications:[],proposals:[],window:'D7'};
 function setup({summary=overview,analysis=report,states={}}={}){
- globalThis.workbenchApp={project,canEdit:true,canReview:true,navigate(){},openReadiness(){},session:{role:'owner'},refresh:0};
+ globalThis.workbenchApp={project,projects:[project],canEdit:true,canReview:true,canSales:true,canManage:true,navigationTarget:{},rememberNavigation(){},navigate(){},openReadiness(){},session:{role:'owner',user:{id:'user-workbench',name:'测试负责人',email:'owner@example.test'},organization:{id:'org-workbench',name:'测试组织'}},refresh:0,reload:async()=>{},notify(){},citation(){},openProject(){},logout:async()=>{}};
  globalThis.workbenchData={'/api/projects/p-1/overview':summary,'/api/projects/p-1/reports?window=D7':analysis};globalThis.workbenchStates=states;
 }
 const render=(Component,props)=>renderToStaticMarkup(React.createElement(Component,props));
@@ -60,4 +60,13 @@ test('empty project sales stages render zero-width bars instead of invented prog
 });
 test('overview surfaces a failed performance resource without hiding project progress',()=>{
  setup({analysis:null,states:{'/api/projects/p-1/reports?window=D7':{data:null,loading:false,error:'发布表现暂不可用'}}});const html=render(panels.Dashboard);assert.match(html,/role="alert"[^>]*>[\s\S]*?发布表现暂不可用/);assert.match(html,/项目进展/);assert.doesNotMatch(html,/第一个待办/);
+});
+
+// A stored record target is required before offering a continuation action.
+test('overview offers continuation only when this user and project have a saved content target',()=>{
+ setup();assert.doesNotMatch(render(panels.Workbench),/继续上次编辑/);
+ panels.saveWorkspaceLocation({userId:'other-user',organizationId:'org-workbench',projectId:'p-1'},'studio',{contentId:'cv-private',studioStage:'script'});
+ assert.doesNotMatch(render(panels.Workbench),/继续上次编辑/);
+ panels.saveWorkspaceLocation({userId:'user-workbench',organizationId:'org-workbench',projectId:'p-1'},'studio',{contentId:'cv-resume',studioStage:'script'});
+ assert.match(render(panels.Workbench),/继续上次编辑/);
 });

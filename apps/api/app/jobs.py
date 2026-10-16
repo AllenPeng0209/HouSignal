@@ -71,6 +71,11 @@ def job_dict(job: Job, db: Session | None = None, ctx: Context | None = None):
             {'douyin','xiaohongshu','kuaishou','weixin-channels','zhihu','bilibili','wechat-oa'}
             and identifier(payload.get('content_version_id'))):
         preparation_request={'platform':payload['platform'],'content_version_id':identifier(payload['content_version_id'])}
+    publication_request=None
+    if (job.kind in ('platform_prepare','platform_publish') and payload.get('platform') in
+            {'douyin','xiaohongshu','kuaishou','weixin-channels','zhihu','bilibili','wechat-oa'}
+            and identifier(payload.get('content_version_id')) and identifier(payload.get('release_id'))):
+        publication_request={key:payload[key] for key in ('platform','content_version_id','release_id')}
     return {"id": job.id, "property_id": job.property_id, "kind": job.kind,
             "waiting_for_job_id": (identifier(payload.get('depends_on_job_id'))
                 if job.kind == 'chat' and job.status == 'queued' else None),
@@ -79,6 +84,7 @@ def job_dict(job: Job, db: Session | None = None, ctx: Context | None = None):
             "skill_id": (job.payload or {}).get('skill_id') if job.kind == 'content_skill' else None,
             "production_request":production_request,
             "preparation_request":preparation_request,
+            "publication_request":publication_request,
             "status": job.status, "result": result, "error": job.error,
             "progress": job.progress, "attempt": job.attempt,
             "phase": phase,
@@ -120,14 +126,22 @@ def cancel_job(jid: str, ctx: Context = Depends(get_context), db: Session = Depe
     if job.user_id != ctx.user_id and ctx.role not in {"admin", "owner"}:
         raise HTTPException(403, "只能取消自己创建的任务")
     if job.status not in TERMINAL:
-        changed = db.execute(update(Job).where(Job.id == job.id,
+        db.execute(update(Job).where(Job.id == job.id,
             Job.status.in_(["queued", "running"])).values(status="cancelled",
                 result={}, phase='已取消', completed_at=utcnow(),
                 lease_token=None, lease_until=None, updated_at=utcnow())
-            .execution_options(synchronize_session=False)).rowcount
-        if changed == 1 and job.kind == "chat":
-            from .agent import finalize_chat_messages
-            finalize_chat_messages(db, job.id, "cancelled", "本轮查询已取消")
+            .execution_options(synchronize_session=False))
+        # Publish the lease fence before touching the assistant row. The worker
+        # may own that row until it observes cancellation through another DB
+        # connection; holding the job lock while waiting would strand both.
+        db.commit()
+    db.refresh(job)
+    # A previous request may have committed cancellation but rolled back its
+    # cleanup. Retry that idempotently, using the actual persisted terminal
+    # status so a concurrent successful completion remains untouched.
+    if job.status == "cancelled" and job.kind == "chat":
+        from .agent import finalize_chat_messages
+        finalize_chat_messages(db, job.id, "cancelled", "本轮查询已取消")
         db.commit()
     db.refresh(job)
     return job_dict(job, db, ctx)

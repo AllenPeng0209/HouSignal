@@ -24,12 +24,12 @@ after(async()=>{delete globalThis.planningApp;delete globalThis.planningData;awa
 const base='/api/projects/p/operations';
 const reference={id:'ref-1',title:'从入户看家务动线',platform:'抖音',source_url:'https://example.com/reference',observed_at:'2026-10-14T01:00:00Z',curation_state:'shortlisted',tags:[],note:'看回家动线',research_notes:{},analysis_snapshot:{job_id:'analysis-1',summary:'从问题到实拍验证',techniques:[{id:'question',label:'问题引入',reason:'先问走路是否绕远',evidence_refs:['s1']}]},revision:2};
 const skills=['topic-matrix','titles-and-hooks','topic-evaluation'].map(id=>({id,title:{'topic-matrix':'选题矩阵','titles-and-hooks':'标题与 Hook','topic-evaluation':'选题评分'}[id],status:'ready',layer:'plan',reason:'可使用'}));
-function setup(role='content'){globalThis.planningApp={project:{id:'p',name:'江边住宅',channel:'抖音',audience:'改善家庭'},session:{role},refresh:0,notify(){}};globalThis.planningData={[`${base}/research/references`]:[reference],[`${base}/skills`]:skills,'/api/projects/p/topics':[{id:'layout',title:'户型动线',eligible:false,missing:['户型图']} ]};}
+function setup(role='content'){globalThis.planningApp={project:{id:'p',name:'江边住宅',channel:'抖音',audience:'改善家庭'},session:{role,user:{id:'u'},organization:{id:'o'}},refresh:0,notify(){}};globalThis.planningData={[`${base}/research/references`]:[reference],[`${base}/skills`]:skills,'/api/projects/p/topics':[{id:'layout',title:'户型动线',eligible:false,missing:['户型图']} ]};}
 const render=(props={})=>renderToStaticMarkup(React.createElement(ui.PlanningPanel,{onGenerate(){},onDiscover(){},...props}));
 function button(html,label){return [...html.matchAll(/<button\b[^>]*>[\s\S]*?<\/button>/g)].map(m=>m[0]).find(m=>m.includes(`<span>${label}</span>`))||'';}
 // Catches making users reopen unrelated pages or complete a plan form before using reference evidence.
-test('the default planner combines saved reference research, content goals and executable methods inline',()=>{
- setup();const html=render();assert.match(html,/role="tab"[^>]*aria-selected="true"[^>]*>策划台/);assert.match(html,/从入户看家务动线/);assert.match(html,/已拆解/);assert.match(html,/专业内容/);assert.match(html,/获客内容/);assert.match(html,/选题矩阵/);assert.match(html,/生成 3 个策划方向/);assert.doesNotMatch(html,/role="dialog"/);
+test('the reference planner combines saved research, content goals and executable methods inline',()=>{
+ setup();const html=render({initialDraft:{title:reference.title,angle:'借鉴结构',brief:'',topic_id:'layout',reference_id:'ref-1',start_mode:'reference'}});assert.match(html,/role="tab"[^>]*aria-selected="true"[^>]*>策划台/);assert.match(html,/从入户看家务动线/);assert.match(html,/已拆解/);assert.match(html,/专业内容/);assert.match(html,/获客内容/);assert.match(html,/选题矩阵/);assert.match(html,/生成 3 个策划方向/);assert.doesNotMatch(html,/role="dialog"/);
 });
 // Catches losing the reference selected in discovery and pretending its metrics prove success.
 test('a reference draft opens the same planner with the actual selected evidence and no fabricated performance score',()=>{
@@ -55,13 +55,13 @@ test('saved planning references retain their source and evidence basis in the pl
  const html=render({focusPlanId:'p-1'});assert.match(html,/从入户看家务动线/);assert.match(html,/href="https:\/\/example.com\/reference"/);assert.match(html,/尚未分析原片/);
 });
 
-// Catches silently inheriting a short-video default when a fresh content plan needs a useful long-form explanation.
-test('a fresh planner starts at five minutes while explicit short and long draft durations survive',()=>{
- assert.equal(ui.planningDraftState().target_seconds,300);
+// Catches a first-time user unexpectedly submitting a long production while explicit long-form briefs must remain intact.
+test('a fresh planner starts with a short first video while explicit short and long draft durations survive',()=>{
+ assert.equal(ui.planningDraftState().target_seconds,30);
  for(const seconds of [30,45,60,300,480,600])assert.equal(ui.planningDraftState({title:'一个真实问题',angle:'解释取舍',brief:'',topic_id:'tour',target_seconds:seconds}).target_seconds,seconds);
- setup();const html=render();assert.match(html,/<option value="300" selected="">5 分钟/);
- for(const seconds of [30,45,60,480,600])assert.match(html,new RegExp(`<option value="${seconds}"`));
- assert.match(html,/6 章/);assert.match(html,/30–45 镜/);assert.match(html,/预算/);
+ setup();const html=render();assert.match(html,/<option value="30" selected="">30 秒/);
+ for(const seconds of [45,60,300,480,600])assert.match(html,new RegExp(`<option value="${seconds}"`));
+ assert.match(html,/3–6 镜/);assert.match(html,/预算/);
 });
 
 // Catches long-form jobs being discarded on restore even though their complete structured reply is valid.
@@ -91,5 +91,10 @@ test('an unanalysed reference is explicitly a structure hypothesis awaiting vali
  assert.doesNotMatch(evidence,/已拆解|实测爆款|爆款概率|成功率|已观看/);
 });
 test('unsupported medium durations do not enter a new planning request',()=>{
- for(const target_seconds of [61,120,299])assert.equal(ui.planningDraftState({title:'待调整时长',angle:'',brief:'',topic_id:'tour',target_seconds}).target_seconds,300);
+ for(const target_seconds of [61,120,299])assert.equal(ui.planningDraftState({title:'待调整时长',angle:'',brief:'',topic_id:'tour',target_seconds}).target_seconds,30);
+});
+
+// A first-time user can request a direction without finding a reference first.
+test('a fresh quick planner can generate with available methods without choosing a reference',()=>{
+ setup();const html=render();assert.doesNotMatch(button(html,'生成 3 个策划方向'),/disabled=""/);
 });

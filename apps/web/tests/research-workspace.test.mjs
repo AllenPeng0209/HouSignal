@@ -168,10 +168,10 @@ test('reference planning infers only recorded category metadata and leaves uncla
  const unclassified=ui.createReferencePlanDraft(reference);assert.equal(unclassified.content_type,undefined);assert.equal(unclassified.subject,undefined);
 });
 
-// Catches old short-video research defaults forcing new planning back to short content, or losing a chosen long target.
-test('reference planning starts at five minutes and reuses only valid saved long-form targets',()=>{
- for(const target_seconds of [undefined,30,45,60,601])assert.equal(ui.createReferencePlanDraft({...reference,research_notes:{target_seconds}}).target_seconds,300);
- for(const target_seconds of [300,480,600])assert.equal(ui.createReferencePlanDraft({...reference,research_notes:{target_seconds}}).target_seconds,target_seconds);
+// Catches replacing a reference's explicit short or long duration with an unrelated default.
+test('reference planning starts short and preserves explicit supported targets',()=>{
+ for(const target_seconds of [undefined,61,120,601])assert.equal(ui.createReferencePlanDraft({...reference,research_notes:{target_seconds}}).target_seconds,30);
+ for(const target_seconds of [30,45,60,300,480,600])assert.equal(ui.createReferencePlanDraft({...reference,research_notes:{target_seconds}}).target_seconds,target_seconds);
 });
 
 // Catches source summaries acquiring false observed-video authority once they are handed to the planner.
@@ -181,9 +181,9 @@ test('a source-only reference draft labels its structural inspiration as a hypot
 });
 
 // Catches research editing rejecting a valid ten-minute adaptation or replacing an already saved short target.
-test('research notes default to five minutes with an editable ten-minute limit and preserve saved durations',()=>{
+test('research notes start short with an editable ten-minute limit and preserve saved durations',()=>{
  const render=research_notes=>renderToStaticMarkup(React.createElement(ui.AppContext.Provider,{value:{project:{id:'p-1'},notify(){}}},React.createElement(ui.ReferenceResearchDialog,{reference:{...reference,research_notes},editable:true,onClose(){},onChanged(){},onAdapt(){}})));
- assert.match(render({}),/<input type="number"[^>]*min="15"[^>]*max="600"[^>]*value="300"/);
+ assert.match(render({}),/<input type="number"[^>]*min="15"[^>]*max="600"[^>]*value="30"/);
  for(const target_seconds of [45,480,600])assert.match(render({target_seconds}),new RegExp(`<input type="number"[^>]*value="${target_seconds}"`));
 });
 
