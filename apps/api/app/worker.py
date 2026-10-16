@@ -23,6 +23,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import aliased
 from .job_models import Job, utcnow
 from .security import context_for_user, require_project
+from .external_agent_job_guard import (ExternalJobAccessDenied, check_external_job_access,
+                                       external_job_access_allowed)
 
 logger = logging.getLogger("housignal.worker")
 worker_engine = create_engine(getattr(settings, "worker_database_url", "") or settings.database_url,
@@ -241,6 +243,7 @@ def publish_progress(job_id, token, attempt, *, session_factory=WorkerSessionLoc
             raise LostLease()
         ctx = context_for_user(db, job.user_id, job.tenant_id)
         require_project(db, ctx, job.property_id, roles=JOB_ROLES.get(job.kind))
+        check_external_job_access(db, job)
         result = dict(job.result or {})
         if longform_progress is not None:
             if job.kind not in {'generate_content','render_content'}:
@@ -273,6 +276,8 @@ def execute_job(job_id, token, attempt, session_factory=WorkerSessionLocal, hand
     # locks while an expensive provider call or FFmpeg process is running.
     stop = threading.Event()
     lost = threading.Event()
+    external_access_lost = threading.Event()
+    external_job = False
     last_cancel_check = 0.0
 
     def cancelled():
@@ -287,8 +292,11 @@ def execute_job(job_id, token, attempt, session_factory=WorkerSessionLocal, hand
         last_cancel_check = current
         try:
             with session_factory() as poll:
-                active = poll.scalar(select(Job.id).where(Job.id == job_id, Job.status == "running",
+                active = poll.scalar(select(Job if external_job else Job.id).where(Job.id == job_id, Job.status == "running",
                                      Job.lease_token == token, Job.attempt == attempt, Job.lease_until > utcnow()))
+                if active is not None and external_job and not external_job_access_allowed(poll, active):
+                    external_access_lost.set()
+                    lost.set()
             if active is None:
                 lost.set()
         except Exception:
@@ -303,11 +311,22 @@ def execute_job(job_id, token, attempt, session_factory=WorkerSessionLocal, hand
         except LostLease:
             lost.set()
             raise
+        except ExternalJobAccessDenied:
+            external_access_lost.set()
+            lost.set()
+            raise
 
     def heartbeat():
         while not stop.wait(20):
             try:
                 with session_factory() as hb:
+                    if external_job:
+                        current = hb.scalar(select(Job).where(Job.id == job_id, Job.status == "running",
+                            Job.lease_token == token, Job.attempt == attempt, Job.lease_until > utcnow()))
+                        if current is not None and not external_job_access_allowed(hb, current):
+                            external_access_lost.set()
+                            lost.set()
+                            return
                     if not renew_lease(hb, job_id, token, attempt):
                         lost.set()
                         return
@@ -322,9 +341,11 @@ def execute_job(job_id, token, attempt, session_factory=WorkerSessionLocal, hand
             job = db.get(Job, job_id)
             if not job or job.status != "running" or job.lease_token != token or job.attempt != attempt:
                 return False
+            external_job = 'external_agent' in (job.payload or {})
             try:
                 ctx = context_for_user(db, job.user_id, job.tenant_id)
                 require_project(db, ctx, job.property_id, roles=JOB_ROLES.get(job.kind))
+                check_external_job_access(db, job)
                 registry = handlers if handlers is not None else registered_handlers()
                 handler = registry.get(job.kind)
                 if handler is None:
@@ -335,11 +356,16 @@ def execute_job(job_id, token, attempt, session_factory=WorkerSessionLocal, hand
                     from .model_usage_ledger import WorkerUsageRecorder
                     db.info["model_usage_recorder"] = WorkerUsageRecorder(session_factory, job)
                 result = handler(db, job)
+                if external_access_lost.is_set():
+                    raise ExternalJobAccessDenied()
                 # The last permission check also rejects revocation during work.
                 db.flush()
                 db.expire_all()
                 current = context_for_user(db, job.user_id, job.tenant_id)
                 require_project(db, current, job.property_id, roles=JOB_ROLES.get(job.kind))
+                check_external_job_access(db, job)
+                if external_access_lost.is_set():
+                    raise ExternalJobAccessDenied()
                 if lost.is_set():
                     db.rollback()
                     _cleanup_outputs(db)
@@ -349,6 +375,8 @@ def execute_job(job_id, token, attempt, session_factory=WorkerSessionLocal, hand
                     _cleanup_outputs(db)
                 return success
             except Exception as exc:
+                if external_access_lost.is_set():
+                    exc = ExternalJobAccessDenied()
                 message = _safe_error(exc)
                 from .provider import ProviderError
                 retry = isinstance(exc, ProviderError) and any(term in message for term in ("连接失败", "繁忙", "暂时不可用"))

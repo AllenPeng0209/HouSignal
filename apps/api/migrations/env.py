@@ -21,6 +21,7 @@ if config.config_file_name is not None:
 from app.config import settings
 from app.db import Base
 from app import core_models, business_models, agent_models, job_models, audit_models, operations_models, secretary_models
+from app import external_agent_models, external_agent_tools
 config.set_main_option("sqlalchemy.url", settings.migration_database_url or settings.database_url)
 target_metadata = Base.metadata
 

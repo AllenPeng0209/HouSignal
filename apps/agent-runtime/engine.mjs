@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { Agent } from '@earendil-works/pi-agent-core';
 import { getCurrentTools, getToolStateChanges, toToolDeclaration } from '@earendil-works/pi-ai';
 import { streamSimple } from '@earendil-works/pi-ai/api/openai-completions';
@@ -19,6 +20,24 @@ const requiredGroups = value => {
   return value.map(group => [...new Set(group)]);
 };
 const textContent = content => typeof content === 'string' ? content : (content ?? []).filter(b => b.type === 'text').map(b => b.text ?? '').join('\n');
+const outcomeFingerprint = value => createHash('sha256').update(JSON.stringify(value, (_key, item) => (
+  item && typeof item === 'object' && !Array.isArray(item)
+    ? Object.fromEntries(Object.keys(item).sort().map(key => [key, item[key]])) : item
+))).digest('hex');
+const progressResult = result => {
+  if (!result || typeof result !== 'object' || Array.isArray(result)
+    || !Object.hasOwn(result, 'data') || !Array.isArray(result.sources)) return result;
+  const comparable = { ...result };
+  delete comparable.observed_at;
+  comparable.sources = result.sources.map(source => {
+    if (!source || typeof source !== 'object' || Array.isArray(source)) return source;
+    const comparableSource = { ...source };
+    delete comparableSource.observed_at;
+    return comparableSource;
+  });
+  // Only the gateway's provenance wrapper carries observation metadata; data stays intact.
+  return comparable;
+};
 
 export class RuntimeError extends Error {
   constructor(code, message) { super(message); this.name = 'RuntimeError'; this.code = code; }
@@ -118,6 +137,28 @@ export function createEngine(config, { send, executeTool, apiKey = process.env.H
   let requiredToolGroups = requiredGroups(config.requiredToolGroups);
   const completedNames = new Set();
   const missingGroups = () => requiredToolGroups.filter(group => !group.some(name => completedNames.has(name)));
+  const evidenceFingerprints = new Set();
+  let turnMadeProgress = false;
+  let noProgressTurns = 0;
+  let deferred = null;
+  const resetProgress = () => { evidenceFingerprints.clear(); noProgressTurns = 0; turnMadeProgress = false; deferred = null; };
+  const recordOutcome = (name, args, result, missingBefore) => {
+    // Failed calls and Pi validation rejections supply no successful server evidence.
+    if (result?.error || result?.isError === true) return;
+    if (missingGroups().length < missingBefore) turnMadeProgress = true;
+    // Keep only digests across turns, so alternating old results cannot manufacture progress.
+    const fingerprint = outcomeFingerprint({ name, arguments: safe(args), result: progressResult(result) });
+    if (!evidenceFingerprints.has(fingerprint)) turnMadeProgress = true;
+    evidenceFingerprints.add(fingerprint);
+    const receipt = result?._execution;
+    const waiting = receipt?.deferred;
+    const validId = value => typeof value === 'string' && value.length > 0 && value.length <= 256;
+    if (receipt?.name === name && validId(waiting?.jobId) && ['queued', 'pending', 'running'].includes(waiting.status)
+      && (waiting.continuationJobId === undefined || validId(waiting.continuationJobId))) {
+      deferred = { jobId: waiting.jobId, status: waiting.status,
+        ...(waiting.continuationJobId ? { continuationJobId: waiting.continuationJobId } : {}) };
+    }
+  };
   const makeTools = schemas => (schemas ?? []).map(schema => {
     const definition = schema.function ?? schema;
     if (!definition?.name || !definition.parameters || definition.parameters.type !== 'object') {
@@ -129,11 +170,13 @@ export function createEngine(config, { send, executeTool, apiKey = process.env.H
       execute: async (id, args, signal) => {
         if (signal?.aborted) throw new RuntimeError('ABORTED', 'Agent run aborted.');
         toolCalls++;
+        const missingBefore = missingGroups().length;
         try {
           const result = safe(await executeTool({ id, name: definition.name, arguments: safe(args) }, signal));
           const execution = result?._execution;
           if (!result?.error && result?.isError !== true && execution?.name === definition.name
             && (execution.applied === true || execution.completed === true)) completedNames.add(definition.name);
+          recordOutcome(definition.name, args, result ?? null, missingBefore);
           return { content: [{ type: 'text', text: JSON.stringify(result ?? null) }], details: {} };
         } catch {
           throw new Error(signal?.aborted ? 'Agent run aborted.' : 'Business tool execution failed.');
@@ -164,6 +207,7 @@ export function createEngine(config, { send, executeTool, apiKey = process.env.H
     toolExecution: 'sequential', steeringMode: 'one-at-a-time', followUpMode: 'one-at-a-time',
     beforeToolCall: async () => {
       if (steeringInputs.length) return { block: true, reason: 'A newer user instruction superseded this pending tool call.' };
+      if (deferred) return { block: true, reason: 'The run is waiting for its server-confirmed background dependency.', terminate: true };
       if (toolCalls >= maxToolCalls) {
         limitReached = 'max_tool_calls';
         return { block: true, reason: 'The run reached its tool-call limit.', terminate: true };
@@ -179,6 +223,9 @@ export function createEngine(config, { send, executeTool, apiKey = process.env.H
       const needsRequiredWrite = missing.length > 0 && steeringInputs.length === 0;
       const needsGrounding = tools.length > 0 && toolCalls === 0 && groundingRetries < 1;
       const needsAnotherTurn = needsRequiredWrite || needsGrounding || message.stopReason === 'toolUse' || agent.hasQueuedMessages();
+      noProgressTurns = turnMadeProgress ? 0 : noProgressTurns + 1;
+      if (!limitReached && deferred && steeringInputs.length === 0) limitReached = 'waiting_for_external';
+      if (!limitReached && needsAnotherTurn && steeringInputs.length === 0 && noProgressTurns >= 3) limitReached = 'no_progress';
       if (!limitReached && needsAnotherTurn && turns >= maxTurns) limitReached = 'max_turns';
       if (!limitReached && needsAnotherTurn && usage.totalTokens >= maxTotalTokens) limitReached = 'max_total_tokens';
       if (limitReached) return { action: 'end' };
@@ -201,11 +248,12 @@ export function createEngine(config, { send, executeTool, apiKey = process.env.H
       if (consumed) {
         requiredToolGroups = consumed.options.requiredToolGroups;
         completedNames.clear();
+        resetProgress();
         if (consumed.options.tools) { tools = consumed.options.tools; agent.state.tools = tools; }
         if (consumed.id) await emit({ type: 'input_consumed', id: consumed.id, kind: consumed.kind });
       }
     }
-    if (event.type === 'turn_start') turns++;
+    if (event.type === 'turn_start') { turns++; turnMadeProgress = false; }
     if (event.type === 'message_end' && event.message.role === 'assistant') {
       if (streamingTextTail) { await emit({ type: 'text_delta', delta: safe(streamingTextTail) }); streamingTextTail = ''; }
       const current = event.message.usage;
@@ -255,8 +303,9 @@ export function createEngine(config, { send, executeTool, apiKey = process.env.H
         if (!aborted && lastAssistant?.stopReason === 'error') {
           throw new RuntimeError('MODEL_REQUEST_FAILED', 'The model request could not be completed.');
         }
-        return safe({ type: 'done', text: textContent(lastAssistant?.content), usage, model: model.id,
+        return safe({ type: 'done', text: deferred ? '' : textContent(lastAssistant?.content), usage, model: model.id,
           turns, toolCalls, incompleteRequiredGroups: missingGroups(), aborted: aborted || lastAssistant?.stopReason === 'aborted', limitReached,
+          deferred,
           state: { messages: agent.state.messages.map(message => {
             const { errorMessage, diagnostics, ...rest } = message;
             return { ...rest, ...(Array.isArray(rest.content) ? { content: rest.content.filter(block => block.type !== 'thinking') } : {}) };

@@ -14,6 +14,24 @@ import app.agent as agent_module
 from app.security import context_for_user
 import app.business_models
 import app.job_models
+from decimal import Decimal
+
+
+@pytest.mark.parametrize('database_sum',[
+    Decimal('0'),Decimal('6312720'),Decimal('9007199254740993'),
+    Decimal('123456789012345678901234567890'),
+])
+def test_postgres_bigint_sum_is_an_exact_integer_token_count(database_sum,monkeypatch):
+    from app.model_budget import used_daily_tokens,remaining_daily_tokens
+    # PostgreSQL SUM(BIGINT) is NUMERIC and the driver returns Decimal. SQLite
+    # returns int, so reproduce the real driver boundary explicitly here.
+    db=SimpleNamespace(scalar=lambda statement:database_sum)
+    monkeypatch.setattr(settings,'app_env','production')
+    monkeypatch.setattr(settings,'daily_token_budget',int(database_sum)+8000)
+    used=used_daily_tokens(db,'synthetic-team')
+    remaining=remaining_daily_tokens(db,'synthetic-team')
+    assert type(used) is int and used==int(database_sum)
+    assert type(remaining) is int and remaining==8000
 
 
 @pytest.mark.parametrize(('environment','quota','used','accepted'),[

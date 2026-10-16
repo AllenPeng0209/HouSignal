@@ -206,7 +206,7 @@ def _execution_requested(raw_text):
 
 
 def _continue_after(db, ctx, pid, args, raw_text):
-    from .agent import _conversation, sanitize
+    from .agent import _conversation, sanitize, _affirmative_intent_text
     from .agent_models import ChatMessage
     from .security import decrypt_pii, encrypt_pii
 
@@ -226,8 +226,8 @@ def _continue_after(db, ctx, pid, args, raw_text):
         authorization = decrypt_pii(inherited) if inherited else raw_text
     except Exception:
         raise HTTPException(409, '原始制作授权已失效，请重新提供要求') from None
-    if (not isinstance(authorization, str) or not re.search(r'完成后|生成后|生成好后|做好后|然后|继续|接着|完整流程|全流程|一条龙', authorization)
-            or re.search(r'(?:不要|不必|禁止|先别|别).{0,6}(?:继续|接着|自动|然后)', authorization)):
+    authority=_affirmative_intent_text(authorization) if isinstance(authorization,str) else ''
+    if not re.search(r'完成后|生成后|生成好后|做好后|然后|继续|接着|完整流程|全流程|一条龙', authority):
         raise HTTPException(409, '用户尚未明确要求完成后继续制作')
     depth = (parent.payload or {}).get('workflow_depth', 0)
     if type(depth) is not int or depth < 0:
@@ -237,7 +237,7 @@ def _continue_after(db, ctx, pid, args, raw_text):
     # One continuation per parent/dependency. Wording changes from the model
     # cannot multiply queued chat branches or their later model calls.
     request_key = hashlib.sha256(json.dumps([ctx.tenant_id, pid, conversation.id, parent.id,
-        upstream.id], ensure_ascii=False, separators=(',', ':')).encode()).hexdigest()
+        upstream.id,(parent.payload or {}).get('authority_control_id')], ensure_ascii=False, separators=(',', ':')).encode()).hexdigest()
     existing = db.scalar(select(Job).where(Job.tenant_id == ctx.tenant_id, Job.property_id == pid,
         Job.user_id == ctx.user_id, Job.kind == 'chat',
         Job.payload['workflow_request_key'].as_string() == request_key))

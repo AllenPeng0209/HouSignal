@@ -1,0 +1,16 @@
+{
+  "name": "louxiang",
+  "version": "0.1.0",
+  "description": "连接楼响工作区，读取真实房源与参考，保存策划并提交制作任务。",
+  "author": { "name": "楼响" },
+  "mcpServers": "./.mcp.json",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "楼响",
+    "shortDescription": "房源研究、内容策划与制作任务",
+    "developerName": "楼响",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://louxiang-preview.lovelingo.love/"
+  }
+}

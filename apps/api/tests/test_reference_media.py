@@ -1,5 +1,6 @@
 """Authorized source media yields traceable sampled evidence, never target facts."""
 from dataclasses import replace
+from datetime import datetime, timedelta, timezone
 import hashlib
 import json
 import subprocess
@@ -314,6 +315,130 @@ def test_explicit_force_is_still_deduplicated_by_idempotency_key(media_env):
     second = start(media_env, idempotency_key=key, force=True)
     assert second.json()['job_id'] == first.json()['job_id']
     assert len(db.scalars(select(Job)).all()) == 1
+
+
+def _historical_analysis(env, identity, key, *, status='failed', offset=0, **changes):
+    _, db, _, _, asset, reference = env
+    payload = {'reference_id': 'r', 'reference_revision': 1, 'source_url': SOURCE,
+        'source_title': '空间导览', 'asset_id': 'a', 'asset_sha256': asset.sha256,
+        'asset_byte_size': asset.byte_size, 'rights_revision': 1, 'idempotency_key': key}
+    job = Job(id=identity, tenant_id='t', property_id='p', user_id='u', kind='reference_analyze',
+        status=status, payload=payload | changes.pop('payload', {}), result={},
+        created_at=datetime(2026, 10, 1, tzinfo=timezone.utc) + timedelta(seconds=offset), **changes)
+    db.add(job)
+    return job
+
+
+def _analysis_rows(db):
+    return {row.id: (row.status, json.dumps(row.payload, sort_keys=True))
+            for row in db.scalars(select(Job)).all()}
+
+
+@pytest.mark.parametrize('original_status', ['failed', 'succeeded'])
+def test_analysis_retry_keeps_original_key_beyond_recent_cache(media_env, original_status):
+    from app.agent_models import ModelUsage
+    _, db, *_ = media_env
+    key = str(uuid4())
+    _historical_analysis(media_env, 'original', key, status=original_status)
+    for index in range(200):
+        _historical_analysis(media_env, f'newer-{index:03d}', str(uuid4()), offset=index + 1)
+    db.commit()
+    before = _analysis_rows(db)
+
+    response = start(media_env, idempotency_key=key, force=True)
+
+    assert response.status_code == 200, response.text
+    assert response.json() == {'job_id': 'original', 'cached': original_status == 'succeeded'}
+    assert _analysis_rows(db) == before
+    assert db.scalar(select(ModelUsage)) is None
+
+
+@pytest.mark.parametrize('changed_binding', [
+    {'reference_revision': 2}, {'source_url': 'https://www.douyin.com/video/7390000000000000002'},
+    {'source_title': '另一个原片标题'}, {'asset_id': 'previous-asset'},
+    {'asset_sha256': 'b' * 64}, {'asset_byte_size': 1}, {'rights_revision': 2},
+])
+def test_newer_cache_cannot_hide_existing_key_binding_conflict(media_env, changed_binding):
+    _, db, *_ = media_env
+    key = str(uuid4())
+    _historical_analysis(media_env, 'original', key, payload=changed_binding)
+    _historical_analysis(media_env, 'newer-cache', str(uuid4()), status='succeeded', offset=1)
+    db.commit()
+    before = _analysis_rows(db)
+
+    response = start(media_env, idempotency_key=key)
+
+    assert response.status_code == 409, response.text
+    assert _analysis_rows(db) == before
+
+
+@pytest.mark.parametrize('foreign_scope', ['tenant', 'project', 'reference', 'kind'])
+def test_analysis_key_lookup_cannot_reuse_another_scope(media_env, foreign_scope):
+    _, db, *_ = media_env
+    key = str(uuid4())
+    foreign = _historical_analysis(media_env, 'foreign', key)
+    if foreign_scope == 'tenant':
+        foreign.tenant_id = 'other'
+    elif foreign_scope == 'project':
+        foreign.property_id = 'p2'
+    elif foreign_scope == 'reference':
+        foreign.payload = foreign.payload | {'reference_id': 'other-reference'}
+    else:
+        foreign.kind = 'generate_content'
+    db.commit()
+    before = _analysis_rows(db)
+
+    response = start(media_env, idempotency_key=key, force=True)
+
+    assert response.status_code == 200, response.text
+    assert response.json()['job_id'] != 'foreign'
+    queued = db.get(Job, response.json()['job_id'])
+    assert (queued.tenant_id, queued.property_id, queued.kind, queued.status) == (
+        't', 'p', 'reference_analyze', 'queued')
+    assert queued.payload['reference_id'] == 'r'
+    assert queued.payload['idempotency_key'] == key
+    assert len(_analysis_rows(db)) == 2
+    assert _analysis_rows(db)['foreign'] == before['foreign']
+
+
+@pytest.mark.parametrize('same_created_at', [False, True])
+@pytest.mark.parametrize('oldest_binding_matches', [False, True])
+def test_duplicate_legacy_keys_keep_the_earliest_binding(media_env, same_created_at, oldest_binding_matches):
+    _, db, *_ = media_env
+    key = str(uuid4())
+    # Insert the newer duplicate first so an unordered query cannot pass by luck.
+    _historical_analysis(media_env, 'duplicate-b', key, status='succeeded',
+        offset=0 if same_created_at else 1,
+        payload={'source_title': '旧的不同标题'} if oldest_binding_matches else {})
+    _historical_analysis(media_env, 'duplicate-a', key,
+        payload={} if oldest_binding_matches else {'source_title': '旧的不同标题'})
+    db.commit()
+    before = _analysis_rows(db)
+
+    response = start(media_env, idempotency_key=key, force=True)
+
+    if oldest_binding_matches:
+        assert response.status_code == 200, response.text
+        assert response.json() == {'job_id': 'duplicate-a', 'cached': False}
+    else:
+        assert response.status_code == 409, response.text
+    assert _analysis_rows(db) == before
+
+
+def test_unrelated_key_does_not_expand_the_success_cache_window(media_env):
+    _, db, *_ = media_env
+    _historical_analysis(media_env, 'old-success', str(uuid4()), status='succeeded')
+    for index in range(200):
+        _historical_analysis(media_env, f'newer-{index:03d}', str(uuid4()), offset=index + 1)
+    db.commit()
+    before = _analysis_rows(db)
+
+    response = start(media_env)
+
+    assert response.status_code == 200, response.text
+    assert response.json()['job_id'] not in before
+    assert response.json()['cached'] is False
+    assert len(_analysis_rows(db)) == 202
 
 
 def test_budget_gate_prevents_cloud_call_after_daily_limit(media_env, monkeypatch):

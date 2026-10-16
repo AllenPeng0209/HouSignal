@@ -11,13 +11,14 @@ from .config import settings
 from .db import SessionLocal
 from .audit_models import AuditEvent
 from . import core, business, agent, jobs, operations, native_skills, content_planning, mobile_auth, discovery, platform_accounts, platform_publish, platform_analytics, research_workspace, reference_media, reference_upload, research_outcomes, secretary
+from . import external_agent_auth, external_agent_api
 
 login_limiter = LoginLimiter(settings.secret_key)
 
 app = FastAPI(title='楼响 HouSignal', version='0.1.0', docs_url='/api/docs', openapi_url='/api/openapi.json')
 app.add_middleware(CORSMiddleware, allow_origins=settings.allowed_origins,
                    allow_credentials=True, allow_methods=['GET', 'POST', 'PATCH', 'DELETE'],
-                   allow_headers=['Content-Type', 'Authorization', 'X-Request-ID'])
+                   allow_headers=['Content-Type', 'Authorization', 'X-Request-ID', 'MCP-Protocol-Version', 'MCP-Method', 'MCP-Name'])
 
 
 @app.middleware('http')
@@ -36,13 +37,15 @@ async def origin_and_audit(request: Request, call_next):
             return JSONResponse({'detail':'登录尝试过于频繁，请稍后重试'}, status_code=429, headers={'Retry-After':'60'})
     if request.method in {'POST', 'PATCH', 'PUT', 'DELETE'}:
         origin = request.headers.get('origin')
-        if origin and origin not in settings.allowed_origins:
+        external_transport = request.url.path in {'/mcp', '/api/agent/tools/call'} and not request.cookies.get('hs_session')
+        external_origin = external_transport and origin in {'https://chatgpt.com', 'https://chat.openai.com'}
+        if origin and origin not in settings.allowed_origins and not external_origin:
             return JSONResponse({'detail': '请求来源未授权'}, status_code=403)
         if request.cookies.get('hs_session') and not origin:
             return JSONResponse({'detail': '写入请求需要同源校验'}, status_code=403)
     response = await call_next(request)
     response.headers['X-Content-Type-Options'] = 'nosniff'
-    response.headers['Referrer-Policy'] = 'same-origin'
+    response.headers.setdefault('Referrer-Policy', 'same-origin')
     response.headers['Cache-Control'] = 'no-store'
     ctx = getattr(request.state, 'context', None)
     if ctx and request.method in {'POST', 'PATCH', 'PUT', 'DELETE'}:
@@ -70,6 +73,8 @@ def health():
 
 for router in (core.router, business.router, agent.router, jobs.router, operations.router, native_skills.router, content_planning.router, mobile_auth.router, discovery.router, platform_accounts.router, platform_publish.router, platform_analytics.router, research_workspace.router, reference_media.router, reference_upload.router, research_outcomes.router, secretary.router):
     app.include_router(router)
+app.include_router(external_agent_auth.router)
+app.include_router(external_agent_api.router)
 
 
 WEB_DIST = Path(__file__).resolve().parents[3] / 'apps/web/dist'

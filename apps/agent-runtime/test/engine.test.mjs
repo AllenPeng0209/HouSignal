@@ -177,8 +177,8 @@ test('unlimited runs complete beyond the former turn, tool, and accumulated-toke
         requests++;
         const finished = requests === 34;
         const message = assistant(model, finished ? [{ type: 'text', text: 'All sixty-six operations completed.' }] : [
-          { type: 'toolCall', id: `long-${requests}-a`, name: 'crm_update', arguments: { note: 'first authorized operation' } },
-          { type: 'toolCall', id: `long-${requests}-b`, name: 'crm_update', arguments: { note: 'second authorized operation' } },
+          { type: 'toolCall', id: `long-${requests}-a`, name: 'crm_update', arguments: { note: `first authorized operation ${requests}` } },
+          { type: 'toolCall', id: `long-${requests}-b`, name: 'crm_update', arguments: { note: `second authorized operation ${requests}` } },
         ], finished ? 'stop' : 'toolUse');
         message.usage = { ...structuredClone(usage), input: 30_000, output: 10_000, totalTokens: 40_000 };
         return message;
@@ -599,4 +599,432 @@ test('impossible required tool groups are rejected before any provider call', as
     send: () => {}, apiKey: 'test', executeTool: async () => ({}),
     streamFn: () => { throw new Error('The model must not be called for an impossible operation'); },
   }), error => error.code === 'UNAVAILABLE_REQUIRED_TOOL');
+});
+
+// Fails if a missing write can force an unbounded loop over an unchanged read result.
+test('repeated identical read outcomes stop an unfinished required operation without a global cap', async () => {
+  const { createEngine } = await load();
+  let requests = 0;
+  const executed = [];
+  const engine = createEngine(baseConfig({
+    tools: [namedTool('get_property_details'), tool], requiredToolGroups: [['crm_update']],
+  }), {
+    send: () => {}, apiKey: 'test',
+    executeTool: async call => {
+      executed.push(call.name);
+      if (call.name === 'crm_update') return { _execution: { name: call.name, applied: true } };
+      // JSON object insertion order is transport noise, not progress.
+      return executed.length % 2
+        ? { property: { id: 'property-1', state: 'unchanged' }, _execution: { name: call.name, applied: false } }
+        : { _execution: { applied: false, name: call.name }, property: { state: 'unchanged', id: 'property-1' } };
+    },
+    streamFn: scriptedStream(model => {
+      requests++;
+      // The escape path makes the regression fail promptly even before the guard exists.
+      if (executed.includes('crm_update')) return assistant(model, [{ type: 'text', text: 'The write completed.' }]);
+      const name = requests > 6 ? 'crm_update' : 'get_property_details';
+      const args = requests % 2 ? { note: 'inspect', page: 1 } : { page: 1, note: 'inspect' };
+      return assistant(model, [{ type: 'toolCall', id: `unchanged-${requests}`, name, arguments: args }], 'toolUse');
+    }),
+  });
+  const result = await engine.run();
+  assert.equal(result.limitReached, 'no_progress');
+  assert.deepEqual(result.incompleteRequiredGroups, [['crm_update']]);
+  assert.deepEqual(executed, ['get_property_details', 'get_property_details', 'get_property_details', 'get_property_details']);
+  assert.equal(requests, 4); // One new server result, followed by three turns without new evidence.
+  assert.equal(result.aborted, false);
+});
+
+// Fails if the guard treats changing arguments/results as a general turn or tool cap.
+test('changing tool arguments or results can advance a long run while a required write remains pending', async t => {
+  const { createEngine } = await load();
+  for (const changing of ['arguments', 'result']) await t.test(changing, async () => {
+    let requests = 0;
+    let calls = 0;
+    const engine = createEngine(baseConfig({
+      tools: [namedTool('get_property_details'), tool], requiredToolGroups: [['crm_update']],
+    }), {
+      send: () => {}, apiKey: 'test',
+      executeTool: async call => {
+        calls++;
+        return call.name === 'crm_update' ? { _execution: { name: call.name, applied: true } }
+          : { progress: changing === 'result' ? calls : 1, _execution: { name: call.name, applied: false } };
+      },
+      streamFn: scriptedStream(model => {
+        requests++;
+        if (requests > 36) throw new Error('The progressing run did not finish after its confirmed write.');
+        if (requests === 36) return assistant(model, [{ type: 'text', text: 'Completed after the progressing reads.' }]);
+        return assistant(model, [{ type: 'toolCall', id: `progress-${requests}`,
+          name: requests === 35 ? 'crm_update' : 'get_property_details',
+          arguments: { note: changing === 'arguments' ? `inspect item ${requests}` : 'poll current status' },
+        }], 'toolUse');
+      }),
+    });
+    const result = await engine.run();
+    assert.equal(result.limitReached, null);
+    assert.equal(result.toolCalls, 35);
+    assert.equal(result.turns, 36);
+    assert.deepEqual(result.incompleteRequiredGroups, []);
+  });
+});
+
+// Fails if repeated rejected or thrown tool outcomes continue spending provider requests.
+test('identical failed writes and thrown business-tool failures stop with explicit unfinished goals', async t => {
+  const { createEngine } = await load();
+  for (const failure of ['receipt', 'exception']) await t.test(failure, async () => {
+    let calls = 0;
+    let requests = 0;
+    const engine = createEngine(baseConfig({ requiredToolGroups: [['crm_update']] }), {
+      send: () => {}, apiKey: 'test',
+      executeTool: async () => {
+        calls++;
+        // A finite escape keeps a missing guard from hanging the regression suite.
+        if (calls > 6) return { _execution: { name: 'crm_update', applied: true } };
+        if (failure === 'exception') throw new Error('private backend failure');
+        return { error: 'The update was rejected.', _execution: { name: 'crm_update', applied: false } };
+      },
+      streamFn: scriptedStream(model => {
+        requests++;
+        return calls > 6 ? assistant(model, [{ type: 'text', text: 'Escaped.' }])
+          : assistant(model, [{ type: 'toolCall', id: `failed-${requests}`, name: 'crm_update', arguments: { note: 'save' } }], 'toolUse');
+      }),
+    });
+    const result = await engine.run();
+    assert.equal(result.limitReached, 'no_progress');
+    assert.deepEqual(result.incompleteRequiredGroups, [['crm_update']]);
+    assert.equal(result.toolCalls, 3);
+    assert.equal(requests, 3);
+    assert.ok(!JSON.stringify(result).includes('private backend failure'));
+  });
+});
+
+// Fails if an unchanged tool streak ends a batch that actually completes a required write.
+test('required-operation progress in a tool batch clears the unchanged-outcome streak', async () => {
+  const { createEngine } = await load();
+  let requests = 0;
+  const engine = createEngine(baseConfig({
+    tools: [namedTool('get_property_details'), tool, namedTool('update_asset')],
+    requiredToolGroups: [['crm_update'], ['update_asset']],
+  }), {
+    send: () => {}, apiKey: 'test',
+    executeTool: async call => ({ _execution: { name: call.name, applied: call.name !== 'get_property_details' } }),
+    streamFn: scriptedStream(model => {
+      requests++;
+      if (requests > 3) return assistant(model, [{ type: 'text', text: 'Both required writes completed.' }]);
+      const names = requests === 1
+        ? ['get_property_details', 'get_property_details', 'get_property_details', 'crm_update']
+        : requests === 2 ? ['get_property_details', 'get_property_details'] : ['update_asset'];
+      return assistant(model, names.map((name, index) => ({
+        type: 'toolCall', id: `batch-${requests}-${index}`, name, arguments: { note: 'authorized' },
+      })), 'toolUse');
+    }),
+  });
+  const result = await engine.run();
+  assert.equal(result.limitReached, null);
+  assert.deepEqual(result.incompleteRequiredGroups, []);
+  assert.equal(result.toolCalls, 7);
+});
+
+// Fails if a new consumed human instruction inherits the previous instruction's no-progress streak.
+test('human steering consumption resets an unfinished operation no-progress streak', async () => {
+  const { createEngine } = await load();
+  let engine;
+  let calls = 0;
+  let requests = 0;
+  const events = [];
+  const reads = namedTool('get_property_details');
+  engine = createEngine(baseConfig({ tools: [reads, tool], requiredToolGroups: [['crm_update']] }), {
+    send: event => events.push(event), apiKey: 'test',
+    executeTool: async call => {
+      calls++;
+      if (calls === 3) engine.steer('Complete the write after one fresh check.', 'fresh-goal', {
+        requiredToolGroups: [['crm_update']], tools: [reads, tool],
+      });
+      return { _execution: { name: call.name, applied: call.name === 'crm_update' } };
+    },
+    streamFn: scriptedStream(model => {
+      requests++;
+      if (requests > 8) throw new Error('The human correction did not finish after its confirmed write.');
+      if (requests > 5) return assistant(model, [{ type: 'text', text: 'Completed the new instruction.' }]);
+      return assistant(model, [{ type: 'toolCall', id: `human-${requests}`,
+        name: requests === 5 ? 'crm_update' : 'get_property_details', arguments: { note: 'inspect' },
+      }], 'toolUse');
+    }),
+  });
+  const result = await engine.run();
+  assert.equal(result.limitReached, null);
+  assert.deepEqual(result.incompleteRequiredGroups, []);
+  assert.equal(result.toolCalls, 5);
+  assert.deepEqual(events.filter(event => event.type === 'input_consumed'), [{ type: 'input_consumed', id: 'fresh-goal', kind: 'steer' }]);
+});
+
+// Fails if a future follow-up disables the guard while Pi is still enforcing the current required operation.
+test('an unconsumed follow-up does not keep an unchanged unfinished operation running', async () => {
+  const { createEngine } = await load();
+  const reads = namedTool('get_property_details');
+  let engine;
+  let requests = 0;
+  let calls = 0;
+  engine = createEngine(baseConfig({ tools: [reads, tool], requiredToolGroups: [['crm_update']] }), {
+    send: () => {}, apiKey: 'test',
+    executeTool: async call => {
+      calls++;
+      if (calls === 3) engine.followUp('Summarize after the current operation.', 'later-summary');
+      return { _execution: { name: call.name, applied: call.name === 'crm_update' } };
+    },
+    streamFn: scriptedStream(model => {
+      requests++;
+      if (requests > 7) return assistant(model, [{ type: 'text', text: 'Escaped.' }]);
+      return assistant(model, [{ type: 'toolCall', id: `queued-${requests}`,
+        name: requests === 7 ? 'crm_update' : 'get_property_details', arguments: { note: 'inspect' },
+      }], 'toolUse');
+    }),
+  });
+  const result = await engine.run();
+  assert.equal(result.limitReached, 'no_progress');
+  assert.deepEqual(result.incompleteRequiredGroups, [['crm_update']]);
+  assert.equal(result.toolCalls, 4);
+  assert.deepEqual(engine.queueStatus(), { hasQueuedMessages: true, steering: 0, followUp: 1 });
+});
+
+// Fails if gateway observation timestamps let an unchanged read bypass no-progress detection.
+test('gateway observation timestamps do not turn unchanged business results into progress', async t => {
+  const { createEngine } = await load();
+  for (const timestampLocation of ['envelope', 'source', 'both']) await t.test(timestampLocation, async () => {
+    let calls = 0;
+    let requests = 0;
+    const engine = createEngine(baseConfig({
+      tools: [namedTool('get_property_details'), tool], requiredToolGroups: [['crm_update']],
+    }), {
+      send: () => {}, apiKey: 'test',
+      executeTool: async call => {
+        calls++;
+        if (call.name === 'crm_update') return { _execution: { name: call.name, applied: true } };
+        const observedAt = `2026-10-15T06:00:${String(calls).padStart(2, '0')}+00:00`;
+        return {
+          data: { property: { id: 'property-1', status: 'verified', updated_at: '2026-10-14T00:00:00+00:00' } },
+          sources: [{ kind: 'property', id: 'property-1', ref: 'S1', label: 'Property details', revision: 2,
+            status: 'verified', valid: true, observed_at: timestampLocation === 'envelope' ? 'unchanged' : observedAt }],
+          observed_at: timestampLocation === 'source' ? 'unchanged' : observedAt,
+          _execution: { name: call.name, applied: false, completed: true },
+        };
+      },
+      streamFn: scriptedStream(model => {
+        requests++;
+        if (requests > 7) return assistant(model, [{ type: 'text', text: 'Escaped.' }]);
+        return assistant(model, [{ type: 'toolCall', id: `observation-${requests}`,
+          name: requests === 7 ? 'crm_update' : 'get_property_details', arguments: { note: 'inspect property-1' },
+        }], 'toolUse');
+      }),
+    });
+    const result = await engine.run();
+    assert.equal(result.limitReached, 'no_progress');
+    assert.deepEqual(result.incompleteRequiredGroups, [['crm_update']]);
+    assert.equal(result.toolCalls, 4);
+    const lastRead = JSON.parse(result.state.messages.filter(message => message.role === 'toolResult').at(-1).content[0].text);
+    // Fingerprinting must not remove provenance metadata from the model-visible transcript.
+    assert.equal(lastRead.observed_at, timestampLocation === 'source' ? 'unchanged' : '2026-10-15T06:00:04+00:00');
+    assert.equal(lastRead.sources[0].observed_at, timestampLocation === 'envelope' ? 'unchanged' : '2026-10-15T06:00:04+00:00');
+  });
+});
+
+// Fails if provenance normalization erases business updates or source identity/revision changes.
+test('gateway business data and source changes remain progress during long required-operation runs', async t => {
+  const { createEngine } = await load();
+  for (const field of ['data.updated_at', 'data.status', 'data.progress', 'data.observed_at', 'source.id', 'source.revision', 'source.status']) {
+    await t.test(field, async () => {
+      let calls = 0;
+      let requests = 0;
+      const engine = createEngine(baseConfig({
+        tools: [namedTool('get_property_details'), tool], requiredToolGroups: [['crm_update']],
+      }), {
+        send: () => {}, apiKey: 'test',
+        executeTool: async call => {
+          calls++;
+          if (call.name === 'crm_update') return { _execution: { name: call.name, applied: true } };
+          const result = {
+            data: { updated_at: 'unchanged', status: 'pending', progress: 0, observed_at: 'business observation' },
+            sources: [{ kind: 'property', id: 'property-1', ref: 'S1', revision: 1, status: 'verified', observed_at: `observation-${calls}` }],
+            observed_at: `observation-${calls}`,
+            _execution: { name: call.name, applied: false, completed: true },
+          };
+          const [location, key] = field.split('.');
+          (location === 'data' ? result.data : result.sources[0])[key] = calls;
+          return result;
+        },
+        streamFn: scriptedStream(model => {
+          requests++;
+          if (requests > 36) throw new Error('Business progress must permit the confirmed write to finish.');
+          if (requests === 36) return assistant(model, [{ type: 'text', text: 'Completed after the changing gateway results.' }]);
+          return assistant(model, [{ type: 'toolCall', id: `business-progress-${requests}`,
+            name: requests === 35 ? 'crm_update' : 'get_property_details', arguments: { note: 'inspect current business state' },
+          }], 'toolUse');
+        }),
+      });
+      const result = await engine.run();
+      assert.equal(result.limitReached, null);
+      assert.equal(result.toolCalls, 35);
+      assert.equal(result.turns, 36);
+      assert.deepEqual(result.incompleteRequiredGroups, []);
+    });
+  }
+});
+
+// Fails if alternating old evidence, Pi validation failures, or tool-free claims can force endless required retries.
+test('three turns without new server evidence stop repeated cycles and calls rejected by Pi', async t => {
+  const { createEngine } = await load();
+  for (const mode of ['alternating', 'invalid arguments', 'unknown tool', 'text only']) await t.test(mode, async () => {
+    let requests = 0;
+    let calls = 0;
+    const reads = [namedTool('get_property_details'), namedTool('get_customer')];
+    const engine = createEngine(baseConfig({ tools: [...reads, tool], requiredToolGroups: [['crm_update']] }), {
+      send: () => {}, apiKey: 'test',
+      executeTool: async call => {
+        calls++;
+        return call.name === 'crm_update' ? { _execution: { name: call.name, applied: true } }
+          : { data: { state: 'unchanged' }, sources: [], _execution: { name: call.name, applied: false } };
+      },
+      streamFn: scriptedStream(model => {
+        requests++;
+        if (requests > 9) return assistant(model, [{ type: 'text', text: 'Escaped.' }]);
+        if (requests === 9) return assistant(model, [{ type: 'toolCall', id: 'escape-write', name: 'crm_update', arguments: { note: 'finish' } }], 'toolUse');
+        if (mode === 'text only') return assistant(model, [{ type: 'text', text: 'I claim the write finished.' }]);
+        return assistant(model, [{ type: 'toolCall', id: `stalled-${requests}`,
+          name: mode === 'unknown tool' ? 'not_a_real_tool' : mode === 'alternating' ? reads[(requests - 1) % 2].function.name : 'crm_update',
+          arguments: mode === 'invalid arguments' ? {} : { note: 'inspect' },
+        }], 'toolUse');
+      }),
+    });
+    const result = await engine.run();
+    assert.equal(result.limitReached, 'no_progress');
+    assert.deepEqual(result.incompleteRequiredGroups, [['crm_update']]);
+    assert.equal(requests, mode === 'alternating' ? 5 : 3);
+    assert.equal(calls, mode === 'alternating' ? 5 : 0);
+  });
+});
+
+// Fails if a confirmed background wait keeps buying model turns or is presented as a successful final answer.
+test('a server deferred execution receipt yields immediately without polling or claiming success', async t => {
+  const { createEngine } = await load();
+  for (const status of ['queued', 'pending', 'running']) await t.test(status, async () => {
+    let requests = 0;
+    const engine = createEngine(baseConfig({ tools: [namedTool('get_production_job'), tool], requiredToolGroups: [['crm_update']] }), {
+      send: () => {}, apiKey: 'test',
+      executeTool: async () => ({ data: { job_id: 'production-1', status }, sources: [],
+        _execution: { name: 'get_production_job', applied: false,
+          deferred: { jobId: 'production-1', status, continuationJobId: 'continuation-1' } } }),
+      streamFn: scriptedStream(model => {
+        requests++;
+        return requests > 5 ? assistant(model, [{ type: 'text', text: 'Escaped.' }], 'error')
+          : assistant(model, [{ type: 'text', text: 'The production is complete.' },
+            { type: 'toolCall', id: `pending-${requests}`, name: 'get_production_job', arguments: { note: 'check job' } }], 'toolUse');
+      }),
+    });
+    const result = await engine.run();
+    assert.equal(requests, 1);
+    assert.equal(result.limitReached, 'waiting_for_external');
+    assert.deepEqual(result.deferred, { jobId: 'production-1', status, continuationJobId: 'continuation-1' });
+    assert.deepEqual(result.incompleteRequiredGroups, [['crm_update']]);
+    assert.equal(result.text, '');
+    assert.equal(result.aborted, false);
+  });
+});
+
+// Fails if yielding loses the original obligation or requires paid polling to observe a finished dependency.
+test('a fresh engine resumes an externally completed dependency and finishes the original required write', async () => {
+  const { createEngine } = await load();
+  const tools = [namedTool('get_production_job'), tool];
+  let waitingRequests = 0;
+  const waitingEngine = createEngine(baseConfig({ tools, requiredToolGroups: [['crm_update']] }), {
+    send: () => {}, apiKey: 'test',
+    executeTool: async () => ({ data: { job_id: 'production-1', status: 'running' }, sources: [],
+      _execution: { name: 'get_production_job', applied: false,
+        deferred: { jobId: 'production-1', status: 'running', continuationJobId: 'continuation-1' } } }),
+    streamFn: scriptedStream(model => {
+      waitingRequests++;
+      return assistant(model, [{ type: 'toolCall', id: `wait-${waitingRequests}`, name: 'get_production_job', arguments: { note: 'check real job' } }], 'toolUse');
+    }),
+  });
+  const waiting = await waitingEngine.run();
+  assert.equal(waitingRequests, 1);
+  assert.equal(waiting.limitReached, 'waiting_for_external');
+  assert.deepEqual(waiting.incompleteRequiredGroups, [['crm_update']]);
+
+  // The persistent Python dependency scheduler supplies this new run after the actual job finishes.
+  let resumedRequests = 0;
+  const executed = [];
+  const resumedEngine = createEngine(baseConfig({ tools, requiredToolGroups: waiting.incompleteRequiredGroups,
+    state: waiting.state, messages: [{ role: 'user', content: 'The real dependency finished; continue the original authorized write.' }],
+  }), {
+    send: () => {}, apiKey: 'test',
+    executeTool: async call => {
+      executed.push(call.name);
+      return call.name === 'get_production_job'
+        ? { data: { job_id: 'production-1', status: 'succeeded', artifacts: [{ id: 'artifact-1' }] }, sources: [],
+          _execution: { name: call.name, applied: false } }
+        : { data: { saved: true }, sources: [], _execution: { name: call.name, applied: true } };
+    },
+    streamFn: scriptedStream(model => {
+      resumedRequests++;
+      if (resumedRequests === 3) return assistant(model, [{ type: 'text', text: 'The actual artifact was checked and the original write saved.' }]);
+      return assistant(model, [{ type: 'toolCall', id: `resume-${resumedRequests}`,
+        name: resumedRequests === 1 ? 'get_production_job' : 'crm_update', arguments: { note: 'original authorized action' } }], 'toolUse');
+    }),
+  });
+  const result = await resumedEngine.run();
+  assert.deepEqual(executed, ['get_production_job', 'crm_update']);
+  assert.equal(result.limitReached, null);
+  assert.equal(result.deferred, null);
+  assert.deepEqual(result.incompleteRequiredGroups, []);
+  assert.equal(result.text, 'The actual artifact was checked and the original write saved.');
+});
+
+// Fails if arbitrary business statuses, rejected results, or another tool's receipt can yield the runtime.
+test('only a valid matching server execution receipt can defer a run', async t => {
+  const { createEngine } = await load();
+  const waiting = { jobId: 'production-1', status: 'running' };
+  for (const [name, receipt] of [
+    ['business status only', { data: { status: 'running', deferred: waiting }, sources: [] }],
+    ['different tool', { _execution: { name: 'crm_update', deferred: waiting } }],
+    ['failed result', { error: 'rejected', _execution: { name: 'get_production_job', deferred: waiting } }],
+    ['missing job id', { _execution: { name: 'get_production_job', deferred: { status: 'running' } } }],
+    ['terminal job', { _execution: { name: 'get_production_job', deferred: { jobId: 'production-1', status: 'succeeded' } } }],
+  ]) await t.test(name, async () => {
+    let requests = 0;
+    const engine = createEngine(baseConfig({ tools: [namedTool('get_production_job')] }), {
+      send: () => {}, apiKey: 'test', executeTool: async () => receipt,
+      streamFn: scriptedStream(model => {
+        requests++;
+        return requests === 1 ? assistant(model, [{ type: 'toolCall', id: 'not-deferred', name: 'get_production_job', arguments: { note: 'inspect' } }], 'toolUse')
+          : assistant(model, [{ type: 'text', text: 'Reported the actual record.' }]);
+      }),
+    });
+    const result = await engine.run();
+    assert.equal(requests, 2);
+    assert.equal(result.limitReached, null);
+    assert.equal(result.deferred, null);
+  });
+});
+
+// Fails if tool calls later in the same model batch still execute after the gateway has handed off to a dependency.
+test('a deferred receipt prevents later tool execution in the current batch', async () => {
+  const { createEngine } = await load();
+  const executed = [];
+  const engine = createEngine(baseConfig({ tools: [namedTool('get_production_job'), tool], requiredToolGroups: [['crm_update']] }), {
+    send: () => {}, apiKey: 'test',
+    executeTool: async call => {
+      executed.push(call.name);
+      return call.name === 'get_production_job'
+        ? { _execution: { name: call.name, applied: false, deferred: { jobId: 'production-1', status: 'running' } } }
+        : { _execution: { name: call.name, applied: true } };
+    },
+    streamFn: scriptedStream(model => assistant(model, [
+      { type: 'toolCall', id: 'dependency-wait', name: 'get_production_job', arguments: { note: 'check' } },
+      { type: 'toolCall', id: 'after-dependency', name: 'crm_update', arguments: { note: 'must wait for the dependency' } },
+    ], 'toolUse')),
+  });
+  const result = await engine.run();
+  assert.deepEqual(executed, ['get_production_job']);
+  assert.equal(result.limitReached, 'waiting_for_external');
+  assert.deepEqual(result.incompleteRequiredGroups, [['crm_update']]);
 });
